@@ -116,15 +116,15 @@ export default async function DatabasePage({
             </form>
           </div>
           <div className="space-y-2 p-3">
-            <Facet title="Industry" param="industry" currentQuery={currentQuery} items={facets.industries.map((i) => [i.industryName, i._count._all])} />
-            <Facet title="Province" param="province" currentQuery={currentQuery} items={facets.provinces.filter((i) => i.province).map((i) => [i.province || "", i._count._all])} />
-            <Facet title="City" param="city" currentQuery={currentQuery} items={facets.cities.filter((i) => i.city).map((i) => [i.city || "", i._count._all])} />
-            <Facet title="Company Size" param="companySize" currentQuery={currentQuery} items={facets.companySizes.filter((i) => i.companySize).map((i) => [i.companySize || "", i._count._all])} />
-            <Facet title="Company Type" param="companyType" currentQuery={currentQuery} items={facets.companyTypes.filter((i) => i.companyType).map((i) => [i.companyType || "", i._count._all])} />
-            <Facet title="Trade Mode" param="tradeMode" currentQuery={currentQuery} items={facets.tradeModes.map((i) => [i.label, i.count])} />
-            <Facet title="Company Nature" param="companyNature" currentQuery={currentQuery} items={facets.companyNatures.filter((i) => i.companyNature).map((i) => [i.companyNature || "", i._count._all])} />
-            <Facet title="Founded Year" param="foundedYear" currentQuery={currentQuery} items={facets.foundedYears.filter((i) => i.foundedYear).map((i) => [String(i.foundedYear), i._count._all])} />
-            <Facet title="Registered Capital" param="registeredCapital" currentQuery={currentQuery} items={facets.registeredCapitals.filter((i) => i.registeredCapital).map((i) => [i.registeredCapital || "", i._count._all])} />
+            <Facet title="Industry" param="industry" currentQuery={currentQuery} visibleLimit={facetLimit(params, "industry")} items={facets.industries.map((i) => [i.industryName, i._count._all])} />
+            <Facet title="Province" param="province" currentQuery={currentQuery} visibleLimit={facetLimit(params, "province")} items={facets.provinces.filter((i) => i.province).map((i) => [i.province || "", i._count._all])} />
+            <Facet title="City" param="city" currentQuery={currentQuery} visibleLimit={facetLimit(params, "city")} items={facets.cities.filter((i) => i.city).map((i) => [i.city || "", i._count._all])} />
+            <Facet title="Company Size" param="companySize" currentQuery={currentQuery} visibleLimit={facetLimit(params, "companySize")} items={facets.companySizes.filter((i) => i.companySize).map((i) => [i.companySize || "", i._count._all])} />
+            <Facet title="Company Type" param="companyType" currentQuery={currentQuery} visibleLimit={facetLimit(params, "companyType")} items={facets.companyTypes.filter((i) => i.companyType).map((i) => [i.companyType || "", i._count._all])} />
+            <Facet title="Trade Mode" param="tradeMode" currentQuery={currentQuery} visibleLimit={facetLimit(params, "tradeMode")} items={facets.tradeModes.map((i) => [i.label, i.count])} />
+            <Facet title="Company Nature" param="companyNature" currentQuery={currentQuery} visibleLimit={facetLimit(params, "companyNature")} items={facets.companyNatures.filter((i) => i.companyNature).map((i) => [i.companyNature || "", i._count._all])} />
+            <Facet title="Founded Year" param="foundedYear" currentQuery={currentQuery} visibleLimit={facetLimit(params, "foundedYear")} items={facets.foundedYears.filter((i) => i.foundedYear).map((i) => [String(i.foundedYear), i._count._all])} />
+            <Facet title="Registered Capital" param="registeredCapital" currentQuery={currentQuery} visibleLimit={facetLimit(params, "registeredCapital")} items={facets.registeredCapitals.filter((i) => i.registeredCapital).map((i) => [i.registeredCapital || "", i._count._all])} />
             <section className="rounded-md border border-[#cfd9e5] bg-white p-3">
               <h2 className="flex items-center justify-between text-sm font-medium text-slate-700">
                 Has Website
@@ -234,17 +234,56 @@ export default async function DatabasePage({
             </table>
           </div>
 
-          <div className="flex items-center justify-between border-t border-[#d8e0ea] bg-white px-4 py-3 text-sm text-slate-600">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#d8e0ea] bg-white px-4 py-3 text-sm text-slate-600">
             <span>
-              Page {results.page} of {results.totalPages}
+              Page {results.page} of {results.totalPages} - {results.total.toLocaleString("en-US")} results
             </span>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Link prefetch={false} className="rounded-md border border-border px-3 py-1.5 hover:bg-slate-50" href={pageHref(params, Math.max(1, page - 1))}>
                 Previous
               </Link>
-              <Link prefetch={false} className="rounded-md border border-border px-3 py-1.5 hover:bg-slate-50" href={pageHref(params, page + 1)}>
+              <div className="flex items-center gap-1">
+                {pageNumbers(results.page, results.totalPages).map((item, index) =>
+                  item === "..." ? (
+                    <span key={`ellipsis-${index}`} className="px-2 text-slate-400">
+                      ...
+                    </span>
+                  ) : (
+                    <Link
+                      key={item}
+                      prefetch={false}
+                      href={pageHref(params, item)}
+                      aria-current={item === results.page ? "page" : undefined}
+                      className={`min-w-8 rounded-md border px-2.5 py-1.5 text-center ${item === results.page ? "border-slate-900 bg-slate-900 text-white" : "border-border hover:bg-slate-50"}`}
+                    >
+                      {item}
+                    </Link>
+                  ),
+                )}
+              </div>
+              <Link prefetch={false} className="rounded-md border border-border px-3 py-1.5 hover:bg-slate-50" href={pageHref(params, Math.min(results.totalPages, page + 1))}>
                 Next
               </Link>
+              <form className="ml-2 flex items-center gap-2">
+                {hiddenSearchInputs(params, ["page"]).map(([key, value]) => (
+                  <input key={key} type="hidden" name={key} value={value} />
+                ))}
+                <label className="text-slate-500" htmlFor="database-page-jump">
+                  Go to
+                </label>
+                <input
+                  id="database-page-jump"
+                  name="page"
+                  type="number"
+                  min={1}
+                  max={results.totalPages}
+                  defaultValue={results.page}
+                  className="h-8 w-20 rounded-md border border-border px-2 text-sm text-slate-700"
+                />
+                <button type="submit" className="h-8 rounded-md border border-border px-3 text-sm hover:bg-slate-50">
+                  Go
+                </button>
+              </form>
             </div>
           </div>
         </section>
@@ -282,9 +321,9 @@ function LockedField({ label }: { label: string }) {
   );
 }
 
-function Facet({ title, param, currentQuery, items }: { title: string; param: string; currentQuery: string; items: Array<[string, number]> }) {
-  const firstItems = items.slice(0, 10);
-  const moreItems = items.slice(10);
+function Facet({ title, param, currentQuery, visibleLimit, items }: { title: string; param: string; currentQuery: string; visibleLimit: number; items: Array<[string, number]> }) {
+  const visibleItems = items.slice(0, visibleLimit);
+  const hasMore = visibleLimit < items.length;
 
   return (
     <section className="rounded-md border border-[#cfd9e5] bg-white p-3">
@@ -293,19 +332,16 @@ function Facet({ title, param, currentQuery, items }: { title: string; param: st
         <Filter className="h-4 w-4 text-brand" />
       </h2>
       <div className="mt-3 grid gap-2">
-        {firstItems.length ? firstItems.map(([label, count]) => <FacetLink key={`${param}-${label}`} param={param} currentQuery={currentQuery} label={label} count={count} />) : <h3 className="text-sm font-normal text-slate-500">No data before import</h3>}
+        {visibleItems.length ? visibleItems.map(([label, count]) => <FacetLink key={`${param}-${label}`} param={param} currentQuery={currentQuery} label={label} count={count} />) : <h3 className="text-sm font-normal text-slate-500">No data before import</h3>}
       </div>
-      {moreItems.length ? (
-        <div className="group mt-2">
-          <input id={`facet-${param}`} type="checkbox" className="peer sr-only" />
-          <div className="hidden gap-2 pt-2 peer-checked:grid">
-            {moreItems.map(([label, count]) => <FacetLink key={`${param}-${label}`} param={param} currentQuery={currentQuery} label={label} count={count} />)}
-          </div>
-          <label htmlFor={`facet-${param}`} className="mx-auto mt-3 block w-fit cursor-pointer rounded-md border border-[#cfd9e5] px-4 py-1.5 text-sm text-slate-600 hover:bg-slate-50">
-            <span className="peer-checked:hidden">Show More</span>
-            <span className="hidden peer-checked:inline">Show Less</span>
-          </label>
-        </div>
+      {hasMore ? (
+        <Link href={facetLimitHref(currentQuery, param, visibleLimit + 10)} className="mx-auto mt-3 block w-fit rounded-md border border-[#cfd9e5] px-4 py-1.5 text-sm text-slate-600 hover:bg-slate-50">
+          Show More
+        </Link>
+      ) : visibleLimit > 10 && items.length > 10 ? (
+        <Link href={facetLimitHref(currentQuery, param, 10)} className="mx-auto mt-3 block w-fit rounded-md border border-[#cfd9e5] px-4 py-1.5 text-sm text-slate-600 hover:bg-slate-50">
+          Show Less
+        </Link>
       ) : null}
     </section>
   );
@@ -332,8 +368,21 @@ function facetHref(currentQuery: string, param: string, label: string) {
   return `/database?${search.toString()}`;
 }
 
+function facetLimitHref(currentQuery: string, param: string, limit: number) {
+  const search = new URLSearchParams(currentQuery);
+  search.set(`${param}Limit`, String(Math.max(10, limit)));
+  search.delete("page");
+  return `/database?${search.toString()}`;
+}
+
 function stringParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] || "" : value || "";
+}
+
+function facetLimit(params: Record<string, string | string[] | undefined>, param: string) {
+  const value = Number(stringParam(params[`${param}Limit`]));
+  if (!Number.isFinite(value)) return 10;
+  return Math.min(100, Math.max(10, Math.floor(value / 10) * 10));
 }
 
 function pageHref(params: Record<string, string | string[] | undefined>, page: number) {
@@ -344,6 +393,26 @@ function pageHref(params: Record<string, string | string[] | undefined>, page: n
   }
   search.set("page", String(page));
   return `/database?${search.toString()}`;
+}
+
+function pageNumbers(currentPage: number, totalPages: number): Array<number | "..."> {
+  const pages = new Set<number>([1, totalPages, currentPage - 1, currentPage, currentPage + 1]);
+  const validPages = [...pages].filter((item) => item >= 1 && item <= totalPages).sort((a, b) => a - b);
+  const result: Array<number | "..."> = [];
+  for (const item of validPages) {
+    const previous = result[result.length - 1];
+    if (typeof previous === "number" && item - previous > 1) result.push("...");
+    result.push(item);
+  }
+  return result;
+}
+
+function hiddenSearchInputs(params: Record<string, string | string[] | undefined>, exclude: string[] = []) {
+  const excluded = new Set(exclude);
+  return Object.entries(params)
+    .filter(([key, value]) => value && !excluded.has(key))
+    .map(([key, value]) => [key, Array.isArray(value) ? value[0] || "" : value || ""] as const)
+    .filter(([, value]) => value);
 }
 
 function queryString(params: Record<string, string | string[] | undefined>) {
