@@ -174,14 +174,21 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
           <h2 className="text-xl md:text-2xl font-bold text-slate-950 tracking-tight">
             China {industryName} Sourcing &amp; Manufacturing Overview
           </h2>
-          <div className="mt-4 text-sm text-slate-600 leading-relaxed space-y-4">
-            <p>
-              The <strong>{industryName}</strong> sector represents a core pillar of China&apos;s trade footprint. Our database registers <strong>{totalCount.toLocaleString("en-US")} active export suppliers</strong> operating in this category. Out of these targets, <strong>{hasWebsiteCount.toLocaleString("en-US")} exporters</strong> maintain active online domains for verification, and <strong>{hasCapitalCount.toLocaleString("en-US")} entities</strong> have registered capital filings open for due diligence checks.
-            </p>
-            <p>
-              Sourcing managers target specific manufacturing zones to leverage regional cluster dynamics. By placing raw material suppliers, assembly lines, and specialized customs brokers in close geographic clusters, local factories can minimize production overheads and logistical delays. Standard supplier verification via on-site audits or sample checking is recommended prior to wire transfers.
-            </p>
-          </div>
+          {industry.intro ? (
+            <div
+              className="mt-4 text-sm text-slate-600 leading-relaxed space-y-4"
+              dangerouslySetInnerHTML={{ __html: industry.intro }}
+            />
+          ) : (
+            <div className="mt-4 text-sm text-slate-600 leading-relaxed space-y-4">
+              <p>
+                The <strong>{industryName}</strong> sector represents a core pillar of China&apos;s trade footprint. Our database registers <strong>{totalCount.toLocaleString("en-US")} active export suppliers</strong> operating in this category. Out of these targets, <strong>{hasWebsiteCount.toLocaleString("en-US")} exporters</strong> maintain active online domains for verification, and <strong>{hasCapitalCount.toLocaleString("en-US")} entities</strong> have registered capital filings open for due diligence checks.
+              </p>
+              <p>
+                Sourcing managers target specific manufacturing zones to leverage regional cluster dynamics. By placing raw material suppliers, assembly lines, and specialized customs brokers in close geographic clusters, local factories can minimize production overheads and logistical delays. Standard supplier verification via on-site audits or sample checking is recommended prior to wire transfers.
+              </p>
+            </div>
+          )}
         </section>
 
         {/* Quality Signals */}
