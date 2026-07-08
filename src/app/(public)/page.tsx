@@ -286,7 +286,7 @@ function WorkflowStep({ num, title, text }: { num: string; title: string; text: 
   return (
     <Card className="border border-slate-200 bg-white transition-all duration-300 hover:shadow-sm">
       <CardContent className="p-6 relative overflow-hidden">
-        <span className="absolute right-3 top-2 text-4xl font-extrabold text-slate-100 font-mono tracking-tighter select-none">{num}</span>
+        <span className="absolute right-6 top-2 text-5xl font-extrabold text-slate-200/40 font-mono tracking-tighter select-none">{num}</span>
         <h3 className="text-base font-bold text-slate-950 relative z-10">{title}</h3>
         <p className="mt-2 text-xs leading-relaxed text-slate-600 relative z-10">{text}</p>
       </CardContent>
