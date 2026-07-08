@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 const { Pool } = require("pg");
 require("dotenv").config({ path: ".env.local" });
 
@@ -14,6 +15,7 @@ const MAX_BATCH_RETRIES = 2;
 const RETRY_DELAY_MS = 3000;
 const CONNECTION_TIMEOUT_MS = 20000;
 const STATEMENT_TIMEOUT_MS = 60000;
+const SYNC_LIMIT = Number(process.env.CANTON_FAIR_SYNC_LIMIT || 0);
 
 function clean(value) {
   const text = String(value ?? "").trim();
@@ -28,6 +30,10 @@ function slugify(value) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 90) || "unknown";
+}
+
+function newId() {
+  return `c${crypto.randomBytes(12).toString("hex")}`;
 }
 
 function readJsonl(filePath) {
@@ -63,7 +69,9 @@ function sleep(ms) {
 }
 
 async function getExistingHashes(pool) {
+  console.log("[db] loading existing imported row hashes...");
   const result = await pool.query('select "sourceRowHash" from "SupplierSourceRaw" where "status" = $1', ["IMPORTED"]);
+  console.log(`[db] existing imported row hashes=${result.rows.length}`);
   return new Set(result.rows.map((row) => row.sourceRowHash));
 }
 
@@ -125,7 +133,7 @@ async function upsertRecord(client, record) {
 
   const supplier = await client.query(
     `insert into "Supplier" (
-      "slug","sourceRowId","sourceFileName","sourceSheetName","sourceRowNumber","sourceRowHash",
+      "id","slug","sourceRowId","sourceFileName","sourceSheetName","sourceRowNumber","sourceRowHash",
       "industryName","industryNameCn","industryNameEn","industrySlug",
       "exhibitorName","exhibitorNameCn","exhibitorNameEn",
       "province","provinceCn","provinceEn","city","cityCn","cityEn","citySlug",
@@ -136,7 +144,7 @@ async function upsertRecord(client, record) {
       "tradeModesRaw","tradeModes","exhibitorHistory","exhibitionSessions","firstExhibitionSession","lastExhibitionSession","exhibitionSessionCount",
       "companyNature","companyNatureCn","companyNatureEn","searchText","searchTextCn","searchTextEn","stabilityScore","capabilityScore","dataQualityScore","updatedAt"
     ) values (
-      $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59,$60,$61,now()
+      $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55,$56,$57,$58,$59,$60,$61,$62,now()
     )
     on conflict ("sourceRowHash") do update set
       "industryName" = excluded."industryName",
@@ -157,6 +165,7 @@ async function upsertRecord(client, record) {
       "updatedAt" = now()
     returning "id"`,
     [
+      newId(),
       slug,
       String(record.sourceRowNumber),
       c.sourceFileName,
@@ -223,25 +232,25 @@ async function upsertRecord(client, record) {
   const supplierId = supplier.rows[0].id;
 
   await client.query(
-    `insert into "SupplierPrivateData" ("supplierId","contactPerson","contactPersonCn","mobile","phone","fax","email","fullAddress","fullAddressCn","fullAddressEn","postalCode","rawJson","updatedAt")
-     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,now())
+    `insert into "SupplierPrivateData" ("id","supplierId","contactPerson","contactPersonCn","mobile","phone","fax","email","fullAddress","fullAddressCn","fullAddressEn","postalCode","rawJson","updatedAt")
+     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,now())
      on conflict ("supplierId") do update set "contactPerson" = excluded."contactPerson", "contactPersonCn" = excluded."contactPersonCn", "mobile" = excluded."mobile", "phone" = excluded."phone", "fax" = excluded."fax", "email" = excluded."email", "fullAddress" = excluded."fullAddress", "fullAddressCn" = excluded."fullAddressCn", "fullAddressEn" = excluded."fullAddressEn", "postalCode" = excluded."postalCode", "rawJson" = excluded."rawJson", "updatedAt" = now()`,
-    [supplierId, r.contactPersonCn || null, r.contactPersonCn || null, r.mobile || null, r.phone || null, r.fax || null, r.email || null, r.fullAddressCn || null, r.fullAddressCn || null, t.addressEn || null, r.postalCode || null, r],
+    [newId(), supplierId, r.contactPersonCn || null, r.contactPersonCn || null, r.mobile || null, r.phone || null, r.fax || null, r.email || null, r.fullAddressCn || null, r.fullAddressCn || null, t.addressEn || null, r.postalCode || null, r],
   );
 
   const s = c.signals || {};
   await client.query(
-    `insert into "SupplierSignal" ("supplierId","innovationAward","cantonFairDesignAward","multiSessionExhibitor","brandExhibitor","chinaTimeHonoredBrand","ruralRevitalizationExhibitor","newExhibitor","specializedSpecialNewEnterprise","greenAwardExhibitor","customsCertifiedExhibitor","highTechEnterprise","hasAnyAward","hasCertificationSignal","hasBrandSignal","hasInnovationSignal","updatedAt")
-     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,now())
+    `insert into "SupplierSignal" ("id","supplierId","innovationAward","cantonFairDesignAward","multiSessionExhibitor","brandExhibitor","chinaTimeHonoredBrand","ruralRevitalizationExhibitor","newExhibitor","specializedSpecialNewEnterprise","greenAwardExhibitor","customsCertifiedExhibitor","highTechEnterprise","hasAnyAward","hasCertificationSignal","hasBrandSignal","hasInnovationSignal","updatedAt")
+     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,now())
      on conflict ("supplierId") do update set "innovationAward" = excluded."innovationAward", "cantonFairDesignAward" = excluded."cantonFairDesignAward", "multiSessionExhibitor" = excluded."multiSessionExhibitor", "brandExhibitor" = excluded."brandExhibitor", "chinaTimeHonoredBrand" = excluded."chinaTimeHonoredBrand", "ruralRevitalizationExhibitor" = excluded."ruralRevitalizationExhibitor", "newExhibitor" = excluded."newExhibitor", "specializedSpecialNewEnterprise" = excluded."specializedSpecialNewEnterprise", "greenAwardExhibitor" = excluded."greenAwardExhibitor", "customsCertifiedExhibitor" = excluded."customsCertifiedExhibitor", "highTechEnterprise" = excluded."highTechEnterprise", "hasAnyAward" = excluded."hasAnyAward", "hasCertificationSignal" = excluded."hasCertificationSignal", "hasBrandSignal" = excluded."hasBrandSignal", "hasInnovationSignal" = excluded."hasInnovationSignal", "updatedAt" = now()`,
-    [supplierId, !!s.innovationAward, !!s.cantonFairDesignAward, !!s.multiSessionExhibitor, !!s.brandExhibitor, !!s.chinaTimeHonoredBrand, !!s.ruralRevitalizationExhibitor, !!s.newExhibitor, !!s.specializedSpecialNewEnterprise, !!s.greenAwardExhibitor, !!s.customsCertifiedExhibitor, !!s.highTechEnterprise, !!s.hasAnyAward, !!s.hasCertificationSignal, !!s.hasBrandSignal, !!s.hasInnovationSignal],
+    [newId(), supplierId, !!s.innovationAward, !!s.cantonFairDesignAward, !!s.multiSessionExhibitor, !!s.brandExhibitor, !!s.chinaTimeHonoredBrand, !!s.ruralRevitalizationExhibitor, !!s.newExhibitor, !!s.specializedSpecialNewEnterprise, !!s.greenAwardExhibitor, !!s.customsCertifiedExhibitor, !!s.highTechEnterprise, !!s.hasAnyAward, !!s.hasCertificationSignal, !!s.hasBrandSignal, !!s.hasInnovationSignal],
   );
 
   await client.query(
-    `insert into "SupplierSourceRaw" ("supplierId","sourceFileName","sourceSheetName","sourceRowNumber","sourceRowHash","rawJson","cleanedJson","translatedJson","status","lastProcessedAt","updatedAt")
-     values ($1,$2,$3,$4,$5,$6,$7,$8,'IMPORTED',now(),now())
+    `insert into "SupplierSourceRaw" ("id","supplierId","sourceFileName","sourceSheetName","sourceRowNumber","sourceRowHash","rawJson","cleanedJson","translatedJson","status","lastProcessedAt","updatedAt")
+     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,'IMPORTED',now(),now())
      on conflict ("sourceRowHash") do update set "supplierId" = excluded."supplierId", "cleanedJson" = excluded."cleanedJson", "translatedJson" = excluded."translatedJson", "status" = 'IMPORTED', "errorMessage" = null, "lastProcessedAt" = now(), "updatedAt" = now()`,
-    [supplierId, c.sourceFileName, c.sourceSheetName, c.sourceRowNumber, c.sourceRowHash, r, c, t],
+    [newId(), supplierId, c.sourceFileName, c.sourceSheetName, c.sourceRowNumber, c.sourceRowHash, r, c, t],
   );
 
   await client.query('delete from "SupplierProductKeyword" where "supplierId" = $1', [supplierId]);
@@ -254,15 +263,17 @@ async function upsertRecord(client, record) {
     const value = clean(keywordEn);
     if (!value) continue;
     await client.query(
-      `insert into "SupplierProductKeyword" ("supplierId","keywordCn","keywordEn","keywordSlug","sourceField","confidence") values ($1,$2,$3,$4,$5,$6) on conflict ("supplierId","keywordSlug","sourceField") do nothing`,
-      [supplierId, keywordCn, value, slugify(value), sourceField, 0.9],
+      `insert into "SupplierProductKeyword" ("id","supplierId","keywordCn","keywordEn","keywordSlug","sourceField","confidence") values ($1,$2,$3,$4,$5,$6,$7) on conflict ("supplierId","keywordSlug","sourceField") do nothing`,
+      [newId(), supplierId, keywordCn, value, slugify(value), sourceField, 0.9],
     );
   }
 }
 
 async function main() {
   if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is required in .env.local.");
-  const rows = readJsonl(CLEANED_FILE);
+  const allRows = readJsonl(CLEANED_FILE);
+  const rows = SYNC_LIMIT > 0 ? allRows.slice(0, SYNC_LIMIT) : allRows;
+  console.log(`[start] cleanedRows=${allRows.length} syncRows=${rows.length} batchSize=${BATCH_SIZE}`);
   archiveFile(SYNC_FAILED_FILE);
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
