@@ -1,8 +1,10 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { MapPin, Factory, ArrowRight, Globe, Users, HelpCircle, CheckCircle2, Calendar, Database, Sparkles, Award } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { Card, CardContent } from "@/components/ui/card";
+import { mediaAssets } from "@/config/media";
 import { createMetadata } from "@/config/seo";
 import { getCityPage } from "@/server/suppliers";
 
@@ -210,30 +212,43 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
         </div>
 
         {/* 深度原创内容：Sourcing & Industrial Overview (融入真实数据) */}
-        <section className="mt-6 border-t border-slate-200 pt-10 max-w-4xl">
-          <h2 className="text-xl md:text-2xl font-bold text-slate-950 tracking-tight">
-            {cityEn} Sourcing &amp; Industrial Manufacturing Overview
-          </h2>
-          {city.industrialCluster ? (
-            <div
-              className="mt-4 text-sm text-slate-600 leading-relaxed space-y-4"
-              dangerouslySetInnerHTML={{ __html: city.industrialCluster }}
-            />
-          ) : (
-            <div className="mt-4 text-sm text-slate-600 leading-relaxed space-y-4">
-              <p>
-                Sourcing statistics show that <strong>{cityEn}</strong> hosts <strong>{city.supplierCount.toLocaleString("en-US")} verified exporters</strong> with established production tracks. Out of this directory, <strong>{hasWebsiteCount.toLocaleString("en-US")} manufacturers</strong> maintain active online domains and digital homepages, and <strong>{hasCapitalCount.toLocaleString("en-US")} exporters</strong> have officially registered capital records available for vetting checks.
-              </p>
-              <p>
-                Exporters based here operate within highly specialized industrial parks. The close geographic proximity of raw material vendors, hardware molders, electronic assembly plants, and international logistics agencies drives down overhead sourcing margins and optimizes lead times. This integrated setup makes {cityEn} highly competitive for international OEM, ODM, and contract manufacturing projects.
-              </p>
-              {(topInd1 || topInd2 || topInd3) && (
-                <p>
-                  The industrial composition in the region is led by key product sectors, notably: <strong>{topInd1}</strong>, followed by <strong>{topInd2}</strong> and <strong>{topInd3}</strong>. Sourcing organizations looking to optimize vendor pipelines or identify backup manufacturers frequently target {cityEn} to negotiate directly with scaled exporters that hold solid compliance certifications and established quality management standards.
-                </p>
+        <section className="mt-6 border-t border-slate-200 pt-10 max-w-5xl">
+          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
+            <div>
+              <h2 className="text-xl md:text-2xl font-bold text-slate-950 tracking-tight">
+                {cityEn} Sourcing &amp; Industrial Manufacturing Overview
+              </h2>
+              {city.industrialCluster ? (
+                <div
+                  className="mt-4 text-sm text-slate-600 leading-relaxed space-y-4"
+                  dangerouslySetInnerHTML={{ __html: city.industrialCluster }}
+                />
+              ) : (
+                <div className="mt-4 text-sm text-slate-600 leading-relaxed space-y-4">
+                  <p>
+                    Sourcing statistics show that <strong>{cityEn}</strong> hosts <strong>{city.supplierCount.toLocaleString("en-US")} verified exporters</strong> with established production tracks. Out of this directory, <strong>{hasWebsiteCount.toLocaleString("en-US")} manufacturers</strong> maintain active online domains and digital homepages, and <strong>{hasCapitalCount.toLocaleString("en-US")} exporters</strong> have officially registered capital records available for vetting checks.
+                  </p>
+                  <p>
+                    Exporters based here operate within highly specialized industrial parks. The close geographic proximity of raw material vendors, hardware molders, electronic assembly plants, and international logistics agencies drives down overhead sourcing margins and optimizes lead times. This integrated setup makes {cityEn} highly competitive for international OEM, ODM, and contract manufacturing projects.
+                  </p>
+                  {(topInd1 || topInd2 || topInd3) && (
+                    <p>
+                      The industrial composition in the region is led by key product sectors, notably: <strong>{topInd1}</strong>, followed by <strong>{topInd2}</strong> and <strong>{topInd3}</strong>. Sourcing organizations looking to optimize vendor pipelines or identify backup manufacturers frequently target {cityEn} to negotiate directly with scaled exporters that hold solid compliance certifications and established quality management standards.
+                    </p>
+                  )}
+                </div>
               )}
             </div>
-          )}
+            <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-slate-200 bg-slate-100 shadow-sm">
+              <Image
+                src={mediaAssets.cityIndustrialClusterAerial}
+                alt={`${cityEn} industrial cluster aerial visual`}
+                fill
+                sizes="(min-width: 1024px) 40vw, 100vw"
+                className="object-cover"
+              />
+            </div>
+          </div>
         </section>
 
         {/* Supplier Intelligence Signals (差异化特色数据分析) */}
@@ -246,7 +261,8 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
             Real-time quality diagnostics extracted directly from our active {cityEn} supplier database.
           </p>
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
-            <Card className="border border-slate-200 bg-white rounded-xl shadow-sm">
+            <Card className="overflow-hidden border border-slate-200 bg-white rounded-xl shadow-sm">
+              <SignalImage src={mediaAssets.signalWebsiteVerification} alt="Website verification diagnostic visual" />
               <CardContent className="p-5 text-center">
                 <Globe className="h-6 w-6 text-teal-600 mx-auto mb-2" />
                 <p className="text-2xl font-extrabold text-slate-950">
@@ -259,7 +275,8 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
               </CardContent>
             </Card>
 
-            <Card className="border border-slate-200 bg-white rounded-xl shadow-sm">
+            <Card className="overflow-hidden border border-slate-200 bg-white rounded-xl shadow-sm">
+              <SignalImage src={mediaAssets.signalCapitalRegistration} alt="Capital registration diagnostic visual" />
               <CardContent className="p-5 text-center">
                 <Database className="h-6 w-6 text-teal-600 mx-auto mb-2" />
                 <p className="text-2xl font-extrabold text-slate-950">
@@ -272,7 +289,8 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
               </CardContent>
             </Card>
 
-            <Card className="border border-slate-200 bg-white rounded-xl shadow-sm">
+            <Card className="overflow-hidden border border-slate-200 bg-white rounded-xl shadow-sm">
+              <SignalImage src={mediaAssets.signalExhibitionStability} alt="Exhibition stability diagnostic visual" />
               <CardContent className="p-5 text-center">
                 <Award className="h-6 w-6 text-teal-600 mx-auto mb-2" />
                 <p className="text-2xl font-extrabold text-slate-950">
@@ -358,7 +376,15 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
 
         {/* H2: 样本供应商 (展示 30 家) */}
         {suppliers.suppliers.length > 0 && (
-          <section id="directory" className="mt-12 max-w-4xl scroll-mt-6">
+          <section id="directory" className="relative mt-12 max-w-4xl scroll-mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <Image
+              src={mediaAssets.lockedSpreadsheetPreview}
+              alt="Blurred spreadsheet export preview"
+              fill
+              sizes="(min-width: 1024px) 896px, 100vw"
+              className="pointer-events-none object-cover opacity-[0.035]"
+            />
+            <div className="relative">
             <div className="flex items-end justify-between border-b border-slate-100 pb-3">
               <div>
                 <h2 className="text-xl font-bold text-slate-950 flex items-center gap-2 tracking-tight">
@@ -432,6 +458,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                 </Link>
               </div>
             )}
+            </div>
           </section>
         )}
 
@@ -543,5 +570,13 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
         )}
       </section>
     </>
+  );
+}
+
+function SignalImage({ src, alt }: { src: string; alt: string }) {
+  return (
+    <div className="relative aspect-[16/9] bg-slate-100">
+      <Image src={src} alt={alt} fill sizes="(min-width: 640px) 33vw, 100vw" className="object-cover" />
+    </div>
   );
 }

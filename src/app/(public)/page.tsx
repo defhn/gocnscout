@@ -1,9 +1,11 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Database, FileText, ListChecks, Search, ShieldCheck, CheckCircle2, ChevronRight } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaqSection } from "@/components/marketing/faq-section";
 import { createMetadata, organizationJsonLd, websiteSearchJsonLd } from "@/config/seo";
+import { mediaAssets } from "@/config/media";
 import { getHomeStats, listCityPages, listIndustryPages } from "@/server/suppliers";
 
 export const metadata = createMetadata({
@@ -127,7 +129,9 @@ export default async function HomePage() {
 
         <div className="grid gap-6 md:grid-cols-3">
           {/* Card 1: Sourcing Database */}
-          <div className="group relative rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+          <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+            <MediaPanel src={mediaAssets.bentoClusterCost} alt="Industrial cluster cost-reduction visual" />
+            <div className="p-6">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-teal-50 text-teal-600 transition-colors group-hover:bg-teal-100">
               <Database className="h-6 w-6" />
             </div>
@@ -138,10 +142,13 @@ export default async function HomePage() {
             <Link href="/database" className="inline-flex items-center text-xs font-bold text-teal-600 mt-4 group-hover:text-teal-700">
               Start searching <ChevronRight className="ml-0.5 h-3.5 w-3.5" />
             </Link>
+            </div>
           </div>
 
           {/* Card 2: PDF Reports */}
-          <div className="group relative rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+          <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+            <MediaPanel src={mediaAssets.bentoLogisticsPort} alt="Factory-to-port logistics proximity visual" />
+            <div className="p-6">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600 transition-colors group-hover:bg-blue-100">
               <FileText className="h-6 w-6" />
             </div>
@@ -152,10 +159,13 @@ export default async function HomePage() {
             <Link href="/reports" className="inline-flex items-center text-xs font-bold text-blue-600 mt-4 group-hover:text-blue-700">
               Browse reports <ChevronRight className="ml-0.5 h-3.5 w-3.5" />
             </Link>
+            </div>
           </div>
 
           {/* Card 3: Custom Shortlist */}
-          <div className="group relative rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+          <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+            <MediaPanel src={mediaAssets.bentoSkilledLabor} alt="Supplier quality inspection worker visual" />
+            <div className="p-6">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-50 text-purple-600 transition-colors group-hover:bg-purple-100">
               <ListChecks className="h-6 w-6" />
             </div>
@@ -166,6 +176,7 @@ export default async function HomePage() {
             <Link href="/custom-shortlist" className="inline-flex items-center text-xs font-bold text-purple-600 mt-4 group-hover:text-purple-700">
               Request shortlist <ChevronRight className="ml-0.5 h-3.5 w-3.5" />
             </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -179,10 +190,10 @@ export default async function HomePage() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-4">
-            <WorkflowStep num="01" title="Select Category" text="Filter suppliers by industry classifications or raw product description keywords." />
-            <WorkflowStep num="02" title="Apply Scale Filters" text="Narrow candidates down using company registration sizes, trade modes, and locations." />
-            <WorkflowStep num="03" title="Inspect Public Profiles" text="Review exhibition history, export focus areas, and verified website links." />
-            <WorkflowStep num="04" title="Perform Direct Vetting" text="Conduct standard verification audits before placing sample orders or agreements." />
+            <WorkflowStep num="01" title="Select Category" image={mediaAssets.workflowSelectCategory} text="Filter suppliers by industry classifications or raw product description keywords." />
+            <WorkflowStep num="02" title="Apply Scale Filters" image={mediaAssets.workflowApplyFilters} text="Narrow candidates down using company registration sizes, trade modes, and locations." />
+            <WorkflowStep num="03" title="Inspect Public Profiles" image={mediaAssets.workflowInspectProfile} text="Review exhibition history, export focus areas, and verified website links." />
+            <WorkflowStep num="04" title="Perform Direct Vetting" image={mediaAssets.workflowDirectVetting} text="Conduct standard verification audits before placing sample orders or agreements." />
           </div>
         </div>
       </section>
@@ -195,8 +206,8 @@ export default async function HomePage() {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
-          <DirectoryBlock title="Browse by Industry Category" href="/industries" items={industries.map((item) => ({ label: item.industryName, count: item.supplierCount, href: `/industries/${item.slug}` }))} />
-          <DirectoryBlock title="Browse by Sourcing City" href="/cities" items={cities.map((item) => ({ label: [item.city, item.province].filter(Boolean).join(", "), count: item.supplierCount, href: `/cities/${item.slug}` }))} />
+          <DirectoryBlock title="Browse by Industry Category" href="/industries" image={mediaAssets.directoryIndustryMatrix} items={industries.map((item) => ({ label: item.industryName, count: item.supplierCount, href: `/industries/${item.slug}` }))} />
+          <DirectoryBlock title="Browse by Sourcing City" href="/cities" image={mediaAssets.directoryCityHeatmap} items={cities.map((item) => ({ label: [item.city, item.province].filter(Boolean).join(", "), count: item.supplierCount, href: `/cities/${item.slug}` }))} />
         </div>
       </section>
 
@@ -282,9 +293,20 @@ export default async function HomePage() {
   );
 }
 
-function WorkflowStep({ num, title, text }: { num: string; title: string; text: string }) {
+function MediaPanel({ src, alt }: { src: string; alt: string }) {
   return (
-    <Card className="border border-slate-200 bg-white transition-all duration-300 hover:shadow-sm">
+    <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
+      <Image src={src} alt={alt} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+    </div>
+  );
+}
+
+function WorkflowStep({ num, title, text, image }: { num: string; title: string; text: string; image: string }) {
+  return (
+    <Card className="overflow-hidden border border-slate-200 bg-white transition-all duration-300 hover:shadow-sm">
+      <div className="relative aspect-square bg-slate-100">
+        <Image src={image} alt={`${title} sourcing workflow visual`} fill sizes="(min-width: 768px) 25vw, 100vw" className="object-cover" />
+      </div>
       <CardContent className="p-6 relative overflow-hidden">
         <span className="absolute right-6 top-2 text-5xl font-extrabold text-slate-200/40 font-mono tracking-tighter select-none">{num}</span>
         <h3 className="text-base font-bold text-slate-950 relative z-10">{title}</h3>
@@ -294,9 +316,12 @@ function WorkflowStep({ num, title, text }: { num: string; title: string; text: 
   );
 }
 
-function DirectoryBlock({ title, href, items }: { title: string; href: string; items: Array<{ label: string; count: number; href: string }> }) {
+function DirectoryBlock({ title, href, image, items }: { title: string; href: string; image: string; items: Array<{ label: string; count: number; href: string }> }) {
   return (
-    <Card className="border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:border-teal-500/20">
+    <Card className="overflow-hidden border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:border-teal-500/20">
+      <div className="relative aspect-[16/9] bg-slate-100">
+        <Image src={image} alt={`${title} visual`} fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
+      </div>
       <CardHeader className="border-b border-slate-100 pb-4">
         <CardTitle className="text-base font-bold text-slate-950">{title}</CardTitle>
       </CardHeader>

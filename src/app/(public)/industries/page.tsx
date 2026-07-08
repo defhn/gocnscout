@@ -1,7 +1,9 @@
+import Image from "next/image";
 import { Cpu, Hammer, Home, Sparkles, Shirt, CheckCircle2, Wrench, Activity, Car, Sun, Layers, Package, Lightbulb, Gamepad2 } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { FaqSection } from "@/components/marketing/faq-section";
 import { Card, CardContent } from "@/components/ui/card";
+import { getCityUnderlayAsset } from "@/config/media";
 import { createMetadata } from "@/config/seo";
 import { listIndustryPages } from "@/server/suppliers";
 import { ButtonLink } from "@/components/ui/button";
@@ -156,6 +158,15 @@ export default async function IndustriesPage() {
                 key={ind.slug} 
                 className="border border-slate-200 bg-white hover:border-teal-500/20 hover:shadow-md transition-all duration-300 rounded-2xl flex flex-col justify-between overflow-hidden"
               >
+                <div className="relative aspect-[16/9] bg-slate-100">
+                  <Image
+                    src={getCityUnderlayAsset(`${ind.name} ${ind.desc}`)}
+                    alt={`${ind.name} manufacturing visual`}
+                    fill
+                    sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
                 <div className="p-6">
                   <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${ind.color}`}>
                     <Icon className="h-5 w-5" />
@@ -194,8 +205,17 @@ export default async function IndustriesPage() {
             industries.map((ind) => (
               <Card 
                 key={ind.slug} 
-                className="border border-slate-200 bg-white hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 rounded-xl"
+                className="overflow-hidden border border-slate-200 bg-white hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 rounded-xl"
               >
+                <div className="relative aspect-[16/9] bg-slate-100">
+                  <Image
+                    src={getCityUnderlayAsset(ind.industryName)}
+                    alt={`${ind.industryName} sourcing category visual`}
+                    fill
+                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
                 <CardContent className="p-5 flex flex-col justify-between h-full">
                   <div>
                     <h3 className="text-sm font-bold text-slate-950 hover:text-teal-600 transition-colors">
@@ -219,8 +239,17 @@ export default async function IndustriesPage() {
             STANDARDIZED_INDUSTRIES.map((ind) => (
               <Card 
                 key={ind.slug} 
-                className="border border-slate-200 bg-white hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 rounded-xl"
+                className="overflow-hidden border border-slate-200 bg-white hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 rounded-xl"
               >
+                <div className="relative aspect-[16/9] bg-slate-100">
+                  <Image
+                    src={getCityUnderlayAsset(`${ind.name} ${ind.desc}`)}
+                    alt={`${ind.name} sourcing category visual`}
+                    fill
+                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
                 <CardContent className="p-5 flex flex-col justify-between h-full">
                   <div>
                     <h3 className="text-sm font-bold text-slate-950 hover:text-teal-600 transition-colors">

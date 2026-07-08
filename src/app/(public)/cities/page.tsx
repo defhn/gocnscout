@@ -1,8 +1,10 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Sparkles, MapPin, CheckCircle2 } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { FaqSection } from "@/components/marketing/faq-section";
 import { Card } from "@/components/ui/card";
+import { getCityUnderlayAsset, mediaAssets } from "@/config/media";
 import { createMetadata } from "@/config/seo";
 import { listCityPages } from "@/server/suppliers";
 import { ButtonLink } from "@/components/ui/button";
@@ -102,7 +104,9 @@ export default async function CitiesPage() {
 
         {/* Bento introduction */}
         <section className="grid gap-6 md:grid-cols-3 mb-16">
-          <Card className="border border-slate-200 bg-white p-5 rounded-2xl shadow-sm">
+          <Card className="overflow-hidden border border-slate-200 bg-white rounded-2xl shadow-sm">
+            <CityIntroImage src={mediaAssets.bentoClusterCost} alt="Industrial cluster cost reduction" />
+            <div className="p-5">
             <h3 className="text-base font-bold text-slate-950 flex items-center">
               <MapPin className="h-4.5 w-4.5 text-teal-600 mr-2" />
               Cluster Cost Reductions
@@ -110,8 +114,11 @@ export default async function CitiesPage() {
             <p className="text-xs text-slate-500 mt-2 leading-relaxed">
               Factories inside clusters share upstream raw materials, mold shops, and paint lines, removing middleman cargo handling and lowering pricing.
             </p>
+            </div>
           </Card>
-          <Card className="border border-slate-200 bg-white p-5 rounded-2xl shadow-sm">
+          <Card className="overflow-hidden border border-slate-200 bg-white rounded-2xl shadow-sm">
+            <CityIntroImage src={mediaAssets.bentoLogisticsPort} alt="Factory logistics proximity" />
+            <div className="p-5">
             <h3 className="text-base font-bold text-slate-950 flex items-center">
               <MapPin className="h-4.5 w-4.5 text-teal-600 mr-2" />
               Logistical Proximity
@@ -119,8 +126,11 @@ export default async function CitiesPage() {
             <p className="text-xs text-slate-500 mt-2 leading-relaxed">
               Industrial hubs are built near major container shipping ports (like Ningbo or Shenzhen), cutting down transport intervals to port storage.
             </p>
+            </div>
           </Card>
-          <Card className="border border-slate-200 bg-white p-5 rounded-2xl shadow-sm">
+          <Card className="overflow-hidden border border-slate-200 bg-white rounded-2xl shadow-sm">
+            <CityIntroImage src={mediaAssets.bentoSkilledLabor} alt="Specialized manufacturing labor" />
+            <div className="p-5">
             <h3 className="text-base font-bold text-slate-950 flex items-center">
               <MapPin className="h-4.5 w-4.5 text-teal-600 mr-2" />
               Specialized Labor Supply
@@ -128,6 +138,7 @@ export default async function CitiesPage() {
             <p className="text-xs text-slate-500 mt-2 leading-relaxed">
               Cities concentrate specialized engineers, quality control inspectors, and export packaging teams accustomed to category-specific standard audits.
             </p>
+            </div>
           </Card>
         </section>
 
@@ -168,24 +179,34 @@ export default async function CitiesPage() {
                     {typedCities.map((city) => (
                     <Card 
                       key={city.slug} 
-                      className="border border-slate-200 bg-white hover:-translate-y-0.5 hover:shadow-sm hover:border-teal-500/20 transition-all duration-200 rounded-xl flex flex-col justify-between group"
+                      className="group relative min-h-[210px] overflow-hidden rounded-xl border border-slate-200 bg-slate-950 text-white transition-all duration-200 hover:-translate-y-0.5 hover:border-teal-500/40 hover:shadow-md"
                     >
-                      <div className="p-5">
+                      <Image
+                        src={getCityUnderlayAsset(`${city.city} ${city.title}`)}
+                        alt={`${city.city} manufacturing cluster visual`}
+                        fill
+                        sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                        className="object-cover opacity-45 transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/20" />
+                      <div className="relative flex h-full flex-col justify-between p-5">
+                      <div>
                         <h3 className="text-base font-bold text-slate-950 group-hover:text-teal-600 transition-colors">
-                          <Link href={`/cities/${city.slug}`}>{city.city}</Link>
+                          <Link href={`/cities/${city.slug}`} className="text-white hover:text-teal-200">{city.city}</Link>
                         </h3>
-                        <p className="text-[10px] text-teal-600 font-bold uppercase tracking-wide mt-1">
+                        <p className="text-[10px] text-teal-200 font-bold uppercase tracking-wide mt-1">
                           {provinceName} Sourcing Hub
                         </p>
-                        <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                        <p className="text-xs text-slate-200 mt-2 leading-relaxed">
                           Browse active manufacturers and export clusters mapped inside {city.city}.
                         </p>
                       </div>
-                      <div className="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs">
-                        <span className="text-[10px] bg-teal-50 text-teal-700 px-2 py-0.5 rounded font-bold uppercase">Active Hub</span>
-                        <span className="font-semibold text-slate-700">
+                      <div className="mt-8 flex items-center justify-between text-xs">
+                        <span className="rounded bg-teal-400/15 px-2 py-0.5 text-[10px] font-bold uppercase text-teal-100 ring-1 ring-teal-300/20">Active Hub</span>
+                        <span className="font-semibold text-white">
                           {city.supplierCount.toLocaleString("en-US")} Manufacturers
                         </span>
+                      </div>
                       </div>
                     </Card>
                   ))}
@@ -197,25 +218,35 @@ export default async function CitiesPage() {
               {STANDARDIZED_CITIES.map((city) => (
                 <Card 
                   key={city.slug} 
-                  className="border border-slate-200 bg-white hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 rounded-xl flex flex-col justify-between"
+                  className="group relative min-h-[230px] overflow-hidden rounded-xl border border-slate-200 bg-slate-950 text-white transition-all duration-200 hover:-translate-y-0.5 hover:border-teal-500/40 hover:shadow-md"
                 >
-                  <div className="p-5">
+                  <Image
+                    src={getCityUnderlayAsset(`${city.city} ${city.specialty}`)}
+                    alt={`${city.city} manufacturing cluster visual`}
+                    fill
+                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    className="object-cover opacity-45 transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/20" />
+                  <div className="relative flex h-full flex-col justify-between p-5">
+                  <div>
                     <h3 className="text-base font-bold text-slate-950 hover:text-teal-600 transition-colors">
-                      <a href={`/database?province=${encodeURIComponent(city.province)}&city=${encodeURIComponent(city.city)}`}>{city.city}</a>
+                      <a href={`/database?province=${encodeURIComponent(city.province)}&city=${encodeURIComponent(city.city)}`} className="text-white hover:text-teal-200">{city.city}</a>
                     </h3>
-                    <div className="text-[10px] text-teal-600 font-bold uppercase tracking-wide mt-1">
+                    <div className="text-[10px] text-teal-200 font-bold uppercase tracking-wide mt-1">
                       Province: {city.province}
                     </div>
-                    <p className="text-[11px] font-semibold text-slate-800 mt-2">Specialty: {city.specialty}</p>
-                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    <p className="text-[11px] font-semibold text-white mt-2">Specialty: {city.specialty}</p>
+                    <p className="text-xs text-slate-200 mt-1 leading-relaxed">
                       {city.desc}
                     </p>
                   </div>
-                  <div className="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs">
-                    <span className="text-[10px] bg-teal-50 text-teal-700 px-2 py-0.5 rounded font-bold uppercase">Active Hub</span>
-                    <span className="font-semibold text-slate-700">
+                  <div className="mt-8 flex items-center justify-between text-xs">
+                    <span className="rounded bg-teal-400/15 px-2 py-0.5 text-[10px] font-bold uppercase text-teal-100 ring-1 ring-teal-300/20">Active Hub</span>
+                    <span className="font-semibold text-white">
                       {city.count.toLocaleString("en-US")} Manufacturers
                     </span>
+                  </div>
                   </div>
                 </Card>
               ))}
@@ -285,5 +316,13 @@ export default async function CitiesPage() {
         </section>
       </section>
     </>
+  );
+}
+
+function CityIntroImage({ src, alt }: { src: string; alt: string }) {
+  return (
+    <div className="relative aspect-[16/9] bg-slate-100">
+      <Image src={src} alt={alt} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover" />
+    </div>
   );
 }

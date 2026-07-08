@@ -1,8 +1,10 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { MapPin, ArrowRight, Globe, Users, HelpCircle, CheckCircle2, Calendar, Database, Sparkles, Award } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { Card, CardContent } from "@/components/ui/card";
+import { getCityUnderlayAsset, mediaAssets } from "@/config/media";
 import { createMetadata } from "@/config/seo";
 import { getIndustryPage } from "@/server/suppliers";
 
@@ -170,25 +172,38 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
         </div>
 
         {/* Industry Sourcing Overview */}
-        <section className="mt-6 border-t border-slate-200 pt-10 max-w-4xl">
-          <h2 className="text-xl md:text-2xl font-bold text-slate-950 tracking-tight">
-            China {industryName} Sourcing &amp; Manufacturing Overview
-          </h2>
-          {industry.intro ? (
-            <div
-              className="mt-4 text-sm text-slate-600 leading-relaxed space-y-4"
-              dangerouslySetInnerHTML={{ __html: industry.intro }}
-            />
-          ) : (
-            <div className="mt-4 text-sm text-slate-600 leading-relaxed space-y-4">
-              <p>
-                The <strong>{industryName}</strong> sector represents a core pillar of China&apos;s trade footprint. Our database registers <strong>{totalCount.toLocaleString("en-US")} active export suppliers</strong> operating in this category. Out of these targets, <strong>{hasWebsiteCount.toLocaleString("en-US")} exporters</strong> maintain active online domains for verification, and <strong>{hasCapitalCount.toLocaleString("en-US")} entities</strong> have registered capital filings open for due diligence checks.
-              </p>
-              <p>
-                Sourcing managers target specific manufacturing zones to leverage regional cluster dynamics. By placing raw material suppliers, assembly lines, and specialized customs brokers in close geographic clusters, local factories can minimize production overheads and logistical delays. Standard supplier verification via on-site audits or sample checking is recommended prior to wire transfers.
-              </p>
+        <section className="mt-6 border-t border-slate-200 pt-10 max-w-5xl">
+          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
+            <div>
+              <h2 className="text-xl md:text-2xl font-bold text-slate-950 tracking-tight">
+                China {industryName} Sourcing &amp; Manufacturing Overview
+              </h2>
+              {industry.intro ? (
+                <div
+                  className="mt-4 text-sm text-slate-600 leading-relaxed space-y-4"
+                  dangerouslySetInnerHTML={{ __html: industry.intro }}
+                />
+              ) : (
+                <div className="mt-4 text-sm text-slate-600 leading-relaxed space-y-4">
+                  <p>
+                    The <strong>{industryName}</strong> sector represents a core pillar of China&apos;s trade footprint. Our database registers <strong>{totalCount.toLocaleString("en-US")} active export suppliers</strong> operating in this category. Out of these targets, <strong>{hasWebsiteCount.toLocaleString("en-US")} exporters</strong> maintain active online domains for verification, and <strong>{hasCapitalCount.toLocaleString("en-US")} entities</strong> have registered capital filings open for due diligence checks.
+                  </p>
+                  <p>
+                    Sourcing managers target specific manufacturing zones to leverage regional cluster dynamics. By placing raw material suppliers, assembly lines, and specialized customs brokers in close geographic clusters, local factories can minimize production overheads and logistical delays. Standard supplier verification via on-site audits or sample checking is recommended prior to wire transfers.
+                  </p>
+                </div>
+              )}
             </div>
-          )}
+            <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-slate-200 bg-slate-100 shadow-sm">
+              <Image
+                src={mediaAssets.industryTrendReport}
+                alt={`${industryName} sourcing trend report visual`}
+                fill
+                sizes="(min-width: 1024px) 40vw, 100vw"
+                className="object-cover"
+              />
+            </div>
+          </div>
         </section>
 
         {/* Quality Signals */}
@@ -201,7 +216,8 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
             Fidelity index diagnostics calculated across the active {industryName} directory.
           </p>
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
-            <Card className="border border-slate-200 bg-white rounded-xl shadow-sm">
+            <Card className="overflow-hidden border border-slate-200 bg-white rounded-xl shadow-sm">
+              <SignalImage src={mediaAssets.signalWebsiteVerification} alt="Website verification diagnostic visual" />
               <CardContent className="p-5 text-center">
                 <Globe className="h-6 w-6 text-teal-600 mx-auto mb-2" />
                 <p className="text-2xl font-extrabold text-slate-950">
@@ -214,7 +230,8 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
               </CardContent>
             </Card>
 
-            <Card className="border border-slate-200 bg-white rounded-xl shadow-sm">
+            <Card className="overflow-hidden border border-slate-200 bg-white rounded-xl shadow-sm">
+              <SignalImage src={mediaAssets.signalCapitalRegistration} alt="Capital registration diagnostic visual" />
               <CardContent className="p-5 text-center">
                 <Database className="h-6 w-6 text-teal-600 mx-auto mb-2" />
                 <p className="text-2xl font-extrabold text-slate-950">
@@ -227,7 +244,8 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
               </CardContent>
             </Card>
 
-            <Card className="border border-slate-200 bg-white rounded-xl shadow-sm">
+            <Card className="overflow-hidden border border-slate-200 bg-white rounded-xl shadow-sm">
+              <SignalImage src={mediaAssets.signalExhibitionStability} alt="Exhibition stability diagnostic visual" />
               <CardContent className="p-5 text-center">
                 <Award className="h-6 w-6 text-teal-600 mx-auto mb-2" />
                 <p className="text-2xl font-extrabold text-slate-950">
@@ -264,15 +282,23 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
                   <Link
                     key={c.city}
                     href={targetUrl}
-                    className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 hover:border-teal-500 hover:shadow-sm hover:bg-teal-50/10 transition-all group"
+                    className="relative flex min-h-[116px] items-end justify-between overflow-hidden rounded-xl border border-slate-200 bg-slate-950 px-4 py-3 text-white shadow-sm transition-all hover:border-teal-500 hover:shadow-md group"
                   >
-                    <div className="min-w-0 pr-2">
-                      <p className="text-xs font-semibold text-slate-900 group-hover:text-teal-600 transition-colors truncate">
+                    <Image
+                      src={getCityUnderlayAsset(`${c.city} ${industryName}`)}
+                      alt={`${c.cityEn} ${industryName} industrial cluster background`}
+                      fill
+                      sizes="(min-width: 1024px) 28vw, 50vw"
+                      className="object-cover opacity-45 transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/20" />
+                    <div className="relative min-w-0 pr-2">
+                      <p className="text-xs font-semibold text-white transition-colors truncate">
                         {c.cityEn} {industryName}
                       </p>
-                      <p className="text-[10px] text-slate-400 mt-0.5">{c.province} province</p>
+                      <p className="text-[10px] text-slate-300 mt-0.5">{c.province} province</p>
                     </div>
-                    <span className="text-xs text-slate-400 bg-slate-50 group-hover:bg-teal-50 group-hover:text-teal-700 px-1.5 py-0.5 rounded font-bold transition-all shrink-0">
+                    <span className="relative shrink-0 rounded bg-white/90 px-1.5 py-0.5 text-xs font-bold text-slate-700 transition-all group-hover:bg-teal-50 group-hover:text-teal-700">
                       {c.supplierCount} Exporters
                     </span>
                   </Link>
@@ -284,7 +310,15 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
 
         {/* Directory List */}
         {suppliers.suppliers.length > 0 && (
-          <section id="directory" className="mt-12 max-w-4xl scroll-mt-6">
+          <section id="directory" className="relative mt-12 max-w-4xl scroll-mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <Image
+              src={mediaAssets.lockedSpreadsheetPreview}
+              alt="Blurred spreadsheet export preview"
+              fill
+              sizes="(min-width: 1024px) 896px, 100vw"
+              className="pointer-events-none object-cover opacity-[0.035]"
+            />
+            <div className="relative">
             <div className="flex items-end justify-between border-b border-slate-100 pb-3">
               <div>
                 <h2 className="text-xl font-bold text-slate-950 flex items-center gap-2 tracking-tight">
@@ -360,6 +394,7 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
                 </Link>
               </div>
             )}
+            </div>
           </section>
         )}
 
@@ -424,5 +459,13 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
         </section>
       </section>
     </>
+  );
+}
+
+function SignalImage({ src, alt }: { src: string; alt: string }) {
+  return (
+    <div className="relative aspect-[16/9] bg-slate-100">
+      <Image src={src} alt={alt} fill sizes="(min-width: 640px) 33vw, 100vw" className="object-cover" />
+    </div>
   );
 }
