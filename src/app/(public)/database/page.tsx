@@ -5,6 +5,7 @@ import {
   Filter,
   Search,
   Sparkles,
+  Check,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -221,15 +222,27 @@ function Facet({ title, param, currentQuery, visibleLimit, items }: { title: str
 }
 
 function FacetLink({ param, currentQuery, label, count }: { param: string; currentQuery: string; label: string; count: number }) {
+  const isSelected = new URLSearchParams(currentQuery).get(param) === label;
+
   return (
     <Link
       href={facetHref(currentQuery, param, label)}
       title={label}
-      className="grid min-w-0 grid-cols-[16px_minmax(0,1fr)_auto] items-start gap-2 text-sm text-slate-700 hover:text-teal-600"
+      className={`grid min-w-0 grid-cols-[16px_minmax(0,1fr)_auto] items-start gap-2 text-sm transition-colors ${
+        isSelected ? "text-teal-600 font-semibold" : "text-slate-700 hover:text-teal-600"
+      }`}
     >
-      <span className="mt-0.5 h-4 w-4 rounded bg-slate-200" aria-hidden />
-      <h3 className="min-w-0 truncate text-sm font-normal leading-5">{label}</h3>
-      <span className="pl-2 text-right text-slate-500">{count.toLocaleString("en-US")}</span>
+      {isSelected ? (
+        <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border border-teal-600 bg-teal-600 text-white" aria-hidden>
+          <Check className="h-3 w-3 stroke-[3]" />
+        </span>
+      ) : (
+        <span className="mt-0.5 h-4 w-4 shrink-0 rounded border border-slate-300 bg-white hover:border-teal-500 hover:bg-slate-50 transition-colors" aria-hidden />
+      )}
+      <h3 className="min-w-0 truncate text-sm leading-5">{label}</h3>
+      <span className={`pl-2 text-right text-xs mt-0.5 ${isSelected ? "text-teal-600" : "text-slate-400"}`}>
+        {count.toLocaleString("en-US")}
+      </span>
     </Link>
   );
 }
@@ -238,7 +251,12 @@ function FacetLink({ param, currentQuery, label, count }: { param: string; curre
 
 function facetHref(currentQuery: string, param: string, label: string) {
   const search = new URLSearchParams(currentQuery);
-  search.set(param, label);
+  const isSelected = search.get(param) === label;
+  if (isSelected) {
+    search.delete(param);
+  } else {
+    search.set(param, label);
+  }
   search.delete("page");
   return `/database?${search.toString()}`;
 }
