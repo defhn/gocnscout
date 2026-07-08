@@ -58,3 +58,6 @@ next-env.d.ts
 # local source datasets with private contact fields
 139th Canton Fair Exhibitor Database (Full Version).xlsx
 *.xlsx
+
+# local import checkpoints
+.import-state/

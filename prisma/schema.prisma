@@ -132,46 +132,116 @@ model Supplier {
   id                String                @id @default(cuid())
   slug              String                @unique
   sourceRowId       String?               @unique
+  sourceFileName    String?
+  sourceSheetName   String?
+  sourceRowNumber   Int?
+  sourceRowHash     String?               @unique
   industryName      String
+  industryNameCn    String?
+  industryNameEn    String?
+  industrySlug      String?
   exhibitorName     String
+  exhibitorNameCn   String?
+  exhibitorNameEn   String?
   province          String?
+  provinceCn        String?
+  provinceEn        String?
+  provinceCode      String?
   city              String?
+  cityCn            String?
+  cityEn            String?
+  citySlug          String?
+  region            String?
+  industrialCluster String?
+  websiteRaw        String?
   websiteUrl        String?
+  websiteDomain     String?
+  websiteStatus     String?
+  websiteType       String?
   publicAddress     String?
   productsText      String?
+  productsTextCn    String?
+  productsTextEn    String?
   keywordsText      String?
+  keywordsTextCn    String?
+  keywordsTextEn    String?
+  productKeywordsCn String[]
+  productKeywordsEn String[]
   foundedYear       Int?
+  foundedYearRange  String?
   registeredCapital String?
+  registeredCapitalRaw String?
+  registeredCapitalRmb Decimal?           @db.Decimal(18, 2)
+  registeredCapitalRange String?
   companySize       String?
+  companySizeCn     String?
+  companySizeEn     String?
+  companySizeCode   String?
   companyType       String?
+  companyTypeCn     String?
+  companyTypeEn     String?
+  companyTypeCode   String?
+  tradeModesRaw     String?
   tradeModes        String[]
   exhibitorHistory  String[]
+  exhibitionSessions Int[]
+  firstExhibitionSession Int?
+  lastExhibitionSession  Int?
+  exhibitionSessionCount Int?
   companyNature     String?
+  companyNatureCn   String?
+  companyNatureEn   String?
+  companyNatureCode String?
   searchText        String?
+  searchTextCn      String?
+  searchTextEn      String?
+  stabilityScore    Int?
+  capabilityScore   Int?
+  dataQualityScore  Int?
   isPublished       Boolean               @default(true)
   dataSource        String                @default("139th Canton Fair Exhibitor Database")
   createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
   privateData       SupplierPrivateData?
+  sourceRaw         SupplierSourceRaw?
+  signals           SupplierSignal?
+  productKeywords   SupplierProductKeyword[]
   savedEntries      SavedSupplier[]
   profileViews      SupplierProfileView[]
 
   @@index([industryName])
+  @@index([industryNameEn])
+  @@index([industrySlug])
   @@index([province, city])
+  @@index([provinceEn, cityEn])
+  @@index([region])
   @@index([companySize])
+  @@index([companySizeCode])
   @@index([companyType])
+  @@index([companyTypeCode])
   @@index([companyNature])
+  @@index([companyNatureCode])
+  @@index([websiteStatus])
+  @@index([websiteType])
+  @@index([foundedYearRange])
+  @@index([registeredCapitalRange])
+  @@index([lastExhibitionSession])
+  @@index([exhibitionSessionCount])
 }
 
 model SupplierPrivateData {
   id            String   @id @default(cuid())
   supplierId    String   @unique
   contactPerson String?
+  contactPersonCn String?
+  contactPersonEn String?
   mobile        String?
   phone         String?
   fax           String?
   email         String?
   fullAddress   String?
+  fullAddressCn String?
+  fullAddressEn String?
   postalCode    String?
   rawJson       Json?
   createdAt     DateTime @default(now())
@@ -179,10 +249,83 @@ model SupplierPrivateData {
   supplier      Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
 }
 
+model SupplierSourceRaw {
+  id                  String    @id @default(cuid())
+  supplierId          String?   @unique
+  sourceFileName      String
+  sourceSheetName     String
+  sourceRowNumber     Int
+  sourceRowHash       String    @unique
+  rawJson             Json
+  cleanedJson         Json?
+  translatedJson      Json?
+  status              String    @default("PENDING")
+  errorMessage        String?
+  deepseekAttempts    Int       @default(0)
+  lastProcessedAt     DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  supplier            Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([sourceRowNumber])
+}
+
+model SupplierSignal {
+  id                                String   @id @default(cuid())
+  supplierId                        String   @unique
+  innovationAward                   Boolean  @default(false)
+  cantonFairDesignAward             Boolean  @default(false)
+  multiSessionExhibitor             Boolean  @default(false)
+  brandExhibitor                    Boolean  @default(false)
+  chinaTimeHonoredBrand             Boolean  @default(false)
+  ruralRevitalizationExhibitor      Boolean  @default(false)
+  newExhibitor                      Boolean  @default(false)
+  specializedSpecialNewEnterprise   Boolean  @default(false)
+  greenAwardExhibitor               Boolean  @default(false)
+  customsCertifiedExhibitor         Boolean  @default(false)
+  highTechEnterprise                Boolean  @default(false)
+  hasAnyAward                       Boolean  @default(false)
+  hasCertificationSignal            Boolean  @default(false)
+  hasBrandSignal                    Boolean  @default(false)
+  hasInnovationSignal               Boolean  @default(false)
+  createdAt                         DateTime @default(now())
+  updatedAt                         DateTime @updatedAt
+  supplier                          Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  @@index([multiSessionExhibitor])
+  @@index([brandExhibitor])
+  @@index([newExhibitor])
+  @@index([specializedSpecialNewEnterprise])
+  @@index([customsCertifiedExhibitor])
+  @@index([highTechEnterprise])
+}
+
+model SupplierProductKeyword {
+  id          String   @id @default(cuid())
+  supplierId  String
+  keywordCn   String?
+  keywordEn   String
+  keywordSlug String
+  sourceField String
+  clusterName String?
+  confidence  Float?
+  createdAt   DateTime @default(now())
+  supplier    Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  @@unique([supplierId, keywordSlug, sourceField])
+  @@index([keywordEn])
+  @@index([keywordSlug])
+  @@index([sourceField])
+  @@index([clusterName])
+}
+
 model IndustryPage {
   id              String    @id @default(cuid())
   slug            String    @unique
   industryName    String    @unique
+  industryNameCn  String?
+  industryNameEn  String?
   title           String
   metaDescription String
   intro           String?
@@ -197,6 +340,9 @@ model ProductKeywordPage {
   id              String    @id @default(cuid())
   slug            String    @unique
   keyword         String    @unique
+  keywordCn       String?
+  keywordEn       String?
+  clusterName     String?
   title           String
   metaDescription String
   supplierCount   Int       @default(0)
@@ -210,7 +356,13 @@ model CityPage {
   id              String    @id @default(cuid())
   slug            String    @unique
   province        String
+  provinceCn      String?
+  provinceEn      String?
   city            String
+  cityCn          String?
+  cityEn          String?
+  region          String?
+  industrialCluster String?
   title           String
   metaDescription String
   supplierCount   Int       @default(0)
