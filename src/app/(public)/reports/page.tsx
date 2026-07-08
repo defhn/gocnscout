@@ -15,34 +15,6 @@ export const metadata = createMetadata({
   path: "/reports",
 });
 
-// Premium report offerings shown as indexable catalogs
-const PRESET_INTELLIGENCE_REPORTS = [
-  {
-    slug: "consumer-electronics-iot-hardware-atlas",
-    title: "Consumer Electronics & IoT Hardware Atlas",
-    type: "PREMIUM",
-    priceUsdCents: 29900,
-    desc: "A comprehensive structural mapping of active PCB assembly, Wearable gadgets, and Smart IoT manufacturers in Shenzhen and Dongguan hubs.",
-    pages: "78 Pages",
-  },
-  {
-    slug: "power-tools-fasteners-hubs-analysis-report",
-    title: "Power Tools & Fasteners Cluster Sourcing Report",
-    type: "FULL",
-    priceUsdCents: 9900,
-    desc: "Detailed geographic and capital scale mapping of hardware plants, cordless tool factories, and high-tensile bolt lines in Yongkang and Jinhua.",
-    pages: "52 Pages",
-  },
-  {
-    slug: "stainless-steel-vacuum-cups-sourcing-guide",
-    title: "Stainless Steel Vacuum Cups & Household Products Guide",
-    type: "BASIC",
-    priceUsdCents: 4900,
-    desc: "A baseline analysis of registered cup factories, paint lines, and silicone lid sub-contractors based in Zhejiang industrial parks.",
-    pages: "34 Pages",
-  },
-];
-
 export default async function ReportsPage() {
   const reports = await listPublishedReports().catch(() => []);
   const hasRealData = reports.length > 0;
@@ -122,32 +94,26 @@ export default async function ReportsPage() {
               </Card>
             ))
           ) : (
-            // High converting Fallback reports list so users and search engines see high quality indexing and CTA options
-            PRESET_INTELLIGENCE_REPORTS.map((report) => (
-              <Card 
-                key={report.slug} 
-                className="border border-slate-200 bg-white hover:border-teal-500/20 hover:shadow-md transition-all duration-300 rounded-2xl flex flex-col justify-between overflow-hidden"
-              >
-                <div className="p-6">
-                  <span className="text-[10px] bg-teal-50 text-teal-700 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
-                    {report.type}
-                  </span>
-                  <h3 className="text-base font-bold text-slate-950 mt-4 leading-snug">
-                    <a href="/contact">{report.title}</a>
-                  </h3>
-                  <p className="text-xs text-slate-500 mt-2 leading-relaxed">
-                    {report.desc}
-                  </p>
-                  <div className="text-[10px] text-slate-400 font-mono mt-3">Format: PDF ({report.pages})</div>
-                </div>
-                <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs">
-                  <span className="font-semibold text-slate-700">{formatUsd(report.priceUsdCents)}</span>
-                  <a href="/contact" className="text-teal-600 font-bold hover:text-teal-700 inline-flex items-center">
-                    Request Analysis <ArrowRight className="h-3 w-3 ml-1" />
-                  </a>
-                </div>
-              </Card>
-            ))
+            <div className="col-span-full rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 p-8 text-center max-w-2xl mx-auto my-4">
+              <div className="mx-auto w-12 h-12 bg-teal-100 text-teal-700 flex items-center justify-center rounded-xl mb-4">
+                <FileText className="h-6 w-6" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900">Custom Industry Sourcing Reports</h3>
+              <p className="mt-2 text-xs text-slate-500 leading-relaxed">
+                Currently, there are no pre-compiled digital PDF reports available for instant download. 
+                However, our research department compiles bespoke geographic cluster analyses, exporter registries, 
+                and factory-vetting checklists customized specifically to your procurement targets.
+              </p>
+              <div className="mt-6 flex justify-center">
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-teal-600 px-5 py-3 text-xs font-bold text-white hover:bg-teal-700 transition-colors shadow-sm"
+                >
+                  Request Custom Hub Report &amp; RFP
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
           )}
         </div>
 

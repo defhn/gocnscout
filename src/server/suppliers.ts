@@ -348,8 +348,34 @@ export async function getIndustryPage(slug: string) {
 export async function getCityPage(slug: string) {
   const city = await prisma.cityPage.findUnique({ where: { slug } });
   if (!city) return null;
-  const suppliers = await searchSuppliers({ province: city.province, city: city.city, pageSize: 12 });
-  return { city, suppliers };
+
+  const [suppliers, industryGroups, companyTypeGroups, relatedCities] = await Promise.all([
+    searchSuppliers({ province: city.province, city: city.city, pageSize: 30 }),
+    // 该城市的行业分布（前6大行业）
+    prisma.supplier.groupBy({
+      by: ["industryName", "industryNameCn"],
+      where: { isPublished: true, city: city.city, province: city.province },
+      _count: { id: true },
+      orderBy: { _count: { id: "desc" } },
+      take: 6,
+    }),
+    // 企业类型分布
+    prisma.supplier.groupBy({
+      by: ["companyTypeEn"],
+      where: { isPublished: true, city: city.city, province: city.province, companyTypeEn: { not: null } },
+      _count: { id: true },
+      orderBy: { _count: { id: "desc" } },
+    }),
+    // 同省份的其他城市（按商户数量排序，取前5）
+    prisma.cityPage.findMany({
+      where: { province: city.province, city: { not: city.city }, supplierCount: { gte: 30 } },
+      orderBy: { supplierCount: "desc" },
+      take: 5,
+      select: { slug: true, city: true, cityEn: true, supplierCount: true },
+    }),
+  ]);
+
+  return { city, suppliers, industryGroups, companyTypeGroups, relatedCities };
 }
 
 export async function getProductPage(slug: string) {
