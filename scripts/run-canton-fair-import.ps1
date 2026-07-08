@@ -20,4 +20,4 @@ Start-Process -FilePath "powershell.exe" -ArgumentList @(
   "-NoExit",
   "-ExecutionPolicy", "Bypass",
   "-Command", $command
-) -WorkingDirectory $projectRoot
+) -WorkingDirectory $projectRoot -WindowStyle Normal

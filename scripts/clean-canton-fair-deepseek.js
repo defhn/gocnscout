@@ -11,8 +11,9 @@ const STATE_DIR = ".import-state";
 const CLEANED_FILE = path.join(STATE_DIR, "canton-fair-cleaned.jsonl");
 const FAILED_FILE = path.join(STATE_DIR, "canton-fair-failed.jsonl");
 const STATE_FILE = path.join(STATE_DIR, "canton-fair-clean-state.json");
-const CONCURRENCY = Number(process.env.DEEPSEEK_CONCURRENCY || 10);
+const CONCURRENCY = 10;
 const TEST_ROWS = Number(process.env.DEEPSEEK_TEST_ROWS || 10);
+const TEST_ONLY = process.env.DEEPSEEK_TEST_ONLY === "1";
 const LOCAL_FLUSH_SIZE = 250;
 const PROGRESS_INTERVAL = 500;
 const PROGRESS_PAUSE_MS = 30000;
@@ -75,6 +76,10 @@ function yn(value) {
   return String(value || "").trim().toUpperCase() === "Y";
 }
 
+function splitInputList(value) {
+  return clean(value).split(/[,;|/\\\n\r\u3001\uff0c\uff1b]+/g).map((item) => item.trim()).filter(Boolean);
+}
+
 function slugify(value) {
   return String(value || "")
     .normalize("NFKD")
@@ -132,7 +137,7 @@ function parseWebsite(rawValue) {
 }
 
 function parseSessions(raw) {
-  const ints = [...new Set(splitList(raw).map(Number).filter((item) => Number.isInteger(item)))].sort((a, b) => a - b);
+  const ints = [...new Set(splitInputList(raw).map(Number).filter((item) => Number.isInteger(item)))].sort((a, b) => a - b);
   return {
     strings: ints.map(String),
     ints,
@@ -191,9 +196,9 @@ function normalizeRow(row, rowNumber) {
   const foundedYear = parseYear(raw.foundedYearRaw);
   const capital = parseCapital(raw.registeredCapitalRaw);
   const website = parseWebsite(raw.websiteRaw);
-  const productsCn = splitList(raw.productsCnText);
-  const keywordsCn = splitList(raw.keywordsCnText);
-  const tradeModes = splitList(raw.tradeModeRaw).map((mode) => mode.toUpperCase()).filter((mode) => ["OEM", "ODM", "OBM"].includes(mode));
+  const productsCn = splitInputList(raw.productsCnText);
+  const keywordsCn = splitInputList(raw.keywordsCnText);
+  const tradeModes = splitInputList(raw.tradeModeRaw).map((mode) => mode.toUpperCase()).filter((mode) => ["OEM", "ODM", "OBM"].includes(mode));
   const signals = {
     innovationAward: yn(raw.signalsRaw.innovationAward),
     cantonFairDesignAward: yn(raw.signalsRaw.cantonFairDesignAward),
@@ -242,7 +247,7 @@ function buildPrompt(cleaned) {
   return [
     {
       role: "system",
-      content: "Translate Chinese Canton Fair exhibitor data for a B2B supplier research database. Return strict JSON only. Do not invent websites, certifications, supplier verification, factory status, or products. Keep translations concise and searchable for English-speaking buyers.",
+      content: "Translate Chinese Canton Fair exhibitor data for a B2B supplier research database. Return strict JSON only. Do not invent websites, certifications, supplier verification, factory status, or products. Keep translations concise and searchable for English-speaking buyers. If a source field is empty, return the normal empty value for that field: an empty string for text fields and an empty array for list fields. Do not fail or invent content for missing source data. productsEn should translate row.productsCn when row.productsCn has values. If row.productsCn is empty, productsEn may be an empty array.",
     },
     {
       role: "user",
@@ -263,6 +268,30 @@ function buildPrompt(cleaned) {
       }),
     },
   ];
+}
+
+function normalizeTranslated(parsed, cleaned) {
+  const keywordsEn = Array.isArray(parsed.keywordsEn) ? parsed.keywordsEn.map(clean).filter(Boolean) : [];
+  let productsEn = Array.isArray(parsed.productsEn) ? parsed.productsEn.map(clean).filter(Boolean) : [];
+
+  if (!productsEn.length && keywordsEn.length && (cleaned.productsCn.length || cleaned.keywordsCn.length)) {
+    productsEn = keywordsEn.slice(0, Math.max(1, Math.min(5, keywordsEn.length)));
+  }
+
+  const translated = {
+    industryEn: clean(parsed.industryEn),
+    exhibitorNameEn: clean(parsed.exhibitorNameEn),
+    provinceEn: clean(parsed.provinceEn),
+    cityEn: clean(parsed.cityEn),
+    companySizeEn: clean(parsed.companySizeEn),
+    companyTypeEn: clean(parsed.companyTypeEn),
+    companyNatureEn: clean(parsed.companyNatureEn),
+    productsEn,
+    keywordsEn,
+    addressEn: clean(parsed.addressEn),
+  };
+
+  return translated;
 }
 
 async function deepseek(cleaned) {
@@ -291,18 +320,7 @@ async function deepseek(cleaned) {
       const content = data.choices?.[0]?.message?.content;
       if (!content) throw new Error("DeepSeek returned empty content.");
       const parsed = JSON.parse(content);
-      return {
-        industryEn: clean(parsed.industryEn) || cleaned.raw.industryCn,
-        exhibitorNameEn: clean(parsed.exhibitorNameEn) || cleaned.raw.exhibitorNameCn,
-        provinceEn: clean(parsed.provinceEn),
-        cityEn: clean(parsed.cityEn),
-        companySizeEn: clean(parsed.companySizeEn),
-        companyTypeEn: clean(parsed.companyTypeEn),
-        companyNatureEn: clean(parsed.companyNatureEn),
-        productsEn: Array.isArray(parsed.productsEn) ? parsed.productsEn.map(clean).filter(Boolean) : [],
-        keywordsEn: Array.isArray(parsed.keywordsEn) ? parsed.keywordsEn.map(clean).filter(Boolean) : [],
-        addressEn: clean(parsed.addressEn),
-      };
+      return normalizeTranslated(parsed, cleaned);
     } catch (error) {
       clearTimeout(timer);
       lastError = error;
@@ -393,6 +411,10 @@ async function main() {
   const testRows = pending.slice(0, TEST_ROWS);
   const testFailures = await processRows(testRows, "test", totals);
   if (testFailures.length) throw new Error(`Test ${TEST_ROWS} rows failed. Fix failed rows before full run.`);
+  if (TEST_ONLY) {
+    console.log(`[test] ${TEST_ROWS} rows succeeded. TEST_ONLY=1, stopping before full local cleaning.`);
+    return;
+  }
   console.log(`[test] ${TEST_ROWS} rows succeeded. Continuing full local cleaning.`);
 
   const mainFailures = await processRows(pending.slice(TEST_ROWS), "full", totals);
