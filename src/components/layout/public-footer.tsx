@@ -21,6 +21,7 @@ export function PublicFooter() {
             <Link href="/cities">Cities</Link>
             <Link href="/reports">Reports</Link>
             <Link href="/pricing">Pricing</Link>
+            <Link href="/sitemap">Sitemap</Link>
           </div>
         </div>
         <div>
@@ -41,6 +42,8 @@ export function PublicFooter() {
             <Link href="/legal/privacy">Privacy</Link>
             <Link href="/legal/refund-policy">Refund Policy</Link>
             <Link href="/legal/acceptable-use">Acceptable Use</Link>
+            <Link href="/llms.txt">LLMs.txt</Link>
+            <Link href="/pricing.md">Pricing.md</Link>
           </div>
         </div>
         <div>

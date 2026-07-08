@@ -22,6 +22,7 @@ export function supplierPublicSelect() {
     id: true,
     slug: true,
     industryName: true,
+    industrySlug: true,
     exhibitorName: true,
     province: true,
     city: true,

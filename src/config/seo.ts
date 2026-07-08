@@ -76,6 +76,31 @@ export function websiteSearchJsonLd() {
   };
 }
 
+export function datasetJsonLd({
+  name,
+  description,
+  url,
+}: {
+  name: string;
+  description: string;
+  url: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "name": name,
+    "description": description,
+    "url": absoluteUrl(url),
+    "creator": {
+      "@type": "Organization",
+      "name": SITE.name,
+      "url": absoluteUrl("/"),
+    },
+    "license": absoluteUrl("/data-policy"),
+    "isAccessibleForFree": true,
+  };
+}
+
 export function productJsonLd({
   name,
   description,
@@ -162,4 +187,3 @@ export function blogPostingJsonLd({
     },
   };
 }
-
