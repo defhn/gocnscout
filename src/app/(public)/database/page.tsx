@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { createMetadata } from "@/config/seo";
 import { sanitizeWebsiteAccess } from "@/config/field-policy";
 import { getDatabaseFacets, searchSuppliers } from "@/server/suppliers";
-import DatabaseFacet from "./database-facet";
 
 export const metadata = createMetadata({
   title: "Supplier Database Search",
@@ -117,15 +116,15 @@ export default async function DatabasePage({
             </form>
           </div>
           <div className="space-y-2 p-3">
-            <DatabaseFacet title="Industry" param="industry" currentQuery={currentQuery} items={facets.industries.map((i) => [i.industryName, i._count._all])} />
-            <DatabaseFacet title="Province" param="province" currentQuery={currentQuery} items={facets.provinces.filter((i) => i.province).map((i) => [i.province || "", i._count._all])} />
-            <DatabaseFacet title="City" param="city" currentQuery={currentQuery} items={facets.cities.filter((i) => i.city).map((i) => [i.city || "", i._count._all])} />
-            <DatabaseFacet title="Company Size" param="companySize" currentQuery={currentQuery} items={facets.companySizes.filter((i) => i.companySize).map((i) => [i.companySize || "", i._count._all])} />
-            <DatabaseFacet title="Company Type" param="companyType" currentQuery={currentQuery} items={facets.companyTypes.filter((i) => i.companyType).map((i) => [i.companyType || "", i._count._all])} />
-            <DatabaseFacet title="Trade Mode" param="tradeMode" currentQuery={currentQuery} items={facets.tradeModes.map((i) => [i.label, i.count])} />
-            <DatabaseFacet title="Company Nature" param="companyNature" currentQuery={currentQuery} items={facets.companyNatures.filter((i) => i.companyNature).map((i) => [i.companyNature || "", i._count._all])} />
-            <DatabaseFacet title="Founded Year" param="foundedYear" currentQuery={currentQuery} items={facets.foundedYears.filter((i) => i.foundedYear).map((i) => [String(i.foundedYear), i._count._all])} />
-            <DatabaseFacet title="Registered Capital" param="registeredCapital" currentQuery={currentQuery} items={facets.registeredCapitals.filter((i) => i.registeredCapital).map((i) => [i.registeredCapital || "", i._count._all])} />
+            <Facet title="Industry" param="industry" currentQuery={currentQuery} items={facets.industries.map((i) => [i.industryName, i._count._all])} />
+            <Facet title="Province" param="province" currentQuery={currentQuery} items={facets.provinces.filter((i) => i.province).map((i) => [i.province || "", i._count._all])} />
+            <Facet title="City" param="city" currentQuery={currentQuery} items={facets.cities.filter((i) => i.city).map((i) => [i.city || "", i._count._all])} />
+            <Facet title="Company Size" param="companySize" currentQuery={currentQuery} items={facets.companySizes.filter((i) => i.companySize).map((i) => [i.companySize || "", i._count._all])} />
+            <Facet title="Company Type" param="companyType" currentQuery={currentQuery} items={facets.companyTypes.filter((i) => i.companyType).map((i) => [i.companyType || "", i._count._all])} />
+            <Facet title="Trade Mode" param="tradeMode" currentQuery={currentQuery} items={facets.tradeModes.map((i) => [i.label, i.count])} />
+            <Facet title="Company Nature" param="companyNature" currentQuery={currentQuery} items={facets.companyNatures.filter((i) => i.companyNature).map((i) => [i.companyNature || "", i._count._all])} />
+            <Facet title="Founded Year" param="foundedYear" currentQuery={currentQuery} items={facets.foundedYears.filter((i) => i.foundedYear).map((i) => [String(i.foundedYear), i._count._all])} />
+            <Facet title="Registered Capital" param="registeredCapital" currentQuery={currentQuery} items={facets.registeredCapitals.filter((i) => i.registeredCapital).map((i) => [i.registeredCapital || "", i._count._all])} />
             <section className="rounded-md border border-[#cfd9e5] bg-white p-3">
               <h2 className="flex items-center justify-between text-sm font-medium text-slate-700">
                 Has Website
@@ -281,6 +280,54 @@ function LockedField({ label }: { label: string }) {
       <span className="text-amber-700">Upgrade to view</span>
     </Link>
   );
+}
+
+function Facet({ title, param, currentQuery, items }: { title: string; param: string; currentQuery: string; items: Array<[string, number]> }) {
+  const firstItems = items.slice(0, 10);
+  const moreItems = items.slice(10);
+
+  return (
+    <section className="rounded-md border border-[#cfd9e5] bg-white p-3">
+      <h2 className="flex items-center justify-between text-sm font-medium text-slate-700">
+        {title}
+        <Filter className="h-4 w-4 text-brand" />
+      </h2>
+      <div className="mt-3 grid gap-2">
+        {firstItems.length ? firstItems.map(([label, count]) => <FacetLink key={`${param}-${label}`} param={param} currentQuery={currentQuery} label={label} count={count} />) : <h3 className="text-sm font-normal text-slate-500">No data before import</h3>}
+      </div>
+      {moreItems.length ? (
+        <div className="group mt-2">
+          <input id={`facet-${param}`} type="checkbox" className="peer sr-only" />
+          <div className="hidden gap-2 pt-2 peer-checked:grid">
+            {moreItems.map(([label, count]) => <FacetLink key={`${param}-${label}`} param={param} currentQuery={currentQuery} label={label} count={count} />)}
+          </div>
+          <label htmlFor={`facet-${param}`} className="mx-auto mt-3 block w-fit cursor-pointer rounded-md border border-[#cfd9e5] px-4 py-1.5 text-sm text-slate-600 hover:bg-slate-50">
+            <span className="peer-checked:hidden">Show More</span>
+            <span className="hidden peer-checked:inline">Show Less</span>
+          </label>
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
+function FacetLink({ param, currentQuery, label, count }: { param: string; currentQuery: string; label: string; count: number }) {
+  return (
+    <Link href={facetHref(currentQuery, param, label)} className="flex items-start justify-between gap-3 text-sm text-slate-700 hover:text-brand">
+      <span className="flex min-w-0 items-start gap-2">
+        <span className="mt-0.5 h-4 w-4 flex-none rounded bg-slate-200" aria-hidden />
+        <h3 className="truncate text-sm font-normal">{label}</h3>
+      </span>
+      <span className="text-slate-500">{count.toLocaleString("en-US")}</span>
+    </Link>
+  );
+}
+
+function facetHref(currentQuery: string, param: string, label: string) {
+  const search = new URLSearchParams(currentQuery);
+  search.set(param, label);
+  search.delete("page");
+  return `/database?${search.toString()}`;
 }
 
 function stringParam(value: string | string[] | undefined) {
