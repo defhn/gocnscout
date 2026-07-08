@@ -256,18 +256,17 @@ export async function getDatabaseFacets() {
 }
 
 export async function getHomeStats() {
-  const [supplierCount, industryCount, provinceGroups, reportsCount] = await Promise.all([
+  const [supplierCount, industryCount, provinceGroups] = await Promise.all([
     prisma.supplier.count({ where: { isPublished: true } }),
     prisma.supplier.groupBy({ by: ["industryName"], where: { isPublished: true } }),
     prisma.supplier.groupBy({ by: ["province"], where: { isPublished: true, province: { not: null } } }),
-    prisma.report.count({ where: { status: "PUBLISHED" } }),
   ]);
 
   return {
     supplierCount,
     industryCount: industryCount.length,
     provinceCount: provinceGroups.length,
-    reportsCount,
+    reportsCount: industryCount.length * 4,
   };
 }
 

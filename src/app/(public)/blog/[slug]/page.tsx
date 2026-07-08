@@ -118,7 +118,7 @@ export default async function BlogPostDetailPage({ params }: Props) {
               <Database className="h-6 w-6 text-teal-400" />
               <h3 className="text-base font-bold mt-4">Launch Supplier Search</h3>
               <p className="text-xs text-slate-400 leading-relaxed mt-2">
-                Vet 120,000+ China export manufacturers. Use filters for locations, product tags, capital size, and domain records.
+                Vet 20,000+ China export manufacturers. Use filters for locations, product tags, capital size, and domain records.
               </p>
               <ButtonLink href="/database" className="mt-5 w-full justify-center bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs">
                 Launch Search Engine <Search className="ml-1 h-3.5 w-3.5" />

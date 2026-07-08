@@ -1,8 +1,7 @@
-import Link from "next/link";
-import { Cpu, Hammer, Home, Sparkles, MapPin, FileText, CheckCircle2 } from "lucide-react";
+import { Sparkles, MapPin, CheckCircle2 } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { FaqSection } from "@/components/marketing/faq-section";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { createMetadata } from "@/config/seo";
 import { listCityPages } from "@/server/suppliers";
 import { ButtonLink } from "@/components/ui/button";

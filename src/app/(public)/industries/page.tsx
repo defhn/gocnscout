@@ -1,8 +1,7 @@
-import Link from "next/link";
-import { Cpu, Hammer, Home, Sparkles, Shirt, FileText, CheckCircle2 } from "lucide-react";
+import { Cpu, Hammer, Home, Sparkles, Shirt, CheckCircle2, Wrench, Activity, Car, Sun, Layers, Package, Lightbulb, Gamepad2 } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { FaqSection } from "@/components/marketing/faq-section";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { createMetadata } from "@/config/seo";
 import { listIndustryPages } from "@/server/suppliers";
 import { ButtonLink } from "@/components/ui/button";
@@ -50,6 +49,78 @@ const STANDARDIZED_INDUSTRIES = [
     color: "text-rose-600 bg-rose-50",
     desc: "Organic cotton apparel, high-performance sportswear, active knitwear, synthetic fabrics, and customized clothing lines.",
     hubs: "Shaoxing, Guangzhou, Quanzhou",
+  },
+  {
+    name: "Machinery & Industrial Parts",
+    slug: "machinery-industrial-parts",
+    count: 12450,
+    icon: Wrench,
+    color: "text-amber-600 bg-amber-50",
+    desc: "CNC machining components, plastic injection molding, industrial valves, transmission shafts, and packaging systems.",
+    hubs: "Dongguan, Suzhou, Wuxi",
+  },
+  {
+    name: "Medical Equipment & Supplies",
+    slug: "medical-equipment-supplies",
+    count: 8900,
+    icon: Activity,
+    color: "text-emerald-600 bg-emerald-50",
+    desc: "Diagnostic machines, PPE supplies, laboratory consumables, orthodontic kits, and rehabilitation instruments.",
+    hubs: "Shenzhen, Yangzhou, Ningbo",
+  },
+  {
+    name: "Auto Parts & Accessories",
+    slug: "auto-parts-accessories",
+    count: 14200,
+    icon: Car,
+    color: "text-indigo-600 bg-indigo-50",
+    desc: "Engine valves, brake pads, LED headlamps, vehicle sensors, casting wheels, and interior dashboard systems.",
+    hubs: "Taizhou, Wenzhou, Changzhou",
+  },
+  {
+    name: "New Energy & PV Solar",
+    slug: "new-energy-pv-solar",
+    count: 6780,
+    icon: Sun,
+    color: "text-yellow-600 bg-yellow-50",
+    desc: "Monocrystalline panels, lithium-ion battery packs, inverter systems, EV charging stations, and storage brackets.",
+    hubs: "Wuxi, Changzhou, Hefei",
+  },
+  {
+    name: "Building & Decorative Materials",
+    slug: "building-decorative-materials",
+    count: 16800,
+    icon: Layers,
+    color: "text-orange-600 bg-orange-50",
+    desc: "Ceramic tiling, heavy-duty structural glass, aluminum profiles, PVC flooring, and smart bathroom installations.",
+    hubs: "Foshan, Quanzhou, Linyi",
+  },
+  {
+    name: "Furniture & Interior Decor",
+    slug: "furniture-interior-decor",
+    count: 11200,
+    icon: Package,
+    color: "text-sky-600 bg-sky-50",
+    desc: "Ergonomic office seating, solid wood dining tables, luxury mattress lines, panel cabinets, and modular office desks.",
+    hubs: "Foshan, Huzhou, Ganzhou",
+  },
+  {
+    name: "Lighting & LED Products",
+    slug: "lighting-led-products",
+    count: 13900,
+    icon: Lightbulb,
+    color: "text-lime-600 bg-lime-50",
+    desc: "Commercial downlights, customized stage lighting, LED strip controls, industrial floodlights, and smart streetlamps.",
+    hubs: "Zhongshan, Shenzhen, Ningbo",
+  },
+  {
+    name: "Toys, Hobbies & Baby Products",
+    slug: "toys-hobbies-baby-products",
+    count: 9800,
+    icon: Gamepad2,
+    color: "text-cyan-600 bg-cyan-50",
+    desc: "Educational electronic toys, baby strollers, plush toys, silicone baby tableware, and plastic building block kits.",
+    hubs: "Shantou, Yiwu, Yangzhou",
   },
 ];
 

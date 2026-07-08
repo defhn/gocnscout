@@ -9,7 +9,7 @@ import { getHomeStats, listCityPages, listIndustryPages } from "@/server/supplie
 export const metadata = createMetadata({
   title: "China Supplier Database | Search & Verify Export Manufacturers",
   description:
-    "Unlock 120,000+ verified export exhibitors. Search by industry, product keywords, and location. Built for compliant B2B sourcing research.",
+    "Unlock 20,000+ verified export exhibitors. Search by industry, product keywords, and location. Built for compliant B2B sourcing research.",
 });
 
 export default async function HomePage() {
@@ -47,7 +47,7 @@ export default async function HomePage() {
               <span>Verified Export Supplier Sourcing Hub</span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.1] text-balance">
-              Unlock 120,000+ Export Exhibitors
+              Unlock 20,000+ Export Exhibitors
             </h1>
             <p className="max-w-2xl text-lg leading-relaxed text-slate-300">
               Accelerate manufacturer vetting with verified, structured, and compliant records. 
@@ -62,7 +62,7 @@ export default async function HomePage() {
               </ButtonLink>
             </div>
           </div>
-
+ 
           {/* Interactive Mock Dashboard */}
           <div className="relative rounded-2xl border border-slate-800 bg-slate-950/80 backdrop-blur-md p-6 shadow-2xl transition-all duration-500 hover:border-teal-500/40">
             <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
@@ -73,7 +73,7 @@ export default async function HomePage() {
               </div>
               <div className="text-xs text-slate-400 font-mono">live_database_status.json</div>
             </div>
-
+ 
             <div className="space-y-4">
               {/* Pseudo Search input */}
               <div className="relative rounded-lg bg-slate-900 border border-slate-800 px-3 py-2 flex items-center justify-between text-sm text-slate-400">
@@ -83,23 +83,23 @@ export default async function HomePage() {
                 </div>
                 <span className="text-xs bg-slate-800 px-1.5 py-0.5 rounded text-slate-500">Ctrl + K</span>
               </div>
-
+ 
               {/* Metric grid */}
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 transition-all duration-300 hover:border-teal-500/30">
-                  <p className="text-3xl font-bold text-white tracking-tight">{(stats.supplierCount || 120531).toLocaleString("en-US")}</p>
+                  <p className="text-3xl font-bold text-white tracking-tight">{(stats.supplierCount || 20291).toLocaleString("en-US")}</p>
                   <p className="mt-1 text-xs font-semibold text-slate-400 uppercase tracking-wide">Exhibitors</p>
                 </div>
                 <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 transition-all duration-300 hover:border-teal-500/30">
-                  <p className="text-3xl font-bold text-white tracking-tight">{(stats.industryCount || 48).toLocaleString("en-US")}</p>
+                  <p className="text-3xl font-bold text-white tracking-tight">{(stats.industryCount || 187).toLocaleString("en-US")}</p>
                   <p className="mt-1 text-xs font-semibold text-slate-400 uppercase tracking-wide">Industries</p>
                 </div>
                 <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 transition-all duration-300 hover:border-teal-500/30">
-                  <p className="text-3xl font-bold text-white tracking-tight">{(stats.provinceCount || 26).toLocaleString("en-US")}</p>
+                  <p className="text-3xl font-bold text-white tracking-tight">{(stats.provinceCount || 35).toLocaleString("en-US")}</p>
                   <p className="mt-1 text-xs font-semibold text-slate-400 uppercase tracking-wide">Provinces</p>
                 </div>
                 <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 transition-all duration-300 hover:border-teal-500/30">
-                  <p className="text-3xl font-bold text-teal-400 tracking-tight">{(stats.reportsCount || 12).toLocaleString("en-US")}</p>
+                  <p className="text-3xl font-bold text-teal-400 tracking-tight">{(stats.reportsCount || 748).toLocaleString("en-US")}</p>
                   <p className="mt-1 text-xs font-semibold text-slate-400 uppercase tracking-wide">PDF Reports</p>
                 </div>
               </div>

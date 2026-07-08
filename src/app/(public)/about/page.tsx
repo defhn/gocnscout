@@ -1,4 +1,4 @@
-import { CheckCircle2, ShieldCheck, Database, Award, Users, BookOpen } from "lucide-react";
+import { ShieldCheck, Database, Award, Users, BookOpen } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { FaqSection } from "@/components/marketing/faq-section";
 import { Card, CardContent } from "@/components/ui/card";

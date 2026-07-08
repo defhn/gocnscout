@@ -1,4 +1,4 @@
-import { Check, ShieldCheck, Database, Search, ArrowRight, BookOpen, UserCheck, HelpCircle } from "lucide-react";
+import { Check, ShieldCheck, Database, ArrowRight, UserCheck } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { FaqSection } from "@/components/marketing/faq-section";
 import { ButtonLink } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { getHomeStats } from "@/server/suppliers";
 
 export const metadata = createMetadata({
   title: "China Exporter Database | Verified Manufacturer Directory",
-  description: "Search 120,000+ verified export manufacturers. Filter by regional clusters, industry categories, and products. Clean, compliance-safe data.",
+  description: "Search 20,000+ verified export manufacturers. Filter by regional clusters, industry categories, and products. Clean, compliance-safe data.",
   path: "/china-exporter-database",
 });
 

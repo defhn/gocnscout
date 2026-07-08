@@ -90,7 +90,7 @@ export default function BlogListPage() {
               <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/10 rounded-full blur-2xl pointer-events-none" />
               <h3 className="text-lg font-bold">Search Real Exporters</h3>
               <p className="text-xs text-slate-400 leading-relaxed mt-2">
-                Stop relying on static PDFs or outdated lists. Filter 120,000+ export manufacturers directly in our real-time database dashboard.
+                Stop relying on static PDFs or outdated lists. Filter 20,000+ export manufacturers directly in our real-time database dashboard.
               </p>
               <ButtonLink href="/database" className="mt-5 w-full justify-center bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs py-2">
                 Launch Search Engine

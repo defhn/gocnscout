@@ -278,38 +278,6 @@ function facetLimit(params: Record<string, string | string[] | undefined>, param
   return Math.min(100, Math.max(10, Math.floor(value / 10) * 10));
 }
 
-function pageHref(params: Record<string, string | string[] | undefined>, page: number) {
-  const search = new URLSearchParams();
-  for (const [key, value] of Object.entries(params)) {
-    if (!value || key === "page") continue;
-    search.set(key, Array.isArray(value) ? value[0] || "" : value);
-  }
-  search.set("page", String(page));
-  return `/database?${search.toString()}`;
-}
-
-function hiddenSearchInputs(params: Record<string, string | string[] | undefined>, exclude: string[]) {
-  const excluded = new Set(exclude);
-  const values: Array<[string, string]> = [];
-  for (const [key, value] of Object.entries(params)) {
-    if (!value || excluded.has(key)) continue;
-    const normalized = Array.isArray(value) ? value[0] || "" : value;
-    if (normalized) values.push([key, normalized]);
-  }
-  return values;
-}
-
-function pageNumbers(currentPage: number, totalPages: number): Array<number | "..."> {
-  const pages = new Set<number>([1, totalPages, currentPage - 1, currentPage, currentPage + 1]);
-  const validPages = [...pages].filter((item) => item >= 1 && item <= totalPages).sort((a, b) => a - b);
-  const result: Array<number | "..."> = [];
-  for (const item of validPages) {
-    const previous = result[result.length - 1];
-    if (typeof previous === "number" && item - previous > 1) result.push("...");
-    result.push(item);
-  }
-  return result;
-}
 
 function queryString(params: Record<string, string | string[] | undefined>) {
   const search = new URLSearchParams();
