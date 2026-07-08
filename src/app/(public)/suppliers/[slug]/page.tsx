@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { Lock, Globe, ExternalLink, Award } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
@@ -6,9 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createMetadata } from "@/config/seo";
 import { getExhibitionTierLabel } from "@/config/field-policy";
-import { canViewStarterFields, canViewProFields, type AppPlanCode } from "@/config/plans";
+import { canViewStarterFields, canViewProFields, getPlan, type AppPlanCode } from "@/config/plans";
 import { getCurrentAppUser } from "@/server/auth";
 import { getSupplierBySlug } from "@/server/suppliers";
+import { prisma } from "@/lib/db";
+import { monthKey } from "@/lib/utils";
+import { canViewSupplierProfile, incrementUsage } from "@/server/quota";
+import { PlanCode } from "@/generated/prisma/enums";
+
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -42,9 +47,55 @@ export default async function SupplierPage({ params }: { params: Promise<{ slug:
 
   if (!supplier) notFound();
 
-  const planCode = (appUser?.planCode ?? "FREE") as AppPlanCode;
+  // 1. 强制登录才能查看供应商详情页
+  if (!appUser) {
+    redirect(`/sign-in?redirect_url=/suppliers/${slug}`);
+  }
+
+  const planCode = (appUser.planCode ?? "FREE") as AppPlanCode;
+  const userId = appUser.id;
+  const planLimit = getPlan(planCode).profileViewsPerMonth;
+
+  // 2. 检查本月查看详情页次数配额限制 (免费版限制 5 次/月)
+  if (planLimit !== "unlimited") {
+    const mKey = monthKey();
+    // 检查本月是否已看过该供应商 (去重：重复看同一个不重复扣减次数)
+    const existingView = await prisma.supplierProfileView.findFirst({
+      where: {
+        userId,
+        supplierId: supplier.id,
+        monthKey: mKey,
+      },
+    });
+
+    if (!existingView) {
+      const allowed = await canViewSupplierProfile(userId, planCode as PlanCode);
+      if (!allowed) {
+        // 渲染超出限额的付费墙页面
+        return <ProfileViewPaywall planCode={planCode} />;
+      }
+
+      // 记录本次访问，并扣减一次额度
+      await prisma.$transaction(async (tx) => {
+        await tx.supplierProfileView.create({
+          data: {
+            userId,
+            supplierId: supplier.id,
+            monthKey: mKey,
+          },
+        });
+        await tx.usageCounter.upsert({
+          where: { userId_kind_periodKey: { userId, kind: "profile_view", periodKey: mKey } },
+          update: { used: { increment: 1 } },
+          create: { userId, kind: "profile_view", periodKey: mKey, used: 1 },
+        });
+      });
+    }
+  }
+
   const canStarter = canViewStarterFields(planCode);
   const canPro = canViewProFields(planCode);
+
 
   const { label: tierLabel, tier } = getExhibitionTierLabel(supplier.exhibitionSessionCount);
 
@@ -226,3 +277,46 @@ function LockedFieldInline({ label, plan, compact = false }: { label: string; pl
     </Link>
   );
 }
+
+function ProfileViewPaywall({ planCode }: { planCode: string }) {
+  return (
+    <>
+      <Breadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Database", href: "/database" },
+          { label: "Limit Reached" },
+        ]}
+      />
+      <section className="container-page py-20 flex flex-col items-center justify-center">
+        <div className="w-full max-w-[500px] rounded-3xl bg-white border border-slate-200 p-8 shadow-xl text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-teal-50 text-teal-600 mb-6">
+            <Lock className="h-8 w-8 text-teal-600" />
+          </div>
+          <h1 className="text-2xl font-extrabold text-slate-950 tracking-tight">
+            Supplier Profile Limit Reached
+          </h1>
+          <p className="mt-4 text-sm leading-relaxed text-slate-600">
+            You have used all 5 of your free supplier profile views for this month. 
+            Upgrade to Starter or Pro to unlock unlimited profile views and get instant access to full verified supplier records.
+          </p>
+          <div className="mt-8 flex flex-col gap-3">
+            <Link
+              href="/pricing"
+              className="flex items-center justify-center gap-2 rounded-xl bg-teal-600 hover:bg-teal-700 px-5 py-3 text-sm font-semibold !text-white transition-all shadow-md"
+            >
+              View Plans & Upgrade
+            </Link>
+            <Link
+              href="/database"
+              className="rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-5 py-3 text-sm font-medium text-slate-600 transition-colors"
+            >
+              Back to Database
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
