@@ -35,11 +35,11 @@ export default async function DatabasePage({
   const page = Math.max(1, Number(stringParam(params.page) || 1));
 
   const [results, facets] = await Promise.all([
-    searchSuppliers({ q, industry, province, city, companyType, companySize, companyNature, foundedYear, registeredCapital, tradeMode, page, pageSize: 20 }).catch(() => ({
+    searchSuppliers({ q, industry, province, city, companyType, companySize, companyNature, foundedYear, registeredCapital, tradeMode, page, pageSize: 10 }).catch(() => ({
       suppliers: [],
       total: 0,
       page: 1,
-      pageSize: 20,
+      pageSize: 10,
       totalPages: 1,
     })),
     getDatabaseFacets().catch(() => ({
@@ -313,12 +313,14 @@ function Facet({ title, param, currentQuery, items }: { title: string; param: st
 
 function FacetLink({ param, currentQuery, label, count }: { param: string; currentQuery: string; label: string; count: number }) {
   return (
-    <Link href={facetHref(currentQuery, param, label)} className="flex items-start justify-between gap-3 text-sm text-slate-700 hover:text-brand">
-      <span className="flex min-w-0 items-start gap-2">
-        <span className="mt-0.5 h-4 w-4 flex-none rounded bg-slate-200" aria-hidden />
-        <h3 className="truncate text-sm font-normal">{label}</h3>
-      </span>
-      <span className="text-slate-500">{count.toLocaleString("en-US")}</span>
+    <Link
+      href={facetHref(currentQuery, param, label)}
+      title={label}
+      className="grid min-w-0 grid-cols-[16px_minmax(0,1fr)_auto] items-start gap-2 text-sm text-slate-700 hover:text-brand"
+    >
+      <span className="mt-0.5 h-4 w-4 rounded bg-slate-200" aria-hidden />
+      <h3 className="min-w-0 truncate text-sm font-normal leading-5">{label}</h3>
+      <span className="pl-2 text-right text-slate-500">{count.toLocaleString("en-US")}</span>
     </Link>
   );
 }
