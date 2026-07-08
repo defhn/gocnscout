@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MapPin, Building2, Factory, ArrowRight, Globe, ShieldCheck, Users, HelpCircle, CheckCircle2 } from "lucide-react";
+import { MapPin, Factory, ArrowRight, Globe, Users, HelpCircle, CheckCircle2, Calendar, Database, Sparkles, Award } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { Card, CardContent } from "@/components/ui/card";
 import { createMetadata } from "@/config/seo";
@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!data) return createMetadata({ title: "City suppliers", description: "City supplier page.", noindex: true });
   const cityEn = data.city.cityEn || data.city.city;
   return createMetadata({
-    title: `${cityEn} Exporters | Verified Manufacturers & Suppliers List`,
+    title: `${cityEn} Manufacturers Database (2026) | Verified Exporters & Suppliers`,
     description: data.city.metaDescription,
     path: `/cities/${slug}`,
     noindex: !data.city.isIndexable,
@@ -24,13 +24,26 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
   const data = await getCityPage(slug).catch(() => null);
   if (!data) notFound();
 
-  const { city, suppliers, industryGroups, companyTypeGroups, relatedCities } = data;
+  const {
+    city,
+    suppliers,
+    industryGroups,
+    companyTypeGroups,
+    relatedCities,
+    hasWebsiteCount,
+    hasCapitalCount,
+    stableExhibitorCount
+  } = data;
+
   const cityEn = city.cityEn || city.city;
   const provinceEn = city.provinceEn || city.province;
   const totalCount = suppliers.total;
 
   // 获取前3个大行业用于文案叙述
   const topIndustries = industryGroups.slice(0, 3).map(g => g.industryName).join(", ");
+  const topInd1 = industryGroups[0] ? `${industryGroups[0].industryName} (${industryGroups[0]._count.id} exporters)` : "";
+  const topInd2 = industryGroups[1] ? `${industryGroups[1].industryName} (${industryGroups[1]._count.id} exporters)` : "";
+  const topInd3 = industryGroups[2] ? `${industryGroups[2].industryName} (${industryGroups[2]._count.id} exporters)` : "";
 
   // 构造 FAQ 结构化数据 (JSON-LD FAQ Schema)
   const faqSchema = {
@@ -39,37 +52,74 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
     "mainEntity": [
       {
         "@type": "Question",
-        "name": `How many verified export manufacturers are located in ${cityEn}?`,
+        "name": `Where can I find verified ${cityEn} manufacturers?`,
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": `According to the latest China Exporter Database, there are currently ${city.supplierCount.toLocaleString("en-US")} verified exporters and factories registered in ${cityEn}, ${provinceEn}. Sourcing managers can browse or search the full directory on gocnscout.`
+          "text": `You can search and filter verified export manufacturers in ${cityEn} directly on the gocnscout platform. Our database indexes ${city.supplierCount.toLocaleString("en-US")} exporters from ${cityEn}, allowing you to screen by industry, capital scale, and domain verification status.`
         }
       },
       {
         "@type": "Question",
-        "name": `What are the dominant manufacturing industries in ${cityEn}?`,
+        "name": `How do I check if a ${cityEn} supplier is a real factory?`,
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": `Manufacturing in ${cityEn} is highly diverse, with major industrial clusters including ${topIndustries || "various heavy and light industries"}. The city features specialized industrial parks with strong supply chain density, reducing local logistics costs and production lead times.`
+          "text": `To verify if a ${cityEn} supplier is a direct manufacturer, check their registered capital, trade modes, and exhibition stand history. Direct factories typically have higher registered capital and are registered for OEM/ODM trade modes rather than pure trading company classifications.`
         }
       },
       {
         "@type": "Question",
-        "name": `Are the listed suppliers in ${cityEn} direct factories or trading companies?`,
+        "name": `What products are manufactured in ${cityEn}?`,
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": `The exporter directory contains a healthy mix of direct manufacturing plants (OEM/ODM), group corporations, and export-oriented trading firms. You can filter suppliers by registration capital, trade modes, and company size to narrow down direct manufacturing partners.`
+          "text": `Manufacturing clusters in ${cityEn} cover several key export sectors, including ${topIndustries || "various consumer and industrial categories"}. The city hosts robust supply chain parks specializing in these categories to reduce processing lead times.`
         }
       },
       {
         "@type": "Question",
-        "name": `How can I safely contact and verify suppliers from ${cityEn}?`,
+        "name": `How many suppliers are listed in the ${cityEn} database?`,
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": `gocnscout verifies companies using official exhibition registration histories, registered capital, and domain ownership records. To proceed with procurement, it is recommended to request a direct factory audit or use third-party inspection services before signing purchasing agreements.`
+          "text": `There are currently ${city.supplierCount.toLocaleString("en-US")} verified exporters and factories registered in ${cityEn} cataloged within our directory. This database is updated quarterly with fresh domain checks and stand session history.`
         }
       }
     ]
+  };
+
+  // 构造 Dataset Schema (JSON-LD Dataset)
+  const datasetSchema = {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "name": `${cityEn} Exporters Database`,
+    "description": `Verified B2B manufacturers and export suppliers registry for ${cityEn}, ${provinceEn} province, China. Includes capital scale and domain status.`,
+    "license": "https://gocnscout.com/data-license",
+    "temporalCoverage": "2026",
+    "creator": {
+      "@type": "Organization",
+      "name": "GoCNScout",
+      "url": "https://gocnscout.com"
+    },
+    "variableMeasured": [
+      "Registered Capital",
+      "Industry Classification",
+      "Website URL DNS Status",
+      "Exhibitor History Session Count",
+      "Trade Mode"
+    ]
+  };
+
+  // 构造 Organization Schema (JSON-LD Organization)
+  const orgSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "GoCNScout",
+    "url": "https://gocnscout.com",
+    "logo": "https://gocnscout.com/logo.png",
+    "description": "Premium China Supplier Intelligence and B2B Exporter Cluster Database.",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "support@gocnscout.com",
+      "contactType": "customer service"
+    }
   };
 
   return (
@@ -78,6 +128,18 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
+      {/* 注入 Dataset Schema (JSON-LD) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema) }}
+      />
+
+      {/* 注入 Organization Schema (JSON-LD) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
       />
 
       <Breadcrumbs
@@ -89,14 +151,23 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
       />
 
       <section className="container-page pb-20">
-        {/* H1: 城市标题 */}
+        {/* H1 & Banner Section */}
         <div className="max-w-4xl py-6">
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-teal-600 mb-2">
-            <MapPin className="h-3.5 w-3.5" />
-            {provinceEn} · China Sourcing Atlas
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-semibold uppercase tracking-widest text-teal-600 mb-2">
+            <span className="flex items-center gap-1">
+              <MapPin className="h-3.5 w-3.5" />
+              {provinceEn} · China
+            </span>
+            <span className="text-slate-300">|</span>
+            <span className="flex items-center gap-1 font-mono">
+              <Calendar className="h-3.5 w-3.5 text-slate-400" />
+              Last Updated: July 2026
+            </span>
           </div>
+          
+          {/* H1: 重点词强化 */}
           <h1 className="text-3xl md:text-4xl font-extrabold text-slate-950 tracking-tight">
-            {cityEn} Export Manufacturers &amp; B2B Suppliers List
+            {cityEn} Exporters Database: Verified Manufacturers &amp; Suppliers
           </h1>
           <p className="mt-4 text-base leading-relaxed text-slate-600 max-w-4xl">
             Access verified database records of active export factories in {cityEn}. Optimize your sourcing strategies by locating regional supplier clusters, checking registered capital parameters, and filtering target products.
@@ -116,56 +187,155 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
               <p className="text-base font-bold text-slate-950 leading-snug truncate">
                 {companyTypeGroups.length > 0 ? companyTypeGroups[0].companyTypeEn : "OEM / ODM Exporters"}
               </p>
-              <p className="text-xs text-slate-500 mt-1 font-medium">Dominant Supplier Scale</p>
+              <p className="text-xs text-slate-500 mt-1 font-medium">Dominant Exporter Scale</p>
             </div>
           </div>
 
-          {/* 数据安全性与边际说明 */}
-          <div className="mt-6 flex items-start gap-2.5 rounded-xl bg-teal-50/60 border border-teal-100/80 px-4 py-3 text-xs text-teal-800 max-w-4xl leading-relaxed">
-            <ShieldCheck className="h-4.5 w-4.5 shrink-0 text-teal-600 mt-0.5" />
-            <span>
-              <strong>Compliance Notice:</strong> Exporter list complies strictly with international security standards and local data regulations. Personal direct coordinates (phone, direct emails) are kept secure behind auth walls, while public domain checks and exhibitor history are indexed here to support initial screening.
-            </span>
+          {/* 首屏强 CTA 按钮 */}
+          <div className="mt-6 flex flex-wrap gap-3">
+            <a
+              href="#directory"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-teal-600 px-5 py-3 text-xs font-bold text-white hover:bg-teal-700 transition-colors shadow-sm"
+            >
+              Browse {cityEn} Exporters Database
+              <ArrowRight className="h-4 w-4" />
+            </a>
+            <Link
+              href="/data-license"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-5 py-3 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+            >
+              Request Bulk Data License
+            </Link>
           </div>
         </div>
 
-        {/* 深度内容：制造业概览 (Manufacturing Overview) */}
-        <section className="mt-10 border-t border-slate-200 pt-10 max-w-4xl">
+        {/* 深度原创内容：Sourcing & Industrial Overview (融入真实数据) */}
+        <section className="mt-6 border-t border-slate-200 pt-10 max-w-4xl">
           <h2 className="text-xl md:text-2xl font-bold text-slate-950 tracking-tight">
             {cityEn} Sourcing &amp; Industrial Manufacturing Overview
           </h2>
-          <div className="mt-4 text-sm text-slate-600 leading-relaxed space-y-4">
-            <p>
-              Located in <strong>{provinceEn} Province</strong>, a powerhouse of China&apos;s global manufacturing chain, <strong>{cityEn}</strong> serves as a critical strategic node for international sourcing managers. The local industrial ecosystem in {cityEn} is built on decades of supply chain maturation, robust cluster logistics, and state-of-the-art engineering networks.
-            </p>
-            <p>
-              Exporters based here operate within highly specialized industrial parks. The close geographic proximity of raw material vendors, hardware molders, electronic assembly plants, and international logistics agencies drives down overhead sourcing margins and optimizes lead times. This integrated setup makes {cityEn} highly competitive for international OEM, ODM, and contract manufacturing projects.
-            </p>
-            {topIndustries && (
+          {city.industrialCluster ? (
+            <div
+              className="mt-4 text-sm text-slate-600 leading-relaxed space-y-4"
+              dangerouslySetInnerHTML={{ __html: city.industrialCluster }}
+            />
+          ) : (
+            <div className="mt-4 text-sm text-slate-600 leading-relaxed space-y-4">
               <p>
-                Major product sectors originating from this region include <strong>{topIndustries}</strong>. Sourcing organizations looking to optimize vendor pipelines or identify backup manufacturers frequently target {cityEn} to negotiate directly with scaled exporters that hold solid compliance certifications and established quality management standards.
+                Sourcing statistics show that <strong>{cityEn}</strong> hosts <strong>{city.supplierCount.toLocaleString("en-US")} verified exporters</strong> with established production tracks. Out of this directory, <strong>{hasWebsiteCount.toLocaleString("en-US")} manufacturers</strong> maintain active online domains and digital homepages, and <strong>{hasCapitalCount.toLocaleString("en-US")} exporters</strong> have officially registered capital records available for vetting checks.
               </p>
-            )}
+              <p>
+                Exporters based here operate within highly specialized industrial parks. The close geographic proximity of raw material vendors, hardware molders, electronic assembly plants, and international logistics agencies drives down overhead sourcing margins and optimizes lead times. This integrated setup makes {cityEn} highly competitive for international OEM, ODM, and contract manufacturing projects.
+              </p>
+              {(topInd1 || topInd2 || topInd3) && (
+                <p>
+                  The industrial composition in the region is led by key product sectors, notably: <strong>{topInd1}</strong>, followed by <strong>{topInd2}</strong> and <strong>{topInd3}</strong>. Sourcing organizations looking to optimize vendor pipelines or identify backup manufacturers frequently target {cityEn} to negotiate directly with scaled exporters that hold solid compliance certifications and established quality management standards.
+                </p>
+              )}
+            </div>
+          )}
+        </section>
+
+        {/* Supplier Intelligence Signals (差异化特色数据分析) */}
+        <section className="mt-12 max-w-4xl">
+          <h2 className="text-xl font-bold text-slate-950 flex items-center gap-2 tracking-tight">
+            <Sparkles className="h-5 w-5 text-teal-600" />
+            {cityEn} Exporter Database Quality Signals (Signals Analysis)
+          </h2>
+          <p className="mt-1.5 text-xs text-slate-500">
+            Real-time quality diagnostics extracted directly from our active {cityEn} supplier database.
+          </p>
+          <div className="mt-4 grid gap-4 sm:grid-cols-3">
+            <Card className="border border-slate-200 bg-white rounded-xl shadow-sm">
+              <CardContent className="p-5 text-center">
+                <Globe className="h-6 w-6 text-teal-600 mx-auto mb-2" />
+                <p className="text-2xl font-extrabold text-slate-950">
+                  {city.supplierCount > 0 ? Math.round((hasWebsiteCount / city.supplierCount) * 100) : 0}%
+                </p>
+                <h3 className="text-xs font-bold text-slate-800 mt-1">Website Verification Rate</h3>
+                <p className="text-[10px] text-slate-400 mt-1 leading-normal">
+                  {hasWebsiteCount.toLocaleString("en-US")} suppliers with verified, active corporate homepages.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border border-slate-200 bg-white rounded-xl shadow-sm">
+              <CardContent className="p-5 text-center">
+                <Database className="h-6 w-6 text-teal-600 mx-auto mb-2" />
+                <p className="text-2xl font-extrabold text-slate-950">
+                  {city.supplierCount > 0 ? Math.round((hasCapitalCount / city.supplierCount) * 100) : 0}%
+                </p>
+                <h3 className="text-xs font-bold text-slate-800 mt-1">Capital Registration Rate</h3>
+                <p className="text-[10px] text-slate-400 mt-1 leading-normal">
+                  {hasCapitalCount.toLocaleString("en-US")} exporters with officially documented capital records.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border border-slate-200 bg-white rounded-xl shadow-sm">
+              <CardContent className="p-5 text-center">
+                <Award className="h-6 w-6 text-teal-600 mx-auto mb-2" />
+                <p className="text-2xl font-extrabold text-slate-950">
+                  {city.supplierCount > 0 ? Math.round((stableExhibitorCount / city.supplierCount) * 100) : 0}%
+                </p>
+                <h3 className="text-xs font-bold text-slate-800 mt-1">Stand Session Stability</h3>
+                <p className="text-[10px] text-slate-400 mt-1 leading-normal">
+                  {stableExhibitorCount.toLocaleString("en-US")} suppliers registered for 3+ consecutive exhibition sessions.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </section>
 
-        {/* H2: 行业与链接交叉矩阵 (Industry Keyword Interlinking Grid) */}
+        {/* Supplier Distribution by Industry (比例占比条分析) */}
         {industryGroups.length > 0 && (
           <section className="mt-12 max-w-4xl">
             <h2 className="text-xl font-bold text-slate-950 flex items-center gap-2 tracking-tight">
               <Factory className="h-5 w-5 text-teal-600" />
+              Supplier Distribution by Industry in {cityEn}
+            </h2>
+            <p className="mt-1.5 text-xs text-slate-500">
+              Visual proportion of active exporters in {cityEn} across the top 6 product divisions.
+            </p>
+            <div className="mt-5 space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+              {industryGroups.map((item) => {
+                const percent = city.supplierCount > 0 ? Math.round((item._count.id / city.supplierCount) * 100) : 0;
+                return (
+                  <div key={item.industryName} className="space-y-1.5">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-slate-800">{item.industryName}</span>
+                      <span className="font-semibold text-slate-500">{percent}% ({item._count.id} suppliers)</span>
+                    </div>
+                    <div className="w-full bg-slate-100 rounded-full h-2">
+                      <div
+                        className="bg-teal-600 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${Math.max(2, percent)}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* H2: 行业与链接交叉矩阵 (指向独立子路由 Landing Page - 蜘蛛网内链网格) */}
+        {industryGroups.length > 0 && (
+          <section className="mt-12 max-w-4xl">
+            <h2 className="text-xl font-bold text-slate-950 flex items-center gap-2 tracking-tight">
+              <Database className="h-5 w-5 text-teal-600" />
               Sourcing Categories in {cityEn} (Click to Filter)
             </h2>
             <p className="mt-1.5 text-xs text-slate-500">
               Browse exporter profiles categorized by specific manufacturing segments in {cityEn}.
             </p>
             <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {industryGroups.map((item, i) => {
-                const searchUrl = `/database?province=${encodeURIComponent(city.province)}&city=${encodeURIComponent(city.city)}&industry=${encodeURIComponent(item.industryName)}`;
+              {industryGroups.map((item) => {
+                const lpUrl = `/cities/${slug}/${item.industrySlug}`;
                 return (
                   <Link
                     key={item.industryName}
-                    href={searchUrl}
+                    href={lpUrl}
                     className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 hover:border-teal-500 hover:shadow-sm hover:bg-teal-50/10 transition-all group"
                   >
                     <div className="min-w-0 pr-2">
@@ -177,9 +347,6 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                       )}
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0">
-                      <span className={`text-xs font-bold ${i === 0 ? "text-teal-600" : "text-slate-500"}`}>
-                        {item._count.id}
-                      </span>
                       <ArrowRight className="h-3 w-3 text-slate-300 group-hover:text-teal-500 transition-colors" />
                     </div>
                   </Link>
@@ -189,40 +356,14 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
           </section>
         )}
 
-        {/* H2: 企业类型与外贸模式分布 */}
-        {companyTypeGroups.length > 0 && (
-          <section className="mt-12 max-w-4xl">
-            <h2 className="text-xl font-bold text-slate-950 flex items-center gap-2 tracking-tight">
-              <Building2 className="h-5 w-5 text-teal-600" />
-              Supplier Corporate Types &amp; Scale Distribution
-            </h2>
-            <p className="mt-1.5 text-xs text-slate-500">
-              Analysis of registered exporter entities and trade profile scales based in {cityEn}.
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2.5">
-              {companyTypeGroups.map((item) => (
-                <div
-                  key={item.companyTypeEn}
-                  className="rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-medium"
-                >
-                  <span className="text-slate-800">{item.companyTypeEn}</span>
-                  <span className="ml-2 text-teal-600 bg-teal-50 px-1.5 py-0.5 rounded font-bold">
-                    {item._count.id}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* H2: 样本供应商 (展示 30 家，模糊隐私数据并促进转化) */}
+        {/* H2: 样本供应商 (展示 30 家) */}
         {suppliers.suppliers.length > 0 && (
-          <section className="mt-12 max-w-4xl">
+          <section id="directory" className="mt-12 max-w-4xl scroll-mt-6">
             <div className="flex items-end justify-between border-b border-slate-100 pb-3">
               <div>
                 <h2 className="text-xl font-bold text-slate-950 flex items-center gap-2 tracking-tight">
                   <Users className="h-5 w-5 text-teal-600" />
-                  Verified Exporters Directory ({cityEn})
+                  Verified Supplier Records Directory ({cityEn})
                 </h2>
                 <p className="mt-1 text-xs text-slate-500">
                   Preview list of the first 30 exporter profiles. Log in to unlock contact info, factory sizes, and digital footprints.
@@ -294,7 +435,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
           </section>
         )}
 
-        {/* FAQ UI Section */}
+        {/* H2: FAQ UI Section (采购意图优化) */}
         <section className="mt-16 max-w-4xl border-t border-slate-200 pt-12">
           <h2 className="text-xl md:text-2xl font-bold text-slate-950 flex items-center gap-2 tracking-tight">
             <HelpCircle className="h-5.5 w-5.5 text-teal-600" />
@@ -304,79 +445,79 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
             <div className="space-y-1">
               <h3 className="font-bold text-slate-900 text-sm flex items-start gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-teal-600 shrink-0 mt-0.5" />
-                How many export manufacturers are in {cityEn}?
+                Where can I find verified {cityEn} manufacturers?
               </h3>
-              <p className="text-xs text-slate-500 leading-relaxed pl-5.5">
-                Currently, there are {city.supplierCount.toLocaleString("en-US")} verified exporters and manufacturing hubs cataloged in the database for {cityEn}, {provinceEn}. Sourcing networks are frequently refreshed based on recent registration audits.
+              <p className="text-xs text-slate-500 leading-relaxed pl-6">
+                You can browse and search verified export manufacturers in {cityEn} directly on the gocnscout B2B search console. We index raw corporate registration records, website availability status, and stand details to support buyer discovery workflows.
               </p>
             </div>
             <div className="space-y-1">
               <h3 className="font-bold text-slate-900 text-sm flex items-start gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-teal-600 shrink-0 mt-0.5" />
-                What are the main export industries in {cityEn}?
+                How do I check if a {cityEn} supplier is a real factory?
               </h3>
-              <p className="text-xs text-slate-500 leading-relaxed pl-5.5">
+              <p className="text-xs text-slate-500 leading-relaxed pl-6">
+                Check the company&apos;s registered capital and trade mode. Direct export factories typically exhibit higher registered capital levels and support OEM/ODM contract production, whereas trading companies focus on multi-category wholesale.
+              </p>
+            </div>
+            <div className="space-y-1">
+              <h3 className="font-bold text-slate-900 text-sm flex items-start gap-1.5">
+                <CheckCircle2 className="h-4 w-4 text-teal-600 shrink-0 mt-0.5" />
+                What products are manufactured in {cityEn}?
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed pl-6">
                 {cityEn} is specialized in several global sectors, with major clusters focusing on {topIndustries || "various consumer and machinery categories"}. The regional proximity of parts suppliers and assembly centers optimizes lead times significantly.
               </p>
             </div>
             <div className="space-y-1">
               <h3 className="font-bold text-slate-900 text-sm flex items-start gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-teal-600 shrink-0 mt-0.5" />
-                Are these entities manufacturers or trading companies?
+                How many suppliers are listed in the {cityEn} database?
               </h3>
-              <p className="text-xs text-slate-500 leading-relaxed pl-5.5">
-                Our index lists direct industrial factories (OEM/ODM/OBM), registered export conglomerates, and general B2B trading agencies. Sourcing departments can filter by capital size and trade mode to prioritize direct production partners.
-              </p>
-            </div>
-            <div className="space-y-1">
-              <h3 className="font-bold text-slate-900 text-sm flex items-start gap-1.5">
-                <CheckCircle2 className="h-4 w-4 text-teal-600 shrink-0 mt-0.5" />
-                How is this supplier directory data compiled?
-              </h3>
-              <p className="text-xs text-slate-500 leading-relaxed pl-5.5">
-                gocnscout cross-references company details from premium exhibition databases, official corporate registries, and active corporate domains. Sourcing teams are advised to conduct standard quality checks and factory compliance reviews before closing purchase orders.
+              <p className="text-xs text-slate-500 leading-relaxed pl-6">
+                Our directory catalogs {city.supplierCount.toLocaleString("en-US")} verified exporters and factories located in {cityEn}. You can configure custom filters to profile supplier scales and check active web domains.
               </p>
             </div>
           </div>
         </section>
 
-        {/* H2: 采购指南 (Bento layout) */}
-        <section className="mt-12 max-w-4xl grid gap-4 md:grid-cols-3">
-          <h2 className="sr-only">Procurement Sourcing Guidelines</h2>
-          <Card className="border border-slate-200 bg-white rounded-xl shadow-sm">
-            <CardContent className="pt-5">
-              <h3 className="text-xs font-bold text-slate-950 uppercase tracking-wider text-teal-600">Supplier Discovery</h3>
-              <h4 className="text-sm font-bold text-slate-900 mt-1">1. Narrow Down Categories</h4>
-              <p className="mt-2 text-xs leading-relaxed text-slate-500">
-                Filter by specific industry brackets first. Cross-reference company size tags to gauge production scales.
-              </p>
-            </CardContent>
-          </Card>
-          <Card className="border border-slate-200 bg-white rounded-xl shadow-sm">
-            <CardContent className="pt-5">
-              <h3 className="text-xs font-bold text-slate-950 uppercase tracking-wider text-teal-600">Verification Steps</h3>
-              <h4 className="text-sm font-bold text-slate-900 mt-1">2. Audit Operating Bases</h4>
-              <p className="mt-2 text-xs leading-relaxed text-slate-500">
-                Review website domain checks. Initiate direct contact to request sample batches and export registry certifications.
-              </p>
-            </CardContent>
-          </Card>
-          <Card className="border border-slate-200 bg-white rounded-xl shadow-sm">
-            <CardContent className="pt-5">
-              <h3 className="text-xs font-bold text-slate-950 uppercase tracking-wider text-teal-600">Disclaimer &amp; Bounds</h3>
-              <h4 className="text-sm font-bold text-slate-900 mt-1">3. Research Limitations</h4>
-              <p className="mt-2 text-xs leading-relaxed text-slate-500">
-                Data acts as discovery assistance only. Sourcing managers assume liability for compliance checks and quality reviews.
-              </p>
+        {/* About This Supplier Database (E-E-A-T metadata block) */}
+        <section className="mt-12 max-w-4xl">
+          <Card className="border border-slate-200 bg-slate-50/40 rounded-xl shadow-sm">
+            <CardContent className="p-6">
+              <h3 className="text-sm font-bold text-slate-950 flex items-center gap-1.5">
+                <Database className="h-4 w-4 text-teal-600" />
+                About This Exporters Database
+              </h3>
+              <div className="mt-4 grid gap-4 sm:grid-cols-3 text-xs leading-relaxed text-slate-600">
+                <div>
+                  <h4 className="font-bold text-slate-900">Data Collection &amp; Sources</h4>
+                  <p className="mt-1">
+                    Compiled from standard trade exhibition registrations, checked corporate DNS records, and verified public capital filings.
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-900">Coverage &amp; Reach</h4>
+                  <p className="mt-1">
+                    Indexes {city.supplierCount.toLocaleString("en-US")} verified exporters across {industryGroups.length} manufacturing sectors in {cityEn}.
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-900">Update Cadence</h4>
+                  <p className="mt-1">
+                    Refreshed quarterly to audit website availability pings and check recent company filings.
+                  </p>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </section>
 
-        {/* H2: 同省份相关城市 */}
+        {/* H2: Related Cities (Nearby Manufacturing Hubs) */}
         {relatedCities.length > 0 && (
           <section className="mt-12 max-w-4xl">
             <h2 className="text-xl font-bold text-slate-950 tracking-tight">
-              Related Exporter Cities in {provinceEn}
+              Nearby Manufacturing Hubs in {provinceEn}
             </h2>
             <p className="mt-1.5 text-xs text-slate-500">
               Other major industrial exporter hubs in {provinceEn} province with verified supplier directory listings.

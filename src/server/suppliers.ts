@@ -349,11 +349,19 @@ export async function getCityPage(slug: string) {
   const city = await prisma.cityPage.findUnique({ where: { slug } });
   if (!city) return null;
 
-  const [suppliers, industryGroups, companyTypeGroups, relatedCities] = await Promise.all([
+  const [
+    suppliers,
+    industryGroups,
+    companyTypeGroups,
+    relatedCities,
+    hasWebsiteCount,
+    hasCapitalCount,
+    stableExhibitorCount
+  ] = await Promise.all([
     searchSuppliers({ province: city.province, city: city.city, pageSize: 30 }),
     // 该城市的行业分布（前6大行业）
     prisma.supplier.groupBy({
-      by: ["industryName", "industryNameCn"],
+      by: ["industryName", "industryNameCn", "industrySlug"],
       where: { isPublished: true, city: city.city, province: city.province },
       _count: { id: true },
       orderBy: { _count: { id: "desc" } },
@@ -373,9 +381,30 @@ export async function getCityPage(slug: string) {
       take: 5,
       select: { slug: true, city: true, cityEn: true, supplierCount: true },
     }),
+    // 信号 1: 拥有官网的商户数量
+    prisma.supplier.count({
+      where: { isPublished: true, city: city.city, province: city.province, websiteUrl: { not: null } }
+    }),
+    // 信号 2: 拥有注册资本商户数量
+    prisma.supplier.count({
+      where: { isPublished: true, city: city.city, province: city.province, registeredCapital: { not: null } }
+    }),
+    // 信号 3: 参展届数 >= 3 届的稳定展商数量
+    prisma.supplier.count({
+      where: { isPublished: true, city: city.city, province: city.province, exhibitionSessionCount: { gte: 3 } }
+    })
   ]);
 
-  return { city, suppliers, industryGroups, companyTypeGroups, relatedCities };
+  return {
+    city,
+    suppliers,
+    industryGroups,
+    companyTypeGroups,
+    relatedCities,
+    hasWebsiteCount,
+    hasCapitalCount,
+    stableExhibitorCount
+  };
 }
 
 export async function getProductPage(slug: string) {
