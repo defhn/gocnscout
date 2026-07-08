@@ -1,7 +1,15 @@
 "use client";
 
-import { SupplierTable, type SupplierRow } from "@/components/database/supplier-detail-modal";
+import dynamic from "next/dynamic";
+import type { SupplierRow } from "@/components/database/supplier-detail-modal";
 import type { AppPlanCode } from "@/config/plans";
+
+
+const SupplierTable = dynamic(
+  () =>
+    import("@/components/database/supplier-detail-modal").then((mod) => mod.SupplierTable),
+  { ssr: false }
+);
 
 export function SupplierTableClient({
   suppliers,
@@ -12,3 +20,4 @@ export function SupplierTableClient({
 }) {
   return <SupplierTable suppliers={suppliers} planCode={planCode} />;
 }
+
