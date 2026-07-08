@@ -16,6 +16,7 @@ const RETRY_DELAY_MS = 3000;
 const CONNECTION_TIMEOUT_MS = 20000;
 const STATEMENT_TIMEOUT_MS = 60000;
 const SYNC_LIMIT = Number(process.env.CANTON_FAIR_SYNC_LIMIT || 0);
+const CONCURRENCY = Number(process.env.CANTON_FAIR_SYNC_CONCURRENCY || 5);
 
 function clean(value) {
   const text = String(value ?? "").trim();
@@ -260,12 +261,19 @@ async function upsertRecord(client, record) {
   for (const item of productsEn) keywordRows.push([null, item, "products_en"]);
   for (const item of c.keywordsCn || []) keywordRows.push([item, item, "keywords_cn"]);
   for (const item of keywordsEn) keywordRows.push([null, item, "keywords_en"]);
+  const keywordParams = [];
+  const keywordValues = [];
   for (const [keywordCn, keywordEn, sourceField] of keywordRows) {
     const value = clean(keywordEn);
     if (!value) continue;
+    const base = keywordParams.length;
+    keywordParams.push(newId(), supplierId, keywordCn, value, slugify(value), sourceField, 0.9);
+    keywordValues.push(`($${base + 1},$${base + 2},$${base + 3},$${base + 4},$${base + 5},$${base + 6},$${base + 7})`);
+  }
+  if (keywordValues.length) {
     await client.query(
-      `insert into "SupplierProductKeyword" ("id","supplierId","keywordCn","keywordEn","keywordSlug","sourceField","confidence") values ($1,$2,$3,$4,$5,$6,$7) on conflict ("supplierId","keywordSlug","sourceField") do nothing`,
-      [newId(), supplierId, keywordCn, value, slugify(value), sourceField, 0.9],
+      `insert into "SupplierProductKeyword" ("id","supplierId","keywordCn","keywordEn","keywordSlug","sourceField","confidence") values ${keywordValues.join(",")} on conflict ("supplierId","keywordSlug","sourceField") do nothing`,
+      keywordParams,
     );
   }
 }
@@ -285,8 +293,9 @@ async function main() {
   });
   const existing = await getExistingHashes(pool);
   const totals = { total: rows.length, synced: 0, skipped: 0, failed: 0 };
-  let batch = [];
   const failures = [];
+  const pendingBatches = [];
+  let currentBatch = [];
 
   for (const record of rows) {
     const validationErrors = validateRecord(record);
@@ -299,25 +308,30 @@ async function main() {
       totals.skipped += 1;
       continue;
     }
-    batch.push(record);
-    if (batch.length >= BATCH_SIZE) {
+    currentBatch.push(record);
+    if (currentBatch.length >= BATCH_SIZE) {
+      pendingBatches.push(currentBatch);
+      currentBatch = [];
+    }
+  }
+  if (currentBatch.length) pendingBatches.push(currentBatch);
+
+  console.log(`[start-sync] pendingBatches=${pendingBatches.length} concurrency=${CONCURRENCY}`);
+
+  const queue = [...pendingBatches];
+  const workers = Array.from({ length: Math.min(CONCURRENCY, queue.length) }, async () => {
+    while (true) {
+      const batch = queue.shift();
+      if (!batch) break;
       const error = await syncBatchWithRetry(pool, batch, totals);
       if (error) {
         totals.failed += batch.length;
         failures.push(...batch.map((item) => ({ sourceRowNumber: item.sourceRowNumber, sourceRowHash: item.sourceRowHash, errorMessage: error.message })));
         console.log(`[failed-batch] size=${batch.length} error=${error.message}`);
       }
-      batch = [];
     }
-  }
-  if (batch.length) {
-    const error = await syncBatchWithRetry(pool, batch, totals);
-    if (error) {
-      totals.failed += batch.length;
-      failures.push(...batch.map((item) => ({ sourceRowNumber: item.sourceRowNumber, sourceRowHash: item.sourceRowHash, errorMessage: error.message })));
-      console.log(`[failed-batch] size=${batch.length} error=${error.message}`);
-    }
-  }
+  });
+  await Promise.all(workers);
   appendJsonl(SYNC_FAILED_FILE, failures);
   saveState(totals);
   await pool.end();
