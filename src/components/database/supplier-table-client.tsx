@@ -14,10 +14,28 @@ const SupplierTable = dynamic(
 export function SupplierTableClient({
   suppliers,
   planCode,
+  total,
+  page,
+  totalPages,
+  searchParams,
 }: {
   suppliers: SupplierRow[];
   planCode: AppPlanCode;
+  total: number;
+  page: number;
+  totalPages: number;
+  searchParams: Record<string, string | string[] | undefined>;
 }) {
-  return <SupplierTable suppliers={suppliers} planCode={planCode} />;
+  return (
+    <SupplierTable
+      suppliers={suppliers}
+      planCode={planCode}
+      total={total}
+      page={page}
+      totalPages={totalPages}
+      searchParams={searchParams}
+    />
+  );
 }
+
 

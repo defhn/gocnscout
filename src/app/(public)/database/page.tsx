@@ -175,61 +175,15 @@ export default async function DatabasePage({
             </div>
           </div>
 
-          {/* Table — Client Component handles modal state and locked fields */}
+          {/* Table — Client Component handles modal state, locked fields and pagination paywall */}
           <SupplierTableClient
             suppliers={results.suppliers as SupplierRow[]}
             planCode={planCode}
+            total={results.total}
+            page={results.page}
+            totalPages={results.totalPages}
+            searchParams={params}
           />
-
-          {/* Pagination */}
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#d8e0ea] bg-white px-4 py-3 text-sm text-slate-600">
-            <span>Page {results.page} of {results.totalPages} · {results.total.toLocaleString("en-US")} results</span>
-            <div className="flex flex-wrap items-center gap-2">
-              <Link prefetch={false} className="rounded-md border border-border px-3 py-1.5 hover:bg-slate-50" href={pageHref(params, Math.max(1, page - 1))}>
-                Previous
-              </Link>
-              <div className="flex items-center gap-1">
-                {pageNumbers(results.page, results.totalPages).map((item, index) =>
-                  item === "..." ? (
-                    <span key={`ellipsis-${index}`} className="px-2 text-slate-400">...</span>
-                  ) : (
-                    <Link
-                      key={item}
-                      prefetch={false}
-                      href={pageHref(params, item)}
-                      aria-current={item === results.page ? "page" : undefined}
-                      className={`min-w-8 rounded-md border px-2.5 py-1.5 text-center ${item === results.page ? "border-slate-900 bg-slate-900 text-white" : "border-border hover:bg-slate-50"}`}
-                    >
-                      {item}
-                    </Link>
-                  ),
-                )}
-              </div>
-              <Link prefetch={false} className="rounded-md border border-border px-3 py-1.5 hover:bg-slate-50" href={pageHref(params, Math.min(results.totalPages, page + 1))}>
-                Next
-              </Link>
-              <form className="flex items-center gap-2">
-                {hiddenSearchInputs(params, ["page"]).map(([key, value]) => (
-                  <input key={key} type="hidden" name={key} value={value} />
-                ))}
-                <label htmlFor="database-page-jump" className="text-slate-500">
-                  Go to
-                </label>
-                <input
-                  id="database-page-jump"
-                  name="page"
-                  type="number"
-                  min={1}
-                  max={results.totalPages}
-                  defaultValue={results.page}
-                  className="h-8 w-20 rounded-md border border-border px-2 text-sm text-slate-700"
-                />
-                <button type="submit" className="rounded-md border border-border px-3 py-1.5 hover:bg-slate-50">
-                  Go
-                </button>
-              </form>
-            </div>
-          </div>
         </section>
       </div>
     </div>

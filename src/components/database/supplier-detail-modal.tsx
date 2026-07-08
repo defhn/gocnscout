@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   X,
   Lock,
@@ -15,10 +16,13 @@ import {
   Award,
   ArrowUpRight,
   ExternalLink,
+  ShieldAlert,
+  Sparkles,
 } from "lucide-react";
 import { getExhibitionTierLabel } from "@/config/field-policy";
 import { canViewStarterFields, canViewProFields } from "@/config/plans";
 import type { AppPlanCode } from "@/config/plans";
+
 
 // ─── Shared types ───────────────────────────────────────────────────────────
 
@@ -74,13 +78,54 @@ const TIER_ICONS: Record<string, string> = {
 export function SupplierTable({
   suppliers,
   planCode,
+  total,
+  page,
+  totalPages,
+  searchParams,
 }: {
   suppliers: SupplierRow[];
   planCode: AppPlanCode;
+  total: number;
+  page: number;
+  totalPages: number;
+  searchParams: Record<string, string | string[] | undefined>;
 }) {
   const [selected, setSelected] = useState<SupplierRow | null>(null);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const router = useRouter();
   const canStarter = canViewStarterFields(planCode);
   const canPro = canViewProFields(planCode);
+
+  // Helper to generate target URL
+  const getPageHref = (targetPage: number) => {
+    const search = new URLSearchParams();
+    for (const [key, value] of Object.entries(searchParams)) {
+      if (!value || key === "page" || key.endsWith("Limit")) continue;
+      search.set(key, Array.isArray(value) ? value[0] || "" : value);
+    }
+    // Also retain Limit params
+    for (const [key, value] of Object.entries(searchParams)) {
+      if (key.endsWith("Limit") && value) {
+        search.set(key, Array.isArray(value) ? value[0] || "" : value);
+      }
+    }
+    search.set("page", String(targetPage));
+    return `/database?${search.toString()}`;
+  };
+
+  // Safe navigation interceptor
+  const handlePageChange = (targetPage: number, e?: React.MouseEvent | React.FormEvent) => {
+    if (e) e.preventDefault();
+    const clampedPage = Math.max(1, Math.min(targetPage, totalPages));
+    
+    // 免费版翻到第 3 页或以上，拦截并显示付费墙
+    if (planCode === "FREE" && clampedPage >= 3) {
+      setShowPaywall(true);
+      return;
+    }
+    
+    router.push(getPageHref(clampedPage));
+  };
 
   return (
     <>
@@ -243,7 +288,7 @@ export function SupplierTable({
               })
             ) : (
               <tr>
-                <td colSpan={11} className="px-4 py-12 text-center">
+                <td colSpan={12} className="px-4 py-12 text-center">
                   <p className="text-base font-semibold text-slate-950">
                     No results found
                   </p>
@@ -257,6 +302,74 @@ export function SupplierTable({
         </table>
       </div>
 
+      {/* Pagination */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#d8e0ea] bg-white px-4 py-3 text-sm text-slate-600">
+        <span>Page {page} of {totalPages} · {total.toLocaleString("en-US")} results</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => handlePageChange(page - 1)}
+            disabled={page <= 1}
+            className="rounded-md border border-border px-3 py-1.5 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+          <div className="flex items-center gap-1">
+            {getClientPageNumbers(page, totalPages).map((item, index) =>
+              item === "..." ? (
+                <span key={`ellipsis-${index}`} className="px-2 text-slate-400">...</span>
+              ) : (
+                <button
+                  key={item}
+                  onClick={() => handlePageChange(item)}
+                  aria-current={item === page ? "page" : undefined}
+                  className={`min-w-8 rounded-md border px-2.5 py-1.5 text-center ${
+                    item === page
+                      ? "border-slate-900 bg-slate-900 text-white"
+                      : "border-border hover:bg-slate-50"
+                  }`}
+                >
+                  {item}
+                </button>
+              )
+            )}
+          </div>
+          <button
+            onClick={() => handlePageChange(page + 1)}
+            disabled={page >= totalPages}
+            className="rounded-md border border-border px-3 py-1.5 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const target = Number(formData.get("page"));
+              if (target >= 1 && target <= totalPages) {
+                handlePageChange(target);
+              }
+            }}
+            className="flex items-center gap-2"
+          >
+            <label htmlFor="database-page-jump" className="text-slate-500">
+              Go to
+            </label>
+            <input
+              id="database-page-jump"
+              name="page"
+              type="number"
+              min={1}
+              max={totalPages}
+              defaultValue={page}
+              className="h-8 w-20 rounded-md border border-border px-2 text-sm text-slate-700"
+            />
+            <button type="submit" className="rounded-md border border-border px-3 py-1.5 hover:bg-slate-50">
+              Go
+            </button>
+          </form>
+        </div>
+      </div>
+
       {/* Slide-out modal */}
       {selected && (
         <SupplierDetailModal
@@ -265,6 +378,9 @@ export function SupplierTable({
           onClose={() => setSelected(null)}
         />
       )}
+
+      {/* Paywall popup */}
+      {showPaywall && <PaywallModal onClose={() => setShowPaywall(false)} />}
     </>
   );
 }
@@ -623,3 +739,73 @@ function ModalLockedBadge({
     </Link>
   );
 }
+
+// ─── Pagination helpers ───────────────────────────────────────────────────────
+
+function getClientPageNumbers(currentPage: number, totalPages: number): Array<number | "..."> {
+  const pages = new Set<number>();
+  
+  // 默认一直显示到第 10 页（若总页数够的话）
+  const maxInitial = Math.min(10, totalPages);
+  for (let i = 1; i <= maxInitial; i++) {
+    pages.add(i);
+  }
+
+  pages.add(1);
+  pages.add(totalPages);
+  pages.add(currentPage - 1);
+  pages.add(currentPage);
+  pages.add(currentPage + 1);
+
+  const validPages = [...pages].filter((item) => item >= 1 && item <= totalPages).sort((a, b) => a - b);
+  const result: Array<number | "..."> = [];
+  for (const item of validPages) {
+    const previous = result[result.length - 1];
+    if (typeof previous === "number" && item - previous > 1) {
+      result.push("...");
+    }
+    result.push(item);
+  }
+  return result;
+}
+
+// ─── Paywall modal ────────────────────────────────────────────────────────────
+
+function PaywallModal({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+      <div className="relative w-full max-w-[420px] rounded-2xl bg-white p-6 shadow-2xl border border-slate-100 text-center animate-in fade-in zoom-in duration-200">
+        <button
+          onClick={onClose}
+          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 transition-colors"
+          aria-label="Close"
+        >
+          <X className="h-4 w-4 text-slate-500" />
+        </button>
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-teal-50 text-teal-600 mb-4">
+          <ShieldAlert className="h-7 w-7 text-teal-600" />
+        </div>
+        <h3 className="text-lg font-bold text-slate-950">Search Limit Reached</h3>
+        <p className="mt-2 text-sm text-slate-600 leading-relaxed">
+          Free search is limited to the first 2 pages (20 records). Upgrade to Starter to unlock unlimited searches and access premium fields like Website, Trade Mode, and Exhibition counts.
+        </p>
+        <div className="mt-6 flex flex-col gap-2">
+          <Link
+            href="/pricing"
+            className="flex items-center justify-center gap-2 rounded-lg bg-teal-600 hover:bg-teal-700 px-4 py-2.5 text-sm font-semibold !text-white transition-colors shadow-md"
+          >
+            <Sparkles className="h-4 w-4" />
+            Upgrade to Starter
+          </Link>
+          <button
+            onClick={onClose}
+            className="rounded-lg border border-slate-200 bg-white hover:bg-slate-50 px-4 py-2.5 text-sm font-medium text-slate-600 transition-colors"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
