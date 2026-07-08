@@ -211,14 +211,14 @@ function LockedFieldInline({ label, plan, compact = false }: { label: string; pl
   return (
     <Link
       href="/pricing"
-      className="mt-2 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-teal-100 bg-teal-50/40 text-teal-800 hover:bg-teal-50 hover:border-teal-200 transition-all group shadow-sm font-medium"
+      className="mt-2 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-600 hover:bg-teal-700 !text-white hover:!text-white transition-all shadow-md font-semibold"
       title={`Upgrade to ${plan} to unlock ${label}`}
     >
-      <Lock className="h-3.5 w-3.5 text-teal-600" />
-      <span className="text-xs font-semibold text-teal-800">
+      <Lock className="h-3.5 w-3.5 !text-white" />
+      <span className="text-xs font-semibold text-white">
         {label} locked
       </span>
-      <span className="rounded-full bg-teal-600 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider !text-white">
+      <span className="rounded-full bg-white/20 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider !text-white">
         {plan}+
       </span>
     </Link>
