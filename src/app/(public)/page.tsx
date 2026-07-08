@@ -91,7 +91,7 @@ export default async function HomePage() {
                   <p className="mt-1 text-xs font-semibold text-slate-400 uppercase tracking-wide">Exhibitors</p>
                 </div>
                 <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 transition-all duration-300 hover:border-teal-500/30">
-                  <p className="text-3xl font-bold text-white tracking-tight">{(stats.industryCount || 187).toLocaleString("en-US")}</p>
+                  <p className="text-3xl font-bold text-white tracking-tight">{(stats.industryCount || 54).toLocaleString("en-US")}</p>
                   <p className="mt-1 text-xs font-semibold text-slate-400 uppercase tracking-wide">Industries</p>
                 </div>
                 <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 transition-all duration-300 hover:border-teal-500/30">
@@ -99,7 +99,7 @@ export default async function HomePage() {
                   <p className="mt-1 text-xs font-semibold text-slate-400 uppercase tracking-wide">Provinces</p>
                 </div>
                 <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 transition-all duration-300 hover:border-teal-500/30">
-                  <p className="text-3xl font-bold text-teal-400 tracking-tight">{(stats.reportsCount || 748).toLocaleString("en-US")}</p>
+                  <p className="text-3xl font-bold text-teal-400 tracking-tight">{(stats.reportsCount || 216).toLocaleString("en-US")}</p>
                   <p className="mt-1 text-xs font-semibold text-slate-400 uppercase tracking-wide">PDF Reports</p>
                 </div>
               </div>
