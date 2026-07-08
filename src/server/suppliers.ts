@@ -341,8 +341,65 @@ export async function listCityPages(limit = 200) {
 export async function getIndustryPage(slug: string) {
   const industry = await prisma.industryPage.findUnique({ where: { slug } });
   if (!industry) return null;
-  const suppliers = await searchSuppliers({ industry: industry.industryName, pageSize: 12 });
-  return { industry, suppliers };
+
+  const [
+    suppliers,
+    hasWebsiteCount,
+    hasCapitalCount,
+    stableExhibitorCount,
+    topCitiesGroup
+  ] = await Promise.all([
+    searchSuppliers({ industry: industry.industryName, pageSize: 30 }),
+    // 信号 1: 拥有官网的商户数量
+    prisma.supplier.count({
+      where: { isPublished: true, industryName: industry.industryName, websiteUrl: { not: null } }
+    }),
+    // 信号 2: 拥有注册资本商户数量
+    prisma.supplier.count({
+      where: { isPublished: true, industryName: industry.industryName, registeredCapital: { not: null } }
+    }),
+    // 信号 3: 参展届数 >= 3 届的稳定展商数量
+    prisma.supplier.count({
+      where: { isPublished: true, industryName: industry.industryName, exhibitionSessionCount: { gte: 3 } }
+    }),
+    // 行业主要生产城市（Top 6）
+    prisma.supplier.groupBy({
+      by: ["province", "city"],
+      where: { isPublished: true, industryName: industry.industryName, city: { not: null }, province: { not: null } },
+      _count: { id: true },
+      orderBy: { _count: { id: "desc" } },
+      take: 6
+    })
+  ]);
+
+  // 反查这 6 个城市在 CityPage 中对应的 Slug
+  const cityPages = topCitiesGroup.length > 0 ? await prisma.cityPage.findMany({
+    where: {
+      city: { in: topCitiesGroup.map(g => g.city as string) },
+      province: { in: topCitiesGroup.map(g => g.province as string) }
+    },
+    select: { city: true, slug: true, cityEn: true }
+  }) : [];
+
+  const topCities = topCitiesGroup.map(g => {
+    const matched = cityPages.find(cp => cp.city === g.city);
+    return {
+      city: g.city as string,
+      province: g.province as string,
+      cityEn: matched?.cityEn || (g.city as string),
+      slug: matched?.slug || null,
+      supplierCount: g._count.id
+    };
+  });
+
+  return {
+    industry,
+    suppliers,
+    hasWebsiteCount,
+    hasCapitalCount,
+    stableExhibitorCount,
+    topCities
+  };
 }
 
 export async function getCityPage(slug: string) {
