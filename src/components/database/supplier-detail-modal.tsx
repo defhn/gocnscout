@@ -541,12 +541,12 @@ function LockedField({
     <Link
       href="/pricing"
       onClick={(e) => e.stopPropagation()}
-      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-slate-200 bg-slate-50/50 hover:bg-teal-50/50 hover:border-teal-200 transition-all group shadow-sm"
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-teal-100 bg-teal-50/40 text-teal-700 hover:bg-teal-50 hover:border-teal-300 transition-all shadow-xs group"
       title={`Upgrade to ${plan} to unlock ${label}`}
     >
-      <Lock className="h-3.5 w-3.5 text-slate-400 group-hover:text-teal-600 transition-colors" />
+      <Lock className="h-3 w-3 text-teal-600 group-hover:scale-110 transition-transform" />
       {!compact && (
-        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-teal-600 transition-colors">
+        <span className="text-[9px] font-bold uppercase tracking-wider text-teal-700/90">
           {plan}
         </span>
       )}
@@ -607,11 +607,11 @@ function ModalLockedBadge({
   return (
     <Link
       href="/pricing"
-      className={`inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-300 hover:bg-slate-100 transition-colors ${compact ? "px-2.5 py-1 text-xs" : "px-3 py-2 text-sm"}`}
+      className={`inline-flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50/40 text-teal-800 hover:bg-teal-50 hover:border-teal-200 transition-colors shadow-xs ${compact ? "px-2.5 py-1 text-xs" : "px-3.5 py-1.5 text-sm font-medium"}`}
     >
-      <Lock className="h-3.5 w-3.5 shrink-0" />
+      <Lock className="h-3.5 w-3.5 shrink-0 text-teal-600" />
       <span>{text}</span>
-      <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-600">
+      <span className="rounded-full bg-teal-600 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider !text-white">
         {plan}+
       </span>
     </Link>
