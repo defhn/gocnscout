@@ -6,7 +6,10 @@ export function PublicFooter() {
     <footer className="mt-auto border-t border-border bg-white">
       <div className="container-page grid gap-8 py-10 md:grid-cols-5">
         <div>
-          <p className="font-semibold text-slate-950">gocnscout</p>
+          <div className="flex items-center gap-2 text-lg font-extrabold text-slate-950">
+            <img src="/logo.png" alt="GoCNScout Logo" className="h-10 w-10 object-contain" />
+            <span>gocnscout</span>
+          </div>
           <p className="mt-3 text-sm leading-6 text-slate-600">
             Non-sensitive supplier research tools based on China sourcing exhibition registries.
           </p>

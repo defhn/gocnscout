@@ -18,8 +18,9 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-slate-50">
       <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-border bg-white p-4 lg:block">
-        <Link href="/" className="text-lg font-semibold text-slate-950">
-          gocnscout
+        <Link href="/" className="flex items-center gap-2 text-lg font-extrabold text-slate-950">
+          <img src="/logo.png" alt="GoCNScout Logo" className="h-8 w-8 object-contain" />
+          <span>gocnscout</span>
         </Link>
         <nav className="mt-8 grid gap-1" aria-label="Dashboard navigation">
           {nav.map((item) => (

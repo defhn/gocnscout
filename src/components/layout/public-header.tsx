@@ -14,8 +14,9 @@ export async function PublicHeader() {
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-md">
       <div className="mx-auto flex h-16 w-full max-w-[1440px] items-center justify-between gap-4 px-4 lg:px-6">
         {/* Brand Logo */}
-        <Link href="/" className="text-lg font-bold tracking-tight text-slate-950 shrink-0">
-          gocnscout
+        <Link href="/" className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-slate-950 shrink-0">
+          <img src="/logo.png" alt="GoCNScout Logo" className="h-8 w-8 object-contain" />
+          <span>gocnscout</span>
         </Link>
 
         {/* Navigation Controls */}
