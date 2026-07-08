@@ -11,7 +11,7 @@ const SupplierTable = dynamic(
   { ssr: false }
 );
 
-export function SupplierTableClient({
+export default function SupplierTableClient({
   suppliers,
   planCode,
   total,
@@ -37,5 +37,6 @@ export function SupplierTableClient({
     />
   );
 }
+
 
 

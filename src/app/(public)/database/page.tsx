@@ -10,7 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { SupplierRow } from "@/components/database/supplier-detail-modal";
-import { SupplierTableClient } from "@/components/database/supplier-table-client";
+import SupplierTableClient from "@/components/database/supplier-table-client";
+
 
 
 
