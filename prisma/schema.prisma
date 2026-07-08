@@ -1,0 +1,361 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PlanCode {
+  FREE
+  STARTER
+  PRO
+  TEAM
+  DATA_LICENSE
+}
+
+enum BillingInterval {
+  MONTH
+  YEAR
+}
+
+enum SubscriptionStatus {
+  FREE
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  INCOMPLETE
+}
+
+enum ReportType {
+  BASIC
+  FULL
+  PREMIUM
+  CANTON_FAIR_INTELLIGENCE
+}
+
+enum ReportStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum PurchaseStatus {
+  PENDING
+  PAID
+  FULFILLED
+  CANCELED
+  REFUNDED
+}
+
+enum ExportStatus {
+  QUEUED
+  PROCESSING
+  READY
+  FAILED
+  EXPIRED
+}
+
+enum InquiryStatus {
+  NEW
+  IN_REVIEW
+  REPLIED
+  CLOSED
+}
+
+enum AdminRole {
+  OWNER
+  ADMIN
+  ANALYST
+}
+
+model User {
+  id                    String               @id @default(cuid())
+  clerkId               String               @unique
+  email                 String               @unique
+  name                  String?
+  companyName           String?
+  stripeCustomerId      String?              @unique
+  planCode              PlanCode             @default(FREE)
+  subscriptionStatus    SubscriptionStatus   @default(FREE)
+  subscriptionStartedAt DateTime?
+  subscriptionEndsAt    DateTime?
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+  adminProfile          AdminProfile?
+  savedLists            SavedList[]
+  profileViews          SupplierProfileView[]
+  exportJobs            ExportJob[]
+  reportPurchases       ReportPurchase[]
+  inquiries             Inquiry[]
+  usageCounters         UsageCounter[]
+  teamMemberships       TeamMember[]
+  ownedTeams            Team[]               @relation("TeamOwner")
+  auditLogs             AuditLog[]
+}
+
+model AdminProfile {
+  id        String    @id @default(cuid())
+  userId    String    @unique
+  role      AdminRole @default(ANALYST)
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Team {
+  id        String       @id @default(cuid())
+  name      String
+  ownerId   String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  owner     User         @relation("TeamOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members   TeamMember[]
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  teamId    String
+  userId    String
+  role      String   @default("member")
+  createdAt DateTime @default(now())
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+}
+
+model Supplier {
+  id                String                @id @default(cuid())
+  slug              String                @unique
+  sourceRowId       String?               @unique
+  industryName      String
+  exhibitorName     String
+  province          String?
+  city              String?
+  websiteUrl        String?
+  publicAddress     String?
+  productsText      String?
+  keywordsText      String?
+  foundedYear       Int?
+  registeredCapital String?
+  companySize       String?
+  companyType       String?
+  tradeModes        String[]
+  exhibitorHistory  String[]
+  companyNature     String?
+  searchText        String?
+  isPublished       Boolean               @default(true)
+  dataSource        String                @default("139th Canton Fair Exhibitor Database")
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  privateData       SupplierPrivateData?
+  savedEntries      SavedSupplier[]
+  profileViews      SupplierProfileView[]
+
+  @@index([industryName])
+  @@index([province, city])
+  @@index([companySize])
+  @@index([companyType])
+  @@index([companyNature])
+}
+
+model SupplierPrivateData {
+  id            String   @id @default(cuid())
+  supplierId    String   @unique
+  contactPerson String?
+  mobile        String?
+  phone         String?
+  fax           String?
+  email         String?
+  fullAddress   String?
+  postalCode    String?
+  rawJson       Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  supplier      Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+}
+
+model IndustryPage {
+  id              String    @id @default(cuid())
+  slug            String    @unique
+  industryName    String    @unique
+  title           String
+  metaDescription String
+  intro           String?
+  supplierCount   Int       @default(0)
+  isIndexable     Boolean   @default(false)
+  lastSyncedAt    DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model ProductKeywordPage {
+  id              String    @id @default(cuid())
+  slug            String    @unique
+  keyword         String    @unique
+  title           String
+  metaDescription String
+  supplierCount   Int       @default(0)
+  isIndexable     Boolean   @default(false)
+  lastSyncedAt    DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model CityPage {
+  id              String    @id @default(cuid())
+  slug            String    @unique
+  province        String
+  city            String
+  title           String
+  metaDescription String
+  supplierCount   Int       @default(0)
+  isIndexable     Boolean   @default(false)
+  lastSyncedAt    DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([province, city])
+}
+
+model SavedList {
+  id          String          @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  suppliers   SavedSupplier[]
+}
+
+model SavedSupplier {
+  id         String    @id @default(cuid())
+  listId     String
+  supplierId String
+  note       String?
+  createdAt  DateTime  @default(now())
+  list       SavedList @relation(fields: [listId], references: [id], onDelete: Cascade)
+  supplier   Supplier  @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  @@unique([listId, supplierId])
+}
+
+model SupplierProfileView {
+  id         String   @id @default(cuid())
+  userId     String
+  supplierId String
+  viewedAt   DateTime @default(now())
+  monthKey   String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  @@index([userId, monthKey])
+}
+
+model UsageCounter {
+  id        String   @id @default(cuid())
+  userId    String
+  kind      String
+  periodKey String
+  used      Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, kind, periodKey])
+}
+
+model ExportJob {
+  id             String       @id @default(cuid())
+  userId         String
+  status         ExportStatus @default(QUEUED)
+  requestedCount Int
+  deliveredCount Int          @default(0)
+  filtersJson    Json
+  fileKey        String?
+  fileName       String?
+  errorMessage   String?
+  expiresAt      DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Report {
+  id              String           @id @default(cuid())
+  slug            String           @unique
+  title           String
+  type            ReportType
+  priceUsdCents   Int
+  industryName    String?
+  description     String?
+  sampleSummary   String?
+  status          ReportStatus     @default(DRAFT)
+  fileKey         String?
+  fileName        String?
+  fileSizeBytes   Int?
+  uploadedBy      String?
+  publishedAt     DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  purchases       ReportPurchase[]
+}
+
+model ReportPurchase {
+  id                    String         @id @default(cuid())
+  userId                String
+  reportId              String
+  status                PurchaseStatus @default(PENDING)
+  stripeCheckoutSession String?        @unique
+  stripePaymentIntent   String?
+  amountUsdCents        Int
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  user                  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  report                Report         @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, reportId])
+}
+
+model Inquiry {
+  id          String        @id @default(cuid())
+  userId      String?
+  type        String
+  name        String
+  email       String
+  companyName String?
+  message     String
+  status      InquiryStatus @default(NEW)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  user        User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model ImportJob {
+  id             String   @id @default(cuid())
+  fileName       String
+  status         String   @default("uploaded")
+  totalRows      Int      @default(0)
+  processedRows  Int      @default(0)
+  errorRows      Int      @default(0)
+  summaryJson    Json?
+  createdBy      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String?
+  entityId  String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
