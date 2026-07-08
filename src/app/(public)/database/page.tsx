@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { ArrowDownUp, Download, ExternalLink, Filter, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { createMetadata } from "@/config/seo";
 import { sanitizeWebsiteAccess } from "@/config/field-policy";
 import { getDatabaseFacets, searchSuppliers } from "@/server/suppliers";
+import DatabaseFacet from "./database-facet";
 
 export const metadata = createMetadata({
   title: "Supplier Database Search",
@@ -66,11 +68,12 @@ export default async function DatabasePage({
     ["Registered capital", registeredCapital],
     ["Trade mode", tradeMode],
   ].filter(([, value]) => value);
+  const currentQuery = queryString(params);
 
   return (
-    <div className="min-h-[calc(100vh-65px)] bg-[#f3f6f9]">
+    <div className="min-h-[calc(100vh-65px)] w-full bg-[#f3f6f9]">
       <div className="border-b border-[#d8e0ea] bg-[#eef3f8]">
-        <div className="mx-auto flex min-h-14 w-full max-w-[1440px] flex-wrap items-center justify-between gap-3 px-4 py-3 lg:px-6">
+        <div className="flex min-h-14 w-full flex-wrap items-center justify-between gap-3 px-4 py-3 lg:px-6">
           <div>
             <h1 className="text-xl font-semibold text-slate-950">Supplier database</h1>
             <p className="text-sm text-slate-600">
@@ -91,7 +94,7 @@ export default async function DatabasePage({
         </div>
       </div>
 
-      <div className="mx-auto grid w-full max-w-[1440px] lg:grid-cols-[292px_minmax(0,1fr)]">
+      <div className="grid w-full lg:grid-cols-[292px_minmax(0,1fr)]">
         <aside className="border-r border-[#d8e0ea] bg-[#f8fafc] lg:sticky lg:top-16 lg:h-[calc(100vh-65px)] lg:overflow-y-auto">
           <div className="border-b border-[#d8e0ea] p-4">
             <div className="mb-3 flex items-center justify-between text-sm">
@@ -114,15 +117,15 @@ export default async function DatabasePage({
             </form>
           </div>
           <div className="space-y-2 p-3">
-            <Facet title="Industry" param="industry" items={facets.industries.map((i) => [i.industryName, i._count._all])} />
-            <Facet title="Province" param="province" items={facets.provinces.filter((i) => i.province).map((i) => [i.province || "", i._count._all])} />
-            <Facet title="City" param="city" items={facets.cities.filter((i) => i.city).map((i) => [i.city || "", i._count._all])} />
-            <Facet title="Company Size" param="companySize" items={facets.companySizes.filter((i) => i.companySize).map((i) => [i.companySize || "", i._count._all])} />
-            <Facet title="Company Type" param="companyType" items={facets.companyTypes.filter((i) => i.companyType).map((i) => [i.companyType || "", i._count._all])} />
-            <Facet title="Trade Mode" param="tradeMode" items={facets.tradeModes.map((i) => [i.label, i.count])} />
-            <Facet title="Company Nature" param="companyNature" items={facets.companyNatures.filter((i) => i.companyNature).map((i) => [i.companyNature || "", i._count._all])} />
-            <Facet title="Founded Year" param="foundedYear" items={facets.foundedYears.filter((i) => i.foundedYear).map((i) => [String(i.foundedYear), i._count._all])} />
-            <Facet title="Registered Capital" param="registeredCapital" items={facets.registeredCapitals.filter((i) => i.registeredCapital).map((i) => [i.registeredCapital || "", i._count._all])} />
+            <DatabaseFacet title="Industry" param="industry" currentQuery={currentQuery} items={facets.industries.map((i) => [i.industryName, i._count._all])} />
+            <DatabaseFacet title="Province" param="province" currentQuery={currentQuery} items={facets.provinces.filter((i) => i.province).map((i) => [i.province || "", i._count._all])} />
+            <DatabaseFacet title="City" param="city" currentQuery={currentQuery} items={facets.cities.filter((i) => i.city).map((i) => [i.city || "", i._count._all])} />
+            <DatabaseFacet title="Company Size" param="companySize" currentQuery={currentQuery} items={facets.companySizes.filter((i) => i.companySize).map((i) => [i.companySize || "", i._count._all])} />
+            <DatabaseFacet title="Company Type" param="companyType" currentQuery={currentQuery} items={facets.companyTypes.filter((i) => i.companyType).map((i) => [i.companyType || "", i._count._all])} />
+            <DatabaseFacet title="Trade Mode" param="tradeMode" currentQuery={currentQuery} items={facets.tradeModes.map((i) => [i.label, i.count])} />
+            <DatabaseFacet title="Company Nature" param="companyNature" currentQuery={currentQuery} items={facets.companyNatures.filter((i) => i.companyNature).map((i) => [i.companyNature || "", i._count._all])} />
+            <DatabaseFacet title="Founded Year" param="foundedYear" currentQuery={currentQuery} items={facets.foundedYears.filter((i) => i.foundedYear).map((i) => [String(i.foundedYear), i._count._all])} />
+            <DatabaseFacet title="Registered Capital" param="registeredCapital" currentQuery={currentQuery} items={facets.registeredCapitals.filter((i) => i.registeredCapital).map((i) => [i.registeredCapital || "", i._count._all])} />
             <section className="rounded-md border border-[#cfd9e5] bg-white p-3">
               <h2 className="flex items-center justify-between text-sm font-medium text-slate-700">
                 Has Website
@@ -162,55 +165,65 @@ export default async function DatabasePage({
           </div>
 
           <div className="overflow-x-auto bg-white">
-            <table className="min-w-[1180px] w-full border-collapse text-left text-sm">
+            <table className="min-w-[1740px] w-full table-fixed border-collapse text-left text-sm">
               <thead className="border-b border-[#d8e0ea] bg-[#fbfcfe] text-xs font-semibold uppercase tracking-wide text-slate-500">
                 <tr>
-                  <th className="w-[250px] px-4 py-3">Supplier</th>
-                  <th className="w-[150px] px-4 py-3">Industry</th>
-                  <th className="w-[110px] px-4 py-3">Province</th>
-                  <th className="w-[110px] px-4 py-3">City</th>
-                  <th className="w-[260px] px-4 py-3">Main products</th>
+                  <th className="w-[230px] px-4 py-3">Supplier</th>
+                  <th className="w-[140px] px-4 py-3">Industry</th>
+                  <th className="w-[105px] px-4 py-3">Province</th>
+                  <th className="w-[105px] px-4 py-3">City</th>
+                  <th className="w-[220px] px-4 py-3">Main products</th>
                   <th className="w-[190px] px-4 py-3">Keywords</th>
                   <th className="w-[120px] px-4 py-3">Company size</th>
                   <th className="w-[130px] px-4 py-3">Company type</th>
                   <th className="w-[140px] px-4 py-3">Trade mode</th>
-                  <th className="w-[110px] px-4 py-3">Website</th>
+                  <th className="w-[120px] px-4 py-3">Contact</th>
+                  <th className="w-[120px] px-4 py-3">Phone</th>
+                  <th className="w-[120px] px-4 py-3">Email</th>
+                  <th className="w-[150px] px-4 py-3">Address</th>
+                  <th className="w-[120px] px-4 py-3">Website</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#e5ebf2]">
                 {results.suppliers.length ? (
                   results.suppliers.map((supplier) => (
-                    <tr key={supplier.id} className="hover:bg-[#f8fafc]">
-                      <td className="px-4 py-3 align-top">
-                        <h3 className="font-semibold text-slate-950">
-                          <Link href={`/suppliers/${supplier.slug}`} className="hover:text-brand">
-                            {supplier.exhibitorName}
-                          </Link>
-                        </h3>
-                        <p className="mt-1 text-xs text-slate-500">Public profile</p>
+                    <tr key={supplier.id} className="h-[104px] hover:bg-[#f8fafc]">
+                      <td className="h-[104px] px-4 py-2 align-top">
+                        <div className="max-h-[88px] overflow-hidden leading-5">
+                          <h3 className="font-semibold text-slate-950">
+                            <Link href={`/suppliers/${supplier.slug}`} className="hover:text-brand">
+                              {supplier.exhibitorName}
+                            </Link>
+                          </h3>
+                          <p className="mt-1 text-xs text-slate-500">Public profile</p>
+                        </div>
                       </td>
-                      <td className="px-4 py-3 align-top text-slate-700">{supplier.industryName}</td>
-                      <td className="px-4 py-3 align-top text-slate-700">{supplier.province || "Not published"}</td>
-                      <td className="px-4 py-3 align-top text-slate-700">{supplier.city || "Not published"}</td>
-                      <td className="px-4 py-3 align-top text-slate-700">{supplier.productsText || "Not published"}</td>
-                      <td className="px-4 py-3 align-top text-slate-700">{supplier.keywordsText || "Not published"}</td>
-                      <td className="px-4 py-3 align-top text-slate-700">{supplier.companySize || "Not published"}</td>
-                      <td className="px-4 py-3 align-top text-slate-700">{supplier.companyType || "Not published"}</td>
-                      <td className="px-4 py-3 align-top text-slate-700">{supplier.tradeModes.length ? supplier.tradeModes.join(", ") : "Not published"}</td>
-                      <td className="px-4 py-3 align-top">
+                      <DataCell>{supplier.industryName}</DataCell>
+                      <DataCell>{supplier.province || "Not published"}</DataCell>
+                      <DataCell>{supplier.city || "Not published"}</DataCell>
+                      <DataCell>{supplier.productsText || "Not published"}</DataCell>
+                      <DataCell>{supplier.keywordsText || "Not published"}</DataCell>
+                      <DataCell>{supplier.companySize || "Not published"}</DataCell>
+                      <DataCell>{supplier.companyType || "Not published"}</DataCell>
+                      <DataCell>{supplier.tradeModes.length ? supplier.tradeModes.join(", ") : "Not published"}</DataCell>
+                      <LockedCell label="Contact locked" />
+                      <LockedCell label="Phone locked" />
+                      <LockedCell label="Email locked" />
+                      <LockedCell label="Address locked" />
+                      <td className="h-[104px] px-4 py-2 align-top">
                         {sanitizeWebsiteAccess("FREE", supplier.websiteUrl) ? (
                           <Link href={supplier.websiteUrl || "#"} className="inline-flex items-center gap-1 text-brand">
                             Open <ExternalLink className="h-3 w-3" />
                           </Link>
                         ) : (
-                          <span className="text-xs text-slate-500">Paid plans</span>
+                          <LockedField label="Website locked" />
                         )}
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={10} className="px-4 py-12 text-center">
+                    <td colSpan={14} className="px-4 py-12 text-center">
                       <h3 className="text-base font-semibold text-slate-950">No published supplier profiles yet</h3>
                       <p className="mt-2 text-sm text-slate-600">
                         Results will appear after the manufacturer exhibition dataset is cleaned and imported.
@@ -227,10 +240,10 @@ export default async function DatabasePage({
               Page {results.page} of {results.totalPages}
             </span>
             <div className="flex items-center gap-2">
-              <Link className="rounded-md border border-border px-3 py-1.5 hover:bg-slate-50" href={pageHref(params, Math.max(1, page - 1))}>
+              <Link prefetch={false} className="rounded-md border border-border px-3 py-1.5 hover:bg-slate-50" href={pageHref(params, Math.max(1, page - 1))}>
                 Previous
               </Link>
-              <Link className="rounded-md border border-border px-3 py-1.5 hover:bg-slate-50" href={pageHref(params, page + 1)}>
+              <Link prefetch={false} className="rounded-md border border-border px-3 py-1.5 hover:bg-slate-50" href={pageHref(params, page + 1)}>
                 Next
               </Link>
             </div>
@@ -241,34 +254,32 @@ export default async function DatabasePage({
   );
 }
 
-function Facet({ title, param, items }: { title: string; param: string; items: Array<[string, number]> }) {
+function DataCell({ children }: { children: ReactNode }) {
   return (
-    <section className="rounded-md border border-[#cfd9e5] bg-white p-3">
-      <h2 className="flex items-center justify-between text-sm font-medium text-slate-700">
-        {title}
-        <Filter className="h-4 w-4 text-brand" />
-      </h2>
-      <div className="mt-3 grid gap-2">
-        {items.length ? (
-          items.slice(0, 10).map(([label, count]) => (
-            <Link key={`${param}-${label}`} href={`/database?${param}=${encodeURIComponent(label)}`} className="flex items-start justify-between gap-3 text-sm text-slate-700 hover:text-brand">
-              <span className="flex min-w-0 items-start gap-2">
-                <span className="mt-0.5 h-4 w-4 flex-none rounded bg-slate-200" aria-hidden />
-                <h3 className="truncate text-sm font-normal">{label}</h3>
-              </span>
-              <span className="text-slate-500">{count.toLocaleString("en-US")}</span>
-            </Link>
-          ))
-        ) : (
-          <h3 className="text-sm font-normal text-slate-500">No data before import</h3>
-        )}
-      </div>
-      {items.length > 10 ? (
-        <button className="mx-auto mt-3 block rounded-md border border-[#cfd9e5] px-4 py-1.5 text-sm text-slate-600">
-          Show More
-        </button>
-      ) : null}
-    </section>
+    <td className="h-[104px] px-4 py-2 align-top text-slate-700">
+      <div className="max-h-[88px] overflow-hidden leading-5">{children}</div>
+    </td>
+  );
+}
+
+function LockedCell({ label }: { label: string }) {
+  return (
+    <td className="h-[104px] px-4 py-2 align-top">
+      <LockedField label={label} />
+    </td>
+  );
+}
+
+function LockedField({ label }: { label: string }) {
+  return (
+    <Link
+      href="/pricing"
+      className="inline-flex max-w-full flex-col rounded-md border border-amber-200 bg-amber-50 px-2.5 py-2 text-xs leading-4 text-amber-900 hover:border-amber-300 hover:bg-amber-100"
+      title="Upgrade to view this field"
+    >
+      <span className="font-medium">{label}</span>
+      <span className="text-amber-700">Upgrade to view</span>
+    </Link>
   );
 }
 
@@ -284,4 +295,13 @@ function pageHref(params: Record<string, string | string[] | undefined>, page: n
   }
   search.set("page", String(page));
   return `/database?${search.toString()}`;
+}
+
+function queryString(params: Record<string, string | string[] | undefined>) {
+  const search = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (!value) continue;
+    search.set(key, Array.isArray(value) ? value[0] || "" : value);
+  }
+  return search.toString();
 }
