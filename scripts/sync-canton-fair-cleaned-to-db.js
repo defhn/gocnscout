@@ -10,7 +10,7 @@ const STATE_DIR = ".import-state";
 const CLEANED_FILE = path.join(STATE_DIR, "canton-fair-cleaned.jsonl");
 const SYNC_FAILED_FILE = path.join(STATE_DIR, "canton-fair-sync-failed.jsonl");
 const SYNC_STATE_FILE = path.join(STATE_DIR, "canton-fair-sync-state.json");
-const BATCH_SIZE = 250;
+const BATCH_SIZE = 100;
 const MAX_BATCH_RETRIES = 2;
 const RETRY_DELAY_MS = 3000;
 const CONNECTION_TIMEOUT_MS = 20000;
@@ -86,6 +86,7 @@ function validateRecord(record) {
 async function syncBatch(pool, batch, totals) {
   const client = await pool.connect();
   try {
+    console.log(`[db] syncing batch=${batch.length} currentSynced=${totals.synced} skipped=${totals.skipped} failed=${totals.failed}`);
     await client.query("begin");
     for (const record of batch) await upsertRecord(client, record);
     await client.query("commit");
