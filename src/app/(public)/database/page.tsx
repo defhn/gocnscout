@@ -53,7 +53,10 @@ export default async function DatabasePage({
   const tradeMode = stringParam(params.tradeMode);
   const rawPage = Math.max(1, Number(stringParam(params.page) || 1));
   const page = clampSearchPage(planCode, rawPage);
-  const pageSize = searchPageSize(planCode);
+  const rawLimit = Number(stringParam(params.limit) || 0);
+  const maxLimit = searchPageSize(planCode);
+  const pageSize = rawLimit > 0 ? Math.min(rawLimit, maxLimit) : maxLimit;
+
 
   const [results, facets] = await Promise.all([
     searchSuppliersForDatabase({

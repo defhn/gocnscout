@@ -92,6 +92,7 @@ export function SupplierTable({
 }) {
   const [selected, setSelected] = useState<SupplierRow | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [paywallTargetPlan, setPaywallTargetPlan] = useState<"STARTER" | "PRO" | "TEAM">("STARTER");
   const router = useRouter();
   const canStarter = canViewStarterFields(planCode);
   const canPro = canViewProFields(planCode);
@@ -100,10 +101,13 @@ export function SupplierTable({
   const getPageHref = (targetPage: number) => {
     const search = new URLSearchParams();
     for (const [key, value] of Object.entries(searchParams)) {
-      if (!value || key === "page" || key.endsWith("Limit")) continue;
+      if (!value || key === "page" || key === "limit" || key.endsWith("Limit")) continue;
       search.set(key, Array.isArray(value) ? value[0] || "" : value);
     }
-    // Also retain Limit params
+    // Also retain Limit params and limit
+    if (searchParams.limit) {
+      search.set("limit", Array.isArray(searchParams.limit) ? searchParams.limit[0] || "" : searchParams.limit);
+    }
     for (const [key, value] of Object.entries(searchParams)) {
       if (key.endsWith("Limit") && value) {
         search.set(key, Array.isArray(value) ? value[0] || "" : value);
@@ -120,12 +124,57 @@ export function SupplierTable({
     
     // 免费版翻到第 3 页或以上，拦截并显示付费墙
     if (planCode === "FREE" && clampedPage >= 3) {
+      setPaywallTargetPlan("STARTER");
       setShowPaywall(true);
       return;
     }
     
     router.push(getPageHref(clampedPage));
   };
+
+  // Rows per page (limit) selector logic
+  const currentLimit = Number(Array.isArray(searchParams.limit) ? searchParams.limit[0] : searchParams.limit || 0);
+  const DEFAULT_PAGE_SIZES: Record<string, number> = {
+    FREE: 10,
+    STARTER: 25,
+    PRO: 50,
+    TEAM: 100,
+    DATA_LICENSE: 100,
+  };
+  const activeLimit = currentLimit > 0 ? currentLimit : (DEFAULT_PAGE_SIZES[planCode] || 10);
+
+  const handleLimitChange = (newLimit: number) => {
+    if (newLimit === 25 && planCode === "FREE") {
+      setPaywallTargetPlan("STARTER");
+      setShowPaywall(true);
+      return;
+    }
+    if (newLimit === 50 && (planCode === "FREE" || planCode === "STARTER")) {
+      setPaywallTargetPlan("PRO");
+      setShowPaywall(true);
+      return;
+    }
+    if (newLimit === 100 && (planCode === "FREE" || planCode === "STARTER" || planCode === "PRO")) {
+      setPaywallTargetPlan("TEAM");
+      setShowPaywall(true);
+      return;
+    }
+
+    const search = new URLSearchParams();
+    for (const [key, value] of Object.entries(searchParams)) {
+      if (!value || key === "page" || key === "limit" || key.endsWith("Limit")) continue;
+      search.set(key, Array.isArray(value) ? value[0] || "" : value);
+    }
+    for (const [key, value] of Object.entries(searchParams)) {
+      if (key.endsWith("Limit") && value) {
+        search.set(key, Array.isArray(value) ? value[0] || "" : value);
+      }
+    }
+    search.set("limit", String(newLimit));
+    search.set("page", "1");
+    router.push(`/database?${search.toString()}`);
+  };
+
 
   return (
     <>
@@ -304,7 +353,22 @@ export function SupplierTable({
 
       {/* Pagination */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#d8e0ea] bg-white px-4 py-3 text-sm text-slate-600">
-        <span>Page {page} of {totalPages} · {total.toLocaleString("en-US")} results</span>
+        <div className="flex flex-wrap items-center gap-4">
+          <span>Page {page} of {totalPages} · {total.toLocaleString("en-US")} results</span>
+          <div className="flex items-center gap-1.5 border-l border-slate-200 pl-4">
+            <span className="text-slate-500">Rows per page:</span>
+            <select
+              value={activeLimit}
+              onChange={(e) => handleLimitChange(Number(e.target.value))}
+              className="h-8 rounded-md border border-slate-200 bg-white px-2 py-0 text-sm font-medium text-slate-700 focus:border-teal-500 focus:outline-none cursor-pointer"
+            >
+              <option value={10}>10 rows</option>
+              <option value={25}>25 rows</option>
+              <option value={50}>50 rows</option>
+              <option value={100}>100 rows</option>
+            </select>
+          </div>
+        </div>
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => handlePageChange(page - 1)}
@@ -380,7 +444,12 @@ export function SupplierTable({
       )}
 
       {/* Paywall popup */}
-      {showPaywall && <PaywallModal onClose={() => setShowPaywall(false)} />}
+      {showPaywall && (
+        <PaywallModal
+          plan={paywallTargetPlan}
+          onClose={() => setShowPaywall(false)}
+        />
+      )}
     </>
   );
 }
@@ -771,7 +840,25 @@ function getClientPageNumbers(currentPage: number, totalPages: number): Array<nu
 
 // ─── Paywall modal ────────────────────────────────────────────────────────────
 
-function PaywallModal({ onClose }: { onClose: () => void }) {
+function PaywallModal({ plan, onClose }: { plan: "STARTER" | "PRO" | "TEAM"; onClose: () => void }) {
+  const planInfo = {
+    STARTER: {
+      title: "Starter Plan Required",
+      desc: "Unlock up to 25 rows per page and unlimited searches. Gain immediate access to core sourcing data like Trade Mode and Websites.",
+      btnText: "Upgrade to Starter",
+    },
+    PRO: {
+      title: "Pro Plan Required",
+      desc: "Unlock up to 50 rows per page. Access advanced sourcing signals, historical exhibition counts, and export up to 1,600 rows per month.",
+      btnText: "Upgrade to Pro",
+    },
+    TEAM: {
+      title: "Team Plan Required",
+      desc: "Unlock up to 100 rows per page. Add custom team annotations, custom fields, and collaborate with up to 5 seats on premium sourcing.",
+      btnText: "Upgrade to Team",
+    },
+  }[plan];
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
       <div className="relative w-full max-w-[420px] rounded-2xl bg-white p-6 shadow-2xl border border-slate-100 text-center animate-in fade-in zoom-in duration-200">
@@ -785,9 +872,9 @@ function PaywallModal({ onClose }: { onClose: () => void }) {
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-teal-50 text-teal-600 mb-4">
           <ShieldAlert className="h-7 w-7 text-teal-600" />
         </div>
-        <h3 className="text-lg font-bold text-slate-950">Search Limit Reached</h3>
+        <h3 className="text-lg font-bold text-slate-950">{planInfo.title}</h3>
         <p className="mt-2 text-sm text-slate-600 leading-relaxed">
-          Free search is limited to the first 2 pages (20 records). Upgrade to Starter to unlock unlimited searches and access premium fields like Website, Trade Mode, and Exhibition counts.
+          {planInfo.desc}
         </p>
         <div className="mt-6 flex flex-col gap-2">
           <Link
@@ -795,7 +882,7 @@ function PaywallModal({ onClose }: { onClose: () => void }) {
             className="flex items-center justify-center gap-2 rounded-lg bg-teal-600 hover:bg-teal-700 px-4 py-2.5 text-sm font-semibold !text-white transition-colors shadow-md"
           >
             <Sparkles className="h-4 w-4" />
-            Upgrade to Starter
+            {planInfo.btnText}
           </Link>
           <button
             onClick={onClose}
