@@ -34,8 +34,42 @@ export function supplierPublicSelect() {
     companyType: true,
     tradeModes: true,
     exhibitorHistory: true,
+    exhibitionSessionCount: true,
     companyNature: true,
     updatedAt: true,
+  } satisfies Prisma.SupplierSelect;
+}
+
+/** 数据库页面专用 select，额外包含 signals 关联（用于权限判断后展示） */
+export function supplierDatabaseSelect() {
+  return {
+    id: true,
+    slug: true,
+    industryName: true,
+    exhibitorName: true,
+    province: true,
+    city: true,
+    websiteUrl: true,
+    productsText: true,
+    keywordsText: true,
+    foundedYear: true,
+    registeredCapital: true,
+    companySize: true,
+    companyType: true,
+    tradeModes: true,
+    exhibitionSessionCount: true,
+    companyNature: true,
+    updatedAt: true,
+    signals: {
+      select: {
+        innovationAward: true,
+        brandExhibitor: true,
+        customsCertifiedExhibitor: true,
+        highTechEnterprise: true,
+        hasAnyAward: true,
+        hasCertificationSignal: true,
+      },
+    },
   } satisfies Prisma.SupplierSelect;
 }
 
@@ -82,6 +116,32 @@ export async function searchSuppliers(params: SupplierSearchParams) {
     prisma.supplier.findMany({
       where,
       select: supplierPublicSelect(),
+      orderBy: [{ exhibitorName: "asc" }],
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+  ]);
+
+  return {
+    suppliers,
+    total,
+    page,
+    pageSize,
+    totalPages: Math.max(1, Math.ceil(total / pageSize)),
+  };
+}
+
+/** 数据库页面专用搜索（含 signals 关联），需要登录才能调用 */
+export async function searchSuppliersForDatabase(params: SupplierSearchParams) {
+  const page = Math.max(1, params.page || 1);
+  const pageSize = Math.min(Math.max(1, params.pageSize || 20), 100);
+  const where = buildSupplierWhere(params);
+
+  const [total, suppliers] = await Promise.all([
+    prisma.supplier.count({ where }),
+    prisma.supplier.findMany({
+      where,
+      select: supplierDatabaseSelect(),
       orderBy: [{ exhibitorName: "asc" }],
       skip: (page - 1) * pageSize,
       take: pageSize,

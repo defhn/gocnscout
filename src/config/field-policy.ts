@@ -60,3 +60,16 @@ export function sanitizeWebsiteAccess(planCode: string, websiteUrl?: string | nu
   if (!websiteUrl) return null;
   return planCode === "FREE" ? null : websiteUrl;
 }
+
+/** 根据参展次数返回等级标签（不含任何展会名称，合规） */
+export function getExhibitionTierLabel(count: number | null | undefined): {
+  label: string;
+  tier: "new" | "rising" | "active" | "established" | "veteran";
+} {
+  if (!count || count <= 0) return { label: "New Exhibitor", tier: "new" };
+  if (count === 1) return { label: "New Exhibitor", tier: "new" };
+  if (count <= 3) return { label: "Rising Exhibitor", tier: "rising" };
+  if (count <= 6) return { label: "Active Exhibitor", tier: "active" };
+  if (count <= 10) return { label: "Established Exhibitor", tier: "established" };
+  return { label: "Veteran Exhibitor", tier: "veteran" };
+}

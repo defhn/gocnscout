@@ -14,7 +14,7 @@ export type PlanDefinition = {
   savedLists: number | "unlimited";
   savedSuppliers: number | "unlimited";
   compareSuppliers: number;
-  includedReportsPerMonth: number | "all" | 0;
+  includedReportsPerMonth: number | 0;
   teamSeats: number;
 };
 
@@ -61,7 +61,7 @@ export const PLAN_DEFINITIONS: Record<AppPlanCode, PlanDefinition> = {
     savedLists: "unlimited",
     savedSuppliers: 3000,
     compareSuppliers: 10,
-    includedReportsPerMonth: 5,
+    includedReportsPerMonth: 3,
     teamSeats: 1,
   },
   TEAM: {
@@ -76,7 +76,7 @@ export const PLAN_DEFINITIONS: Record<AppPlanCode, PlanDefinition> = {
     savedLists: "unlimited",
     savedSuppliers: "unlimited",
     compareSuppliers: 20,
-    includedReportsPerMonth: "all",
+    includedReportsPerMonth: 10,
     teamSeats: 5,
   },
   DATA_LICENSE: {
@@ -91,7 +91,7 @@ export const PLAN_DEFINITIONS: Record<AppPlanCode, PlanDefinition> = {
     savedLists: "unlimited",
     savedSuppliers: "unlimited",
     compareSuppliers: 20,
-    includedReportsPerMonth: "all",
+    includedReportsPerMonth: 10,
     teamSeats: 1,
   },
 };
@@ -104,4 +104,16 @@ export function getPlan(code?: PlanCode | AppPlanCode | null) {
 
 export function canExport(code?: PlanCode | AppPlanCode | null) {
   return getPlan(code).exportRowsPerMonth > 0;
+}
+
+/** STARTER 及以上可见字段：贸易方式、官网、参展等级标签 */
+export function canViewStarterFields(code?: PlanCode | AppPlanCode | null): boolean {
+  const plan = code as AppPlanCode;
+  return plan === "STARTER" || plan === "PRO" || plan === "TEAM" || plan === "DATA_LICENSE";
+}
+
+/** PRO 及以上可见字段：参展具体次数、供应商信号（获奖/认证） */
+export function canViewProFields(code?: PlanCode | AppPlanCode | null): boolean {
+  const plan = code as AppPlanCode;
+  return plan === "PRO" || plan === "TEAM" || plan === "DATA_LICENSE";
 }
