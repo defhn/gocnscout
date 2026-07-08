@@ -1,11 +1,14 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { ChevronDown, ShieldCheck, Sparkles, Layers, FileText, Mail, ShieldAlert } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
 
-export function PublicHeader() {
+export async function PublicHeader() {
   const clerkEnabled = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+  const userId = clerkEnabled ? (await auth()).userId : null;
+  const isSignedIn = Boolean(userId);
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-md">
@@ -63,13 +66,15 @@ export function PublicHeader() {
 
         {/* Right side CTA Button Panel */}
         <div className="flex shrink-0 items-center gap-2">
-          <ButtonLink href="/sign-in" variant="outline">
-            Sign in
-          </ButtonLink>
+          {!isSignedIn ? (
+            <ButtonLink href="/sign-in" variant="outline">
+              Sign in
+            </ButtonLink>
+          ) : null}
           <ButtonLink href="/app" variant="secondary">
             Dashboard
           </ButtonLink>
-          {clerkEnabled ? <UserButton /> : null}
+          {isSignedIn ? <UserButton /> : null}
         </div>
       </div>
     </header>
