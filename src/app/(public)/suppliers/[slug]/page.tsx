@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { Lock, Globe, ExternalLink, Award } from "lucide-react";
+import { Lock, Globe, ExternalLink, Award, ArrowRight } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -46,6 +46,16 @@ export default async function SupplierPage({ params }: { params: Promise<{ slug:
   ]);
 
   if (!supplier) notFound();
+
+  // 查找所属城市页面的 Slug (RSC 环境下直接访问 DB 进行内链反查)
+  let cityPageSlug = "";
+  if (supplier.city && supplier.province) {
+    const cp = await prisma.cityPage.findUnique({
+      where: { province_city: { province: supplier.province, city: supplier.city } },
+      select: { slug: true }
+    });
+    cityPageSlug = cp?.slug || "";
+  }
 
   // 1. 强制登录才能查看供应商详情页
   if (!appUser) {
@@ -111,10 +121,30 @@ export default async function SupplierPage({ params }: { params: Promise<{ slug:
       <section className="container-page pb-14">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <Badge>{supplier.industryName}</Badge>
-            <h1 className="mt-4 text-3xl font-semibold text-slate-950">{supplier.exhibitorName}</h1>
-            <p className="mt-3 text-base text-slate-600">
-              {[supplier.city, supplier.province].filter(Boolean).join(", ") || "Location not published"}
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <Link href={`/industries/${supplier.industrySlug || ""}`}>
+                <Badge className="bg-teal-50 text-teal-700 border-teal-100 hover:bg-teal-100 transition-colors cursor-pointer">
+                  {supplier.industryName}
+                </Badge>
+              </Link>
+              {cityPageSlug && (
+                <Link href={`/cities/${cityPageSlug}`}>
+                  <span className="inline-flex items-center rounded-full border border-slate-200 px-2.5 py-0.5 text-xs font-semibold text-slate-500 hover:text-teal-600 hover:border-teal-300 transition-all cursor-pointer">
+                    📍 {supplier.city} Sourcing Hub
+                  </span>
+                </Link>
+              )}
+            </div>
+            <h1 className="mt-2 text-3xl font-semibold text-slate-950">{supplier.exhibitorName}</h1>
+            <p className="mt-3 text-base text-slate-600 flex items-center gap-1">
+              {cityPageSlug ? (
+                <Link href={`/cities/${cityPageSlug}`} className="hover:text-teal-600 hover:underline transition-all font-semibold">
+                  {supplier.city}
+                </Link>
+              ) : (
+                <span>{supplier.city}</span>
+              )}
+              {supplier.province && <span className="text-slate-400">, {supplier.province}</span>}
             </p>
           </div>
         </div>
@@ -125,6 +155,19 @@ export default async function SupplierPage({ params }: { params: Promise<{ slug:
               <CardTitle>Supplier overview</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
+              {cityPageSlug && supplier.industrySlug && (
+                <div className="rounded-xl border border-teal-100 bg-teal-50/20 p-4 text-xs flex flex-wrap items-center justify-between gap-4">
+                  <div className="text-slate-600 leading-relaxed max-w-xl">
+                    Looking for alternative candidates? Explore the full list of verified <strong>{supplier.industryName}</strong> exporters and manufacturers based in <strong>{supplier.city}</strong>.
+                  </div>
+                  <Link
+                    href={`/cities/${cityPageSlug}/${supplier.industrySlug}`}
+                    className="shrink-0 rounded-lg bg-teal-600 px-3.5 py-2 font-bold text-white hover:bg-teal-700 transition-all flex items-center gap-1 shadow-sm text-[11px]"
+                  >
+                    Explore {supplier.city} {supplier.industryName} <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              )}
               {/* Company info */}
               <section>
                 <h2 className="text-lg font-semibold text-slate-950">Public company profile</h2>

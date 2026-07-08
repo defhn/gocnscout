@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Sparkles, MapPin, CheckCircle2 } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { FaqSection } from "@/components/marketing/faq-section";
@@ -64,6 +65,20 @@ const STANDARDIZED_CITIES = [
   },
 ];
 
+interface CityPageItem {
+  id: string;
+  slug: string;
+  province: string;
+  city: string;
+  title: string;
+  metaDescription: string;
+  supplierCount: number;
+  isIndexable: boolean;
+  lastSyncedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export default async function CitiesPage() {
   const cities = await listCityPages().catch(() => []);
   const hasRealData = cities.length > 0;
@@ -129,60 +144,82 @@ export default async function CitiesPage() {
           </div>
         </div>
 
-        {/* Main City Listings Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {/* Main Province-Grouped Sourcing Clusters Grid */}
+        <div className="space-y-12">
           {hasRealData ? (
-            cities.map((city) => (
-              <Card 
-                key={city.slug} 
-                className="border border-slate-200 bg-white hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 rounded-xl flex flex-col justify-between"
-              >
-                <div className="p-5">
-                  <h3 className="text-base font-bold text-slate-950 hover:text-teal-600 transition-colors">
-                    <a href={`/cities/${city.slug}`}>{city.city}</a>
-                  </h3>
-                  <div className="text-[10px] text-teal-600 font-bold uppercase tracking-wide mt-1">
-                    Province: {city.province}
+            Object.entries(
+              (cities as CityPageItem[]).reduce((acc, curr) => {
+                const prov = curr.province || "Other Regions";
+                if (!acc[prov]) acc[prov] = [];
+                acc[prov].push(curr);
+                return acc;
+              }, {} as Record<string, CityPageItem[]>)
+            ).map(([provinceName, provinceCities]) => {
+              const typedCities = provinceCities as CityPageItem[];
+              return (
+                <div key={provinceName} className="space-y-4">
+                  <div className="flex items-center gap-2 pb-2 border-b border-slate-100">
+                    <span className="h-2 w-2 rounded-full bg-teal-600" />
+                    <h2 className="text-lg font-extrabold text-slate-900 tracking-tight">
+                      {provinceName} Province ({typedCities.length} Sourcing Cities)
+                    </h2>
                   </div>
-                  <p className="text-xs text-slate-500 mt-2 leading-relaxed">
-                    Browse active manufacturers and export clusters mapped inside {city.city}.
-                  </p>
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {typedCities.map((city) => (
+                    <Card 
+                      key={city.slug} 
+                      className="border border-slate-200 bg-white hover:-translate-y-0.5 hover:shadow-sm hover:border-teal-500/20 transition-all duration-200 rounded-xl flex flex-col justify-between group"
+                    >
+                      <div className="p-5">
+                        <h3 className="text-base font-bold text-slate-950 group-hover:text-teal-600 transition-colors">
+                          <Link href={`/cities/${city.slug}`}>{city.city}</Link>
+                        </h3>
+                        <p className="text-[10px] text-teal-600 font-bold uppercase tracking-wide mt-1">
+                          {provinceName} Sourcing Hub
+                        </p>
+                        <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                          Browse active manufacturers and export clusters mapped inside {city.city}.
+                        </p>
+                      </div>
+                      <div className="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs">
+                        <span className="text-[10px] bg-teal-50 text-teal-700 px-2 py-0.5 rounded font-bold uppercase">Active Hub</span>
+                        <span className="font-semibold text-slate-700">
+                          {city.supplierCount.toLocaleString("en-US")} Manufacturers
+                        </span>
+                      </div>
+                    </Card>
+                  ))}
                 </div>
-                <div className="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs">
-                  <span className="text-[10px] bg-teal-50 text-teal-700 px-2 py-0.5 rounded font-bold uppercase">Active Hub</span>
-                  <span className="font-semibold text-slate-700">
-                    {city.supplierCount.toLocaleString("en-US")} Manufacturers
-                  </span>
-                </div>
-              </Card>
-            ))
-          ) : (
-            // Fallback cities to make the page full of quality crawlable data
-            STANDARDIZED_CITIES.map((city) => (
-              <Card 
-                key={city.slug} 
-                className="border border-slate-200 bg-white hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 rounded-xl flex flex-col justify-between"
-              >
-                <div className="p-5">
-                  <h3 className="text-base font-bold text-slate-950 hover:text-teal-600 transition-colors">
-                    <a href={`/database?province=${encodeURIComponent(city.province)}&city=${encodeURIComponent(city.city)}`}>{city.city}</a>
-                  </h3>
-                  <div className="text-[10px] text-teal-600 font-bold uppercase tracking-wide mt-1">
-                    Province: {city.province}
+              </div>
+              );
+            })) : (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {STANDARDIZED_CITIES.map((city) => (
+                <Card 
+                  key={city.slug} 
+                  className="border border-slate-200 bg-white hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 rounded-xl flex flex-col justify-between"
+                >
+                  <div className="p-5">
+                    <h3 className="text-base font-bold text-slate-950 hover:text-teal-600 transition-colors">
+                      <a href={`/database?province=${encodeURIComponent(city.province)}&city=${encodeURIComponent(city.city)}`}>{city.city}</a>
+                    </h3>
+                    <div className="text-[10px] text-teal-600 font-bold uppercase tracking-wide mt-1">
+                      Province: {city.province}
+                    </div>
+                    <p className="text-[11px] font-semibold text-slate-800 mt-2">Specialty: {city.specialty}</p>
+                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                      {city.desc}
+                    </p>
                   </div>
-                  <p className="text-[11px] font-semibold text-slate-800 mt-2">Specialty: {city.specialty}</p>
-                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                    {city.desc}
-                  </p>
-                </div>
-                <div className="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs">
-                  <span className="text-[10px] bg-teal-50 text-teal-700 px-2 py-0.5 rounded font-bold uppercase">Active Hub</span>
-                  <span className="font-semibold text-slate-700">
-                    {city.count.toLocaleString("en-US")} Manufacturers
-                  </span>
-                </div>
-              </Card>
-            ))
+                  <div className="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs">
+                    <span className="text-[10px] bg-teal-50 text-teal-700 px-2 py-0.5 rounded font-bold uppercase">Active Hub</span>
+                    <span className="font-semibold text-slate-700">
+                      {city.count.toLocaleString("en-US")} Manufacturers
+                    </span>
+                  </div>
+                </Card>
+              ))}
+            </div>
           )}
         </div>
 
