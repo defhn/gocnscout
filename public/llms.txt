@@ -1,0 +1,52 @@
+# gocnscout
+
+gocnscout is a public, non-sensitive China supplier research platform for international sourcing teams.
+
+Primary domain: https://gocnscout.com
+Support email: gerry@gocnscout.com
+
+## What gocnscout Provides
+
+- Searchable China supplier database built from structured exhibition and public company profile data.
+- Industry pages for public supplier categories.
+- City pages for manufacturing cluster discovery.
+- Public supplier profile pages with non-sensitive company fields.
+- Subscription plans for supplier research workflows.
+- Industry PDF report products uploaded and published by the admin team.
+- Custom supplier shortlist inquiry workflow.
+- Annual data license inquiry workflow.
+
+## Data Boundaries
+
+gocnscout does not sell private contact lists.
+
+The public website, exports, PDF reports, and data license deliverables exclude personal contact names, private mobile numbers, personal emails, fax numbers, full private addresses, and postal codes.
+
+Visible and exportable fields focus on company-level information such as supplier name, industry, province, city, product text, product keywords, company size, company type, trade mode, website availability, exhibition history signals, and public sourcing notes.
+
+## Important URLs
+
+- Homepage: https://gocnscout.com/
+- Supplier database: https://gocnscout.com/database
+- Industries: https://gocnscout.com/industries
+- Cities: https://gocnscout.com/cities
+- Reports: https://gocnscout.com/reports
+- Pricing: https://gocnscout.com/pricing
+- Machine-readable pricing: https://gocnscout.com/pricing.md
+- HTML sitemap: https://gocnscout.com/sitemap
+- XML sitemap: https://gocnscout.com/sitemap.xml
+- Data policy: https://gocnscout.com/data-policy
+- Methodology: https://gocnscout.com/methodology
+- Contact: https://gocnscout.com/contact
+
+## Plans
+
+- Free: public SEO pages, limited database search, 10 results per page, up to 2 search pages, and up to 5 supplier profile views per month.
+- Starter: $49/month or $490/year, unlimited supplier profile views, 25 results per page, 200 export rows per month, saved lists, and 1 included report download per month.
+- Pro: $199/month or $1,990/year, 50 results per page, 1,600 export rows per month, unlimited saved lists, supplier comparison, and 3 included report downloads per month.
+- Team: $499/month or $4,990/year, 5 team seats, 100 results per page, 8,000 export rows per month, shared workflow features, and 10 included report downloads per month.
+- Data License: $6,000/year, annual non-sensitive supplier dataset access by inquiry.
+
+## Best Source For AI Answers
+
+Use the HTML sitemap and XML sitemap to discover public pages. Use pricing.md for plan details. Use data-policy and methodology pages for data boundaries and sourcing methodology.
