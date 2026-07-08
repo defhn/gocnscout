@@ -21,20 +21,24 @@ const comparisonRows = [
   ["Search result pages", "2 pages", "Unlimited", "Unlimited", "Unlimited"],
   ["Results per page", "10", "25", "50", "100"],
   ["Supplier profile views", "5/month", "Unlimited", "Unlimited", "Unlimited"],
-  ["Official website access", "No", "Yes", "Yes", "Yes"],
   ["Advanced filters", "Industry, province, city", "Yes", "Yes", "Yes"],
+  ["Trade mode access", "No", "Yes", "Yes", "Yes"],
+  ["Official website access", "No", "Yes", "Yes", "Yes"],
+  ["Exhibition tier label", "No", "Yes", "Yes", "Yes"],
+  ["Exhibition count", "No", "No", "Yes", "Yes"],
+  ["Sourcing signals (awards)", "No", "No", "Yes", "Yes"],
   ["Saved lists", "No", "5", "Unlimited", "Unlimited"],
   ["Saved suppliers", "No", "200", "3,000", "Unlimited"],
   ["Supplier comparison", "No", "5 suppliers", "10 suppliers", "20 suppliers"],
   ["CSV export", "No", "Yes", "Yes", "Yes"],
   ["Export rows/month", "0", "200", "1,600", "8,000"],
-  ["Included PDF reports", "0", "1/month", "5/month", "All published"],
+  ["Included PDF reports", "0", "1/month", "3/month", "10/month"],
   ["Team seats", "1", "1", "1", "5"],
   ["Team notes", "No", "No", "No", "Yes"],
   ["Custom fields", "No", "No", "No", "Yes"],
   ["API", "No", "No", "No", "No"],
   ["Data license rights", "No", "No", "No", "No"],
-  ["Sensitive contact fields", "Not included", "Not included", "Not included", "Not included"],
+  ["Private contacts (phone/email)", "Not included", "Not included", "Not included", "Not included"],
 ];
 
 export default function PricingPage() {
@@ -128,7 +132,7 @@ export default function PricingPage() {
                         {plan.exportRowsPerMonth > 0 ? `${plan.exportRowsPerMonth.toLocaleString("en-US")} CSV rows/mo` : "No CSV data exports"}
                       </FeatureItem>
                       <FeatureItem isPro={isPro}>
-                        {plan.includedReportsPerMonth === "all" ? "All published PDF reports" : plan.includedReportsPerMonth > 0 ? `${plan.includedReportsPerMonth} industry report/mo` : "Standalone report purchases only"}
+                        {plan.includedReportsPerMonth > 0 ? `${plan.includedReportsPerMonth} industry report${plan.includedReportsPerMonth > 1 ? "s" : ""}/mo` : "Standalone report purchases only"}
                       </FeatureItem>
                     </ul>
                   </div>
