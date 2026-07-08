@@ -10,6 +10,10 @@ const CLEANED_FILE = path.join(STATE_DIR, "canton-fair-cleaned.jsonl");
 const SYNC_FAILED_FILE = path.join(STATE_DIR, "canton-fair-sync-failed.jsonl");
 const SYNC_STATE_FILE = path.join(STATE_DIR, "canton-fair-sync-state.json");
 const BATCH_SIZE = 250;
+const MAX_BATCH_RETRIES = 2;
+const RETRY_DELAY_MS = 3000;
+const CONNECTION_TIMEOUT_MS = 20000;
+const STATEMENT_TIMEOUT_MS = 60000;
 
 function clean(value) {
   const text = String(value ?? "").trim();
@@ -47,6 +51,17 @@ function saveState(state) {
   fs.writeFileSync(SYNC_STATE_FILE, JSON.stringify({ ...state, updatedAt: new Date().toISOString() }, null, 2));
 }
 
+function archiveFile(filePath) {
+  if (!fs.existsSync(filePath)) return;
+  const backupPath = `${filePath}.${new Date().toISOString().replace(/[:.]/g, "-")}.bak`;
+  fs.renameSync(filePath, backupPath);
+  console.log(`[archive] ${filePath} -> ${backupPath}`);
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function getExistingHashes(pool) {
   const result = await pool.query('select "sourceRowHash" from "SupplierSourceRaw" where "status" = $1', ["IMPORTED"]);
   return new Set(result.rows.map((row) => row.sourceRowHash));
@@ -56,10 +71,7 @@ function validateRecord(record) {
   const errors = [];
   if (!record.sourceRowHash) errors.push("missing sourceRowHash");
   if (!record.sourceRowNumber) errors.push("missing sourceRowNumber");
-  if (!record.cleaned?.raw?.industryCn) errors.push("missing industryCn");
-  if (!record.cleaned?.raw?.exhibitorNameCn) errors.push("missing exhibitorNameCn");
-  if (!record.translated?.industryEn) errors.push("missing industryEn");
-  if (!record.translated?.exhibitorNameEn) errors.push("missing exhibitorNameEn");
+  if (!record.cleaned?.raw) errors.push("missing raw source object");
   return errors;
 }
 
@@ -78,6 +90,21 @@ async function syncBatch(pool, batch, totals) {
   } finally {
     client.release();
   }
+}
+
+async function syncBatchWithRetry(pool, batch, totals) {
+  let lastError;
+  for (let attempt = 1; attempt <= MAX_BATCH_RETRIES + 1; attempt++) {
+    try {
+      await syncBatch(pool, batch, totals);
+      return null;
+    } catch (error) {
+      lastError = error;
+      console.log(`[retry-batch] attempt=${attempt} size=${batch.length} error=${error.message}`);
+      if (attempt <= MAX_BATCH_RETRIES) await sleep(RETRY_DELAY_MS * attempt);
+    }
+  }
+  return lastError;
 }
 
 async function upsertRecord(client, record) {
@@ -236,7 +263,14 @@ async function upsertRecord(client, record) {
 async function main() {
   if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is required in .env.local.");
   const rows = readJsonl(CLEANED_FILE);
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL, connectionTimeoutMillis: 20000 });
+  archiveFile(SYNC_FAILED_FILE);
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    connectionTimeoutMillis: CONNECTION_TIMEOUT_MS,
+    statement_timeout: STATEMENT_TIMEOUT_MS,
+    query_timeout: STATEMENT_TIMEOUT_MS + 10000,
+    max: 5,
+  });
   const existing = await getExistingHashes(pool);
   const totals = { total: rows.length, synced: 0, skipped: 0, failed: 0 };
   let batch = [];
@@ -255,9 +289,8 @@ async function main() {
     }
     batch.push(record);
     if (batch.length >= BATCH_SIZE) {
-      try {
-        await syncBatch(pool, batch, totals);
-      } catch (error) {
+      const error = await syncBatchWithRetry(pool, batch, totals);
+      if (error) {
         totals.failed += batch.length;
         failures.push(...batch.map((item) => ({ sourceRowNumber: item.sourceRowNumber, sourceRowHash: item.sourceRowHash, errorMessage: error.message })));
         console.log(`[failed-batch] size=${batch.length} error=${error.message}`);
@@ -265,7 +298,14 @@ async function main() {
       batch = [];
     }
   }
-  if (batch.length) await syncBatch(pool, batch, totals);
+  if (batch.length) {
+    const error = await syncBatchWithRetry(pool, batch, totals);
+    if (error) {
+      totals.failed += batch.length;
+      failures.push(...batch.map((item) => ({ sourceRowNumber: item.sourceRowNumber, sourceRowHash: item.sourceRowHash, errorMessage: error.message })));
+      console.log(`[failed-batch] size=${batch.length} error=${error.message}`);
+    }
+  }
   appendJsonl(SYNC_FAILED_FILE, failures);
   saveState(totals);
   await pool.end();
