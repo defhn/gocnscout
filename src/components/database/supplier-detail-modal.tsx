@@ -85,7 +85,7 @@ export function SupplierTable({
   return (
     <>
       <div className="overflow-x-auto bg-white">
-        <table className="min-w-[1200px] w-full table-fixed border-collapse text-left text-sm">
+        <table className="min-w-[1380px] w-full table-fixed border-collapse text-left text-sm">
           <thead className="border-b border-[#d8e0ea] bg-[#fbfcfe] text-xs font-semibold uppercase tracking-wide text-slate-500">
             <tr>
               <th className="w-[210px] px-4 py-3">Supplier</th>
@@ -93,6 +93,7 @@ export function SupplierTable({
               <th className="w-[100px] px-4 py-3">Province</th>
               <th className="w-[95px] px-4 py-3">City</th>
               <th className="w-[200px] px-4 py-3">Main products</th>
+              <th className="w-[180px] px-4 py-3">Keywords</th>
               <th className="w-[110px] px-4 py-3">Company size</th>
               <th className="w-[120px] px-4 py-3">Company type</th>
               <th className="w-[130px] px-4 py-3">Trade mode</th>
@@ -130,7 +131,8 @@ export function SupplierTable({
                     <DataCell>{supplier.industryName}</DataCell>
                     <DataCell>{supplier.province || "—"}</DataCell>
                     <DataCell>{supplier.city || "—"}</DataCell>
-                    <DataCell>{supplier.productsText || "—"}</DataCell>
+                    <DataCell title={supplier.productsText || undefined}>{supplier.productsText || "—"}</DataCell>
+                    <DataCell title={supplier.keywordsText || undefined}>{supplier.keywordsText || "—"}</DataCell>
                     <DataCell>{supplier.companySize || "—"}</DataCell>
                     <DataCell>{supplier.companyType || "—"}</DataCell>
 
@@ -518,10 +520,10 @@ function SupplierDetailModal({
 
 // ─── Shared sub-components ───────────────────────────────────────────────────
 
-function DataCell({ children }: { children: React.ReactNode }) {
+function DataCell({ children, title }: { children: React.ReactNode; title?: string }) {
   return (
-  <td className="h-[105px] px-4 py-2 align-top text-slate-700">
-      <div className="max-h-[89px] overflow-hidden text-xs leading-5">
+    <td className="h-[105px] px-4 py-2 align-top text-slate-700" title={title}>
+      <div className="line-clamp-3 overflow-hidden text-xs leading-5">
         {children}
       </div>
     </td>
