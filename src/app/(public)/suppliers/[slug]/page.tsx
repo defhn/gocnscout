@@ -208,10 +208,12 @@ function Field({ label, value }: { label: string; value?: string | null }) {
 }
 
 function LockedFieldInline({ label, plan, compact = false }: { label: string; plan: string; compact?: boolean }) {
+  const isPro = plan === "PRO" || plan.startsWith("PRO");
+  const bgClass = isPro ? "bg-indigo-600 hover:bg-indigo-700" : "bg-teal-600 hover:bg-teal-700";
   return (
     <Link
       href="/pricing"
-      className="mt-2 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-600 hover:bg-teal-700 !text-white hover:!text-white transition-all shadow-md font-semibold"
+      className={`mt-2 inline-flex items-center gap-2 px-4 py-1.5 rounded-full ${bgClass} !text-white hover:!text-white transition-all shadow-md font-semibold`}
       title={`Upgrade to ${plan} to unlock ${label}`}
     >
       <Lock className="h-3.5 w-3.5 !text-white" />

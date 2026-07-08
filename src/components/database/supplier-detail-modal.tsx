@@ -135,7 +135,7 @@ export function SupplierTable({
                     <DataCell>{supplier.companyType || "—"}</DataCell>
 
                     {/* Trade mode — STARTER+ */}
-                    <td className="h-[105px] px-4 py-2 align-top">
+                    <td className="h-[105px] px-4 py-2 align-middle">
                       {canStarter ? (
                         <div className="flex flex-col gap-1">
                           {supplier.tradeModes.length > 0 ? (
@@ -157,7 +157,7 @@ export function SupplierTable({
                     </td>
 
                     {/* Exhibition — STARTER: label; PRO+: label + count */}
-                    <td className="h-[105px] px-4 py-2 align-top">
+                    <td className="h-[105px] px-4 py-2 align-middle">
                       {canStarter ? (
                         <div className="flex flex-col gap-1">
                           <span
@@ -183,7 +183,7 @@ export function SupplierTable({
                     </td>
 
                     {/* Sourcing Signals — PRO+ */}
-                    <td className="h-[105px] px-4 py-2 align-top">
+                    <td className="h-[105px] px-4 py-2 align-middle">
                       {canPro && supplier.signals ? (
                         <div className="flex flex-col gap-1">
                           {supplier.signals.innovationAward && (
@@ -219,7 +219,7 @@ export function SupplierTable({
                     </td>
 
                     {/* Website — STARTER+ */}
-                    <td className="h-[105px] px-4 py-2 align-top">
+                    <td className="h-[105px] px-4 py-2 align-middle">
                       {canStarter && supplier.websiteUrl ? (
                         <a
                           href={supplier.websiteUrl}
@@ -537,11 +537,13 @@ function LockedField({
   plan: string;
   compact?: boolean;
 }) {
+  const isPro = plan === "PRO" || plan.startsWith("PRO");
+  const bgClass = isPro ? "bg-indigo-600 hover:bg-indigo-700" : "bg-teal-600 hover:bg-teal-700";
   return (
     <Link
       href="/pricing"
       onClick={(e) => e.stopPropagation()}
-      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-teal-600 hover:bg-teal-700 !text-white hover:!text-white transition-all shadow-sm group"
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${bgClass} !text-white hover:!text-white transition-all shadow-sm group`}
       title={`Upgrade to ${plan} to unlock ${label}`}
     >
       <Lock className="h-3 w-3 !text-white group-hover:scale-110 transition-transform" />
@@ -604,10 +606,12 @@ function ModalLockedBadge({
   plan: string;
   compact?: boolean;
 }) {
+  const isPro = plan === "PRO" || plan.startsWith("PRO");
+  const bgClass = isPro ? "bg-indigo-600 hover:bg-indigo-700" : "bg-teal-600 hover:bg-teal-700";
   return (
     <Link
       href="/pricing"
-      className={`inline-flex items-center gap-2 rounded-full bg-teal-600 hover:bg-teal-700 !text-white hover:!text-white transition-colors shadow-sm ${compact ? "px-2.5 py-1 text-xs" : "px-4 py-2 text-sm font-semibold"}`}
+      className={`inline-flex items-center gap-2 rounded-full ${bgClass} !text-white hover:!text-white transition-colors shadow-sm ${compact ? "px-2.5 py-1 text-xs" : "px-4 py-2 text-sm font-semibold"}`}
     >
       <Lock className="h-3.5 w-3.5 shrink-0 !text-white" />
       <span>{text}</span>
