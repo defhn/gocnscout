@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Cpu, Hammer, Home, Sparkles, Shirt, CheckCircle2, Wrench, Activity, Car, Sun, Layers, Package, Lightbulb, Gamepad2 } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { FaqSection } from "@/components/marketing/faq-section";
@@ -158,13 +157,11 @@ export default async function IndustriesPage() {
                 key={ind.slug} 
                 className="border border-slate-200 bg-white hover:border-teal-500/20 hover:shadow-md transition-all duration-300 rounded-2xl flex flex-col justify-between overflow-hidden"
               >
-                <div className="relative aspect-[16/9] bg-slate-100">
-                  <Image
+                <div className="relative aspect-[16/9] bg-slate-100 overflow-hidden rounded-t-2xl">
+                  <img
                     src={getIndustryVisualAsset(`${ind.name} ${ind.desc}`)}
                     alt={`${ind.name} manufacturing visual`}
-                    fill
-                    sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
-                    className="object-cover"
+                    className="absolute inset-0 w-full h-full object-cover"
                   />
                 </div>
                 <div className="p-6">
