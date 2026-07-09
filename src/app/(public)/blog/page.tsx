@@ -6,8 +6,8 @@ import { createMetadata } from "@/config/seo";
 import { BLOG_POSTS } from "@/config/blog-data";
 
 export const metadata = createMetadata({
-  title: "Sourcing & Procurement Guides Blog | China Manufacturing Insights",
-  description: "Read expert guides on verifying Chinese manufacturers, mapping export clusters, and avoiding import scams.",
+  title: "China Sourcing Guides and Supplier Research Blog",
+  description: "Read practical guides on verifying Chinese manufacturers, mapping industrial clusters, comparing supplier types, and reducing sourcing risk.",
   path: "/blog",
 });
 

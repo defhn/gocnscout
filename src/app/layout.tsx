@@ -16,11 +16,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.APP_URL || "http://localhost:3000"),
   title: {
-    default: "gocnscout",
+    default: "China Supplier Database for Export Research | gocnscout",
     template: "%s | gocnscout",
   },
   description:
-    "Search a non-sensitive China supplier database for supplier research, industry reports, and sourcing shortlists.",
+    "Search public China supplier records, industry reports, sourcing shortlists, and data license options for compliant B2B supplier research.",
 };
 
 export default function RootLayout({

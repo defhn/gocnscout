@@ -9,9 +9,9 @@ import { mediaAssets } from "@/config/media";
 import { getHomeStats, listCityPages, listIndustryPages } from "@/server/suppliers";
 
 export const metadata = createMetadata({
-  title: "China Supplier Database | Search & Verify Export Manufacturers",
+  title: "China Supplier Database for Export Manufacturers",
   description:
-    "Unlock 20,000+ verified export exhibitors. Search by industry, product keywords, and location. Built for compliant B2B sourcing research.",
+    "Search structured public China supplier records by industry, city, products, company type, trade mode, and exhibition history.",
 });
 
 export default async function HomePage() {

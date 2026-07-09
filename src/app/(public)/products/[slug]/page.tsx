@@ -7,10 +7,19 @@ import { getProductPage } from "@/server/suppliers";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const data = await getProductPage(slug).catch(() => null);
-  if (!data) return createMetadata({ title: "Product suppliers", description: "Product supplier page.", noindex: true });
+  if (!data) {
+    return createMetadata({
+      title: "China Product Supplier Database",
+      description: "Browse public China supplier profiles by product keyword, industry, city, company type, and trade mode.",
+      noindex: true,
+    });
+  }
+  const keyword = data.product.keyword;
   return createMetadata({
-    title: `${data.product.keyword} suppliers`,
-    description: data.product.metaDescription,
+    title: `${keyword} China Suppliers`,
+    description:
+      data.product.metaDescription ||
+      `Research China suppliers connected to ${keyword}. Compare public company fields, product text, industry categories, city clusters, and trade mode.`,
     path: `/products/${slug}`,
     noindex: !data.product.isIndexable,
   });

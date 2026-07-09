@@ -9,10 +9,18 @@ import { getPublishedReport } from "@/server/reports";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const report = await getPublishedReport(slug).catch(() => null);
-  if (!report) return createMetadata({ title: "Report", description: "Industry report.", noindex: true });
+  if (!report) {
+    return createMetadata({
+      title: "China Supplier Industry Report",
+      description: "Download industry PDF reports based on non-sensitive supplier data, cluster analysis, and buyer vetting checklists.",
+      noindex: true,
+    });
+  }
   return createMetadata({
     title: report.title,
-    description: report.description || "Industry PDF report based on non-sensitive supplier data.",
+    description:
+      report.description ||
+      "Industry PDF report based on non-sensitive supplier data, supplier counts, city clusters, product keywords, and buyer verification checklists.",
     path: `/reports/${slug}`,
   });
 }

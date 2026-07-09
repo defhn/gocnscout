@@ -19,7 +19,9 @@ type SeoInput = {
 export function createMetadata({ title, description, path = "/", noindex = false }: SeoInput): Metadata {
   const fullTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
   return {
-    title: fullTitle,
+    title: {
+      absolute: fullTitle,
+    },
     description,
     alternates: {
       canonical: absoluteUrl(path),
@@ -31,6 +33,11 @@ export function createMetadata({ title, description, path = "/", noindex = false
       url: absoluteUrl(path),
       siteName: SITE.name,
       type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: fullTitle,
+      description,
     },
   };
 }

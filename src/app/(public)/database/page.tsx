@@ -24,11 +24,10 @@ import { getDatabaseFacets, searchSuppliersForDatabase } from "@/server/supplier
 import { clampSearchPage, searchPageSize } from "@/server/quota";
 
 export const metadata = createMetadata({
-  title: "Supplier Database Search",
+  title: "Search China Suppliers by Industry, City and Product",
   description:
-    "Search public trade exhibition supplier profiles by industry, product keyword, province, city, company type, and trade mode.",
+    "Filter public China supplier records by industry, province, city, products, company size, company type, trade mode, and website status.",
   path: "/database",
-  noindex: true,
 });
 
 export default async function DatabasePage({

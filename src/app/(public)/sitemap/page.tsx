@@ -6,9 +6,9 @@ import { absoluteUrl } from "@/lib/utils";
 import { prisma } from "@/lib/db";
 
 export const metadata = createMetadata({
-  title: "HTML Sitemap",
+  title: "HTML Sitemap for gocnscout",
   description:
-    "Browse the main gocnscout pages, supplier database sections, industry pages, city pages, reports, policy pages, and machine-readable files.",
+    "Browse the main public pages, supplier database indexes, industry reports, city pages, supplier categories, and legal pages on gocnscout.",
   path: "/sitemap",
 });
 

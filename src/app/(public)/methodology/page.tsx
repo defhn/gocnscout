@@ -5,8 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { createMetadata } from "@/config/seo";
 
 export const metadata = createMetadata({
-  title: "Methodology | Sourcing Intelligence & Vetting Algorithms | gocnscout",
-  description: "Learn how gocnscout normalizes manufacturer exhibition files, applies compliance filters, and aggregates market stats.",
+  title: "Supplier Data Methodology and Vetting Signals",
+  description: "Learn how gocnscout normalizes exhibitor records, removes sensitive fields, maps supplier categories, and builds sourcing intelligence signals.",
   path: "/methodology",
 });
 

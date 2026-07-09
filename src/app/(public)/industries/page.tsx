@@ -8,8 +8,8 @@ import { listIndustryPages } from "@/server/suppliers";
 import { ButtonLink } from "@/components/ui/button";
 
 export const metadata = createMetadata({
-  title: "Industry Classifications & Manufacturer Categories",
-  description: "Browse Chinese manufacturers by industry classification. Explore electronics, hardware, apparel, and home sectors.",
+  title: "China Supplier Industries and Manufacturer Categories",
+  description: "Browse China manufacturers by industry category, including electronics, hardware, home appliances, textiles, machinery, medical devices, and more.",
   path: "/industries",
 });
 

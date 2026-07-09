@@ -18,10 +18,16 @@ import { PlanCode } from "@/generated/prisma/enums";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const supplier = await getSupplierBySlug(slug).catch(() => null);
-  if (!supplier) return createMetadata({ title: "Supplier profile", description: "Public supplier profile.", noindex: true });
+  if (!supplier) {
+    return createMetadata({
+      title: "Supplier Profile Not Found",
+      description: "This supplier profile is not available for indexing.",
+      noindex: true,
+    });
+  }
   return createMetadata({
     title: supplier.exhibitorName,
-    description: `${supplier.exhibitorName} public supplier profile — industry, location, product keywords, company type, and trade context.`,
+    description: `${supplier.exhibitorName} public supplier profile: industry, location, product keywords, company type, trade mode, and website status.`,
     path: `/suppliers/${slug}`,
   });
 }
@@ -34,7 +40,11 @@ const TIER_COLORS: Record<string, string> = {
   veteran: "bg-purple-50 text-purple-700 border-purple-200",
 };
 const TIER_ICONS: Record<string, string> = {
-  new: "🆕", rising: "📈", active: "⭐", established: "🔥", veteran: "💎",
+  new: "NEW",
+  rising: "UP",
+  active: "ACTIVE",
+  established: "EST",
+  veteran: "VET",
 };
 
 export default async function SupplierPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -47,7 +57,7 @@ export default async function SupplierPage({ params }: { params: Promise<{ slug:
 
   if (!supplier) notFound();
 
-  // 查找所属城市页面的 Slug (RSC 环境下直接访问 DB 进行内链反查)
+  // Look up the related city page for internal linking.
   let cityPageSlug = "";
   if (supplier.city && supplier.province) {
     const cp = await prisma.cityPage.findUnique({
@@ -57,15 +67,13 @@ export default async function SupplierPage({ params }: { params: Promise<{ slug:
     cityPageSlug = cp?.slug || "";
   }
 
-  // 1. 允许游客直接访问供应商详情页以利于 SEO 抓取，但高级字段仍受 planCode="FREE" 限制
   const planCode = (appUser?.planCode ?? "FREE") as AppPlanCode;
   const userId = appUser?.id;
   const planLimit = appUser ? getPlan(planCode).profileViewsPerMonth : "limited";
 
-  // 2. 仅对已登录且有额度限制的用户进行配额检查与扣减
   if (appUser && userId && planLimit !== "unlimited") {
     const mKey = monthKey();
-    // 检查本月是否已看过该供应商 (去重：重复看同一个不重复扣减次数)
+    // Do not count repeated views of the same supplier in the same month.
     const existingView = await prisma.supplierProfileView.findFirst({
       where: {
         userId,
@@ -77,11 +85,10 @@ export default async function SupplierPage({ params }: { params: Promise<{ slug:
     if (!existingView) {
       const allowed = await canViewSupplierProfile(userId, planCode as PlanCode);
       if (!allowed) {
-        // 渲染超出限额的付费墙页面
+        // Render a paywall when the monthly profile view limit is reached.
         return <ProfileViewPaywall planCode={planCode} />;
       }
 
-      // 记录本次访问，并扣减一次额度
       await prisma.$transaction(async (tx) => {
         await tx.supplierProfileView.create({
           data: {
@@ -126,7 +133,7 @@ export default async function SupplierPage({ params }: { params: Promise<{ slug:
               {cityPageSlug && (
                 <Link href={`/cities/${cityPageSlug}`}>
                   <span className="inline-flex items-center rounded-full border border-slate-200 px-2.5 py-0.5 text-xs font-semibold text-slate-500 hover:text-teal-600 hover:border-teal-300 transition-all cursor-pointer">
-                    📍 {supplier.city} Sourcing Hub
+                    {supplier.city} Sourcing Hub
                   </span>
                 </Link>
               )}
@@ -270,7 +277,7 @@ export default async function SupplierPage({ params }: { params: Promise<{ slug:
                     href="/pricing"
                     className="mt-3 inline-flex items-center gap-1 rounded-md bg-teal-600 px-3 py-1.5 text-xs font-semibold !text-white hover:bg-teal-750 shadow-sm transition-colors"
                   >
-                    View pricing →
+                    View pricing
                   </Link>
                 </div>
               )}

@@ -45,11 +45,17 @@ async function getCityIndustryData(citySlug: string, industrySlug: string) {
 export async function generateMetadata({ params }: { params: Promise<Params> }) {
   const { slug, industrySlug } = await params;
   const data = await getCityIndustryData(slug, industrySlug).catch(() => null);
-  if (!data) return createMetadata({ title: "Sourcing Database", description: "Supplier directory.", noindex: true });
+  if (!data) {
+    return createMetadata({
+      title: "City Industry Supplier Database",
+      description: "Browse public China supplier profiles by city, industry, product keywords, company type, and trade mode.",
+      noindex: true,
+    });
+  }
   const cityEn = data.city.cityEn || data.city.city;
   return createMetadata({
-    title: `${data.industryName} Manufacturers in ${cityEn} Database (2026)`,
-    description: `Browse verified ${data.industryName} export suppliers and factories in ${cityEn}, ${data.city.provinceEn || data.city.province}. capital scale and website verification status.`,
+    title: `${data.industryName} Manufacturers in ${cityEn}`,
+    description: `Browse ${data.industryName} suppliers in ${cityEn}, ${data.city.provinceEn || data.city.province}. Compare public company fields, product keywords, capital scale, and website status.`,
     path: `/cities/${slug}/${industrySlug}`,
   });
 }

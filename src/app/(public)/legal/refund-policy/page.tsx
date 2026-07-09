@@ -3,8 +3,8 @@ import { LegalLayout } from "@/components/layout/legal-layout";
 import { createMetadata, SITE } from "@/config/seo";
 
 export const metadata = createMetadata({
-  title: "Refund Policy | gocnscout",
-  description: "Refund Policy for gocnscout database subscriptions, category reports, and custom shortlists.",
+  title: "Refund Policy",
+  description: "Review refund rules for gocnscout subscriptions, one-time industry PDF reports, custom supplier shortlists, and annual data licenses.",
   path: "/legal/refund-policy",
 });
 

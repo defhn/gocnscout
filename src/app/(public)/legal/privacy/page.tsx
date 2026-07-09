@@ -3,8 +3,8 @@ import { LegalLayout } from "@/components/layout/legal-layout";
 import { createMetadata, SITE } from "@/config/seo";
 
 export const metadata = createMetadata({
-  title: "Privacy Policy | gocnscout",
-  description: "Privacy Policy detailing user account processing and supplier compliance data guidelines.",
+  title: "Privacy Policy",
+  description: "Read how gocnscout handles account data, billing data, support requests, analytics, and compliant supplier data publication rules.",
   path: "/legal/privacy",
 });
 

@@ -6,8 +6,8 @@ import { createMetadata } from "@/config/seo";
 import { Card, CardContent } from "@/components/ui/card";
 
 export const metadata = createMetadata({
-  title: "Data Policy & Compliance Safety Standards | gocnscout",
-  description: "Examine gocnscout's compliance-focused data policies. Learn which supplier fields are public, exportable, and excluded.",
+  title: "Supplier Data Policy and Compliance Standards",
+  description: "See which China supplier fields gocnscout publishes, excludes, exports, and restricts for compliant B2B sourcing research.",
   path: "/data-policy",
 });
 

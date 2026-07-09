@@ -5,6 +5,7 @@ import { absoluteUrl } from "@/lib/utils";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     "",
+    "/database",
     "/industries",
     "/products",
     "/cities",

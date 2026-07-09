@@ -7,8 +7,8 @@ import { Input, Textarea } from "@/components/ui/input";
 import { createMetadata, SITE } from "@/config/seo";
 
 export const metadata = createMetadata({
-  title: "Contact Sourcing Support | gocnscout Help Desk",
-  description: "Reach our data engineers for billing queries, data licenses, custom supplier lists, or privacy inquiries.",
+  title: "Contact gocnscout for Supplier Data Support",
+  description: "Contact gocnscout about billing, custom supplier shortlists, data licenses, report access, privacy questions, or sourcing database support.",
   path: "/contact",
 });
 

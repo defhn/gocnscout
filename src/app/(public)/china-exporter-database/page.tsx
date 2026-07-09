@@ -7,8 +7,8 @@ import { createMetadata, faqJsonLd } from "@/config/seo";
 import { getHomeStats } from "@/server/suppliers";
 
 export const metadata = createMetadata({
-  title: "China Exporter Database | Verified Manufacturer Directory",
-  description: "Search 20,000+ verified export manufacturers. Filter by regional clusters, industry categories, and products. Clean, compliance-safe data.",
+  title: "China Exporter Database for Manufacturer Research",
+  description: "Search public China exporter profiles by industry, product keywords, manufacturing city, company type, trade mode, and website availability.",
   path: "/china-exporter-database",
 });
 

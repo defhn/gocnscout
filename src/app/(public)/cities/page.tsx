@@ -10,8 +10,8 @@ import { listCityPages } from "@/server/suppliers";
 import { ButtonLink } from "@/components/ui/button";
 
 export const metadata = createMetadata({
-  title: "Manufacturing Cities & Industrial Clusters",
-  description: "Browse verified Chinese manufacturers by city and manufacturing hub. Explore industrial clusters in Zhejiang, Guangdong, and Jiangsu.",
+  title: "China Manufacturing Cities and Supplier Clusters",
+  description: "Browse China supplier clusters by city and province. Compare manufacturing hubs for electronics, hardware, textiles, appliances, and industrial goods.",
   path: "/cities",
 });
 

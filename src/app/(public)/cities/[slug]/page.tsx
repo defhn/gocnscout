@@ -11,11 +11,19 @@ import { getCityPage } from "@/server/suppliers";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const data = await getCityPage(slug).catch(() => null);
-  if (!data) return createMetadata({ title: "City suppliers", description: "City supplier page.", noindex: true });
+  if (!data) {
+    return createMetadata({
+      title: "China Manufacturing City Database",
+      description: "Browse public China supplier profiles by manufacturing city, province, industry, product keywords, and company signals.",
+      noindex: true,
+    });
+  }
   const cityEn = data.city.cityEn || data.city.city;
   return createMetadata({
-    title: `${cityEn} Manufacturers Database (2026) | Verified Exporters & Suppliers`,
-    description: data.city.metaDescription,
+    title: `${cityEn} Manufacturers and Export Suppliers`,
+    description:
+      data.city.metaDescription ||
+      `Browse China supplier records in ${cityEn} by industry, product keywords, company type, trade mode, and website status.`,
     path: `/cities/${slug}`,
     noindex: !data.city.isIndexable,
   });

@@ -9,8 +9,8 @@ import { createMetadata, productJsonLd } from "@/config/seo";
 import { formatUsd } from "@/lib/utils";
 
 export const metadata = createMetadata({
-  title: "Pricing | Subscriptions & Reports Sourcing Packages",
-  description: "Find the best fit for your sourcing research. Compare starter, pro, and team subscriptions for verified China supplier records.",
+  title: "Pricing for Supplier Database, Reports and Shortlists",
+  description: "Compare plans for China supplier research, CSV exports, industry PDF reports, custom shortlists, and annual data licensing.",
   path: "/pricing",
 });
 

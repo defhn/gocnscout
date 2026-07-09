@@ -5,8 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { createMetadata, SITE } from "@/config/seo";
 
 export const metadata = createMetadata({
-  title: "About Us | Sourcing Database Pioneers | gocnscout",
-  description: "Discover our mission at gocnscout. We provide compliance-safe, high-integrity manufacturer mapping tools for international buyers.",
+  title: "About gocnscout and China Supplier Data",
+  description: "Learn how gocnscout structures public supplier data for compliant China manufacturer research, industry reports, and custom shortlists.",
   path: "/about",
 });
 

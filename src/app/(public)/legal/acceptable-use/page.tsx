@@ -3,8 +3,8 @@ import { LegalLayout } from "@/components/layout/legal-layout";
 import { createMetadata, SITE } from "@/config/seo";
 
 export const metadata = createMetadata({
-  title: "Acceptable Use Policy | gocnscout",
-  description: "Acceptable Use Policy detailing permitted sourcing research workflows and database restrictions.",
+  title: "Acceptable Use Policy",
+  description: "Understand allowed and restricted uses of gocnscout supplier data, exports, reports, custom shortlists, and internal research workflows.",
   path: "/legal/acceptable-use",
 });
 

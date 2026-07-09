@@ -3,8 +3,8 @@ import { LegalLayout } from "@/components/layout/legal-layout";
 import { createMetadata, SITE } from "@/config/seo";
 
 export const metadata = createMetadata({
-  title: "Terms of Service | gocnscout",
-  description: "Terms of Service for using the gocnscout supplier intelligence platform.",
+  title: "Terms of Service",
+  description: "Read the terms for using gocnscout supplier database subscriptions, industry reports, custom shortlists, and data license services.",
   path: "/legal/terms",
 });
 

@@ -9,8 +9,8 @@ import { createMetadata } from "@/config/seo";
 import { formatUsd } from "@/lib/utils";
 
 export const metadata = createMetadata({
-  title: "Annual Data License | Bulk Supplier Records | gocnscout",
-  description: "Request an annual license for the raw non-sensitive China export manufacturer dataset. Custom integrations and quarterly refreshes.",
+  title: "Annual China Supplier Data License",
+  description: "Request annual access to non-sensitive China supplier records for internal research, with CSV delivery, quarterly refreshes, and data-use limits.",
   path: "/data-license",
 });
 

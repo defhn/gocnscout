@@ -10,8 +10,8 @@ import { formatUsd } from "@/lib/utils";
 import { listPublishedReports } from "@/server/reports";
 
 export const metadata = createMetadata({
-  title: "Industry PDF Reports & Cluster Sourcing Guides",
-  description: "Download verified industry and sourcing intelligence reports. Maps of regional cluster densities, exporter parameters, and vetting checklists.",
+  title: "China Supplier Industry Reports and Sourcing Guides",
+  description: "Download industry PDF reports built from non-sensitive supplier data, covering supplier counts, city clusters, product keywords, and vetting checklists.",
   path: "/reports",
 });
 

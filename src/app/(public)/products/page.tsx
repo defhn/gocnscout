@@ -8,8 +8,8 @@ import { listProductPages } from "@/server/suppliers";
 import { ButtonLink } from "@/components/ui/button";
 
 export const metadata = createMetadata({
-  title: "Product Keywords & Sourcing Categories",
-  description: "Browse verified Chinese manufacturers by product keyword index. Discover hardware, electronics, household, and textile suppliers.",
+  title: "China Supplier Product Keywords and Categories",
+  description: "Browse product keyword indexes for China supplier research, then filter manufacturers by industry, city, company type, trade mode, and website status.",
   path: "/products",
 });
 

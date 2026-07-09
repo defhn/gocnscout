@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props) {
   if (!post) return {};
 
   return createMetadata({
-    title: `${post.title} | gocnscout Guide`,
+    title: post.title,
     description: post.description,
     path: `/blog/${slug}`,
   });

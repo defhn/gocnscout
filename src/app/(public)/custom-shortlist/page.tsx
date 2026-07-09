@@ -8,8 +8,8 @@ import { createMetadata } from "@/config/seo";
 import { formatUsd } from "@/lib/utils";
 
 export const metadata = createMetadata({
-  title: "Custom Supplier Shortlist",
-  description: "Request a custom supplier shortlist based on non-sensitive public supplier profile fields.",
+  title: "Custom China Supplier Shortlist Service",
+  description: "Request a curated shortlist of 30-50 China suppliers matched to your product, industry, city preferences, and public company profile fields.",
   path: "/custom-shortlist",
 });
 
