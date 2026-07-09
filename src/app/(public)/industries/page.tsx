@@ -3,7 +3,7 @@ import { Cpu, Hammer, Home, Sparkles, Shirt, CheckCircle2, Wrench, Activity, Car
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { FaqSection } from "@/components/marketing/faq-section";
 import { Card, CardContent } from "@/components/ui/card";
-import { getCityUnderlayAsset } from "@/config/media";
+import { getIndustryVisualAsset } from "@/config/media";
 import { createMetadata } from "@/config/seo";
 import { listIndustryPages } from "@/server/suppliers";
 import { ButtonLink } from "@/components/ui/button";
@@ -160,7 +160,7 @@ export default async function IndustriesPage() {
               >
                 <div className="relative aspect-[16/9] bg-slate-100">
                   <Image
-                    src={getCityUnderlayAsset(`${ind.name} ${ind.desc}`)}
+                    src={getIndustryVisualAsset(`${ind.name} ${ind.desc}`)}
                     alt={`${ind.name} manufacturing visual`}
                     fill
                     sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
@@ -209,7 +209,7 @@ export default async function IndustriesPage() {
               >
                 <div className="relative aspect-[16/9] bg-slate-100">
                   <Image
-                    src={getCityUnderlayAsset(ind.industryName)}
+                    src={getIndustryVisualAsset(ind.industryName)}
                     alt={`${ind.industryName} sourcing category visual`}
                     fill
                     sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
@@ -243,7 +243,7 @@ export default async function IndustriesPage() {
               >
                 <div className="relative aspect-[16/9] bg-slate-100">
                   <Image
-                    src={getCityUnderlayAsset(`${ind.name} ${ind.desc}`)}
+                    src={getIndustryVisualAsset(`${ind.name} ${ind.desc}`)}
                     alt={`${ind.name} sourcing category visual`}
                     fill
                     sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"

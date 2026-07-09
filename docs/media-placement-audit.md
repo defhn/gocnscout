@@ -1,6 +1,8 @@
 # GoCNScout Media Placement Audit
 
-Purpose: audit every current front-end image placement, identify image/text mismatches, and prepare exact prompts for replacement images. This document is an audit only. It does not request immediate generation.
+Purpose: audit every current front-end image placement, identify image/text mismatches, prepare exact prompts for replacement images, and track the final replacement status.
+
+Current status: all required replacement images in this audit have been generated, converted to WebP, saved in `public/media/generated/`, and wired into `src/config/media.ts`.
 
 ## 1. Executive Summary
 
@@ -163,9 +165,13 @@ The following real industry categories exist in the database. The current five-i
 
 To avoid one image per every 54 industries, use a controlled asset taxonomy. These 24 additions cover the current real categories without obvious mismatch.
 
+Generation status: complete.
+
 ### 4.1 `industry-household-goods-production.webp`
 
 Use for: Household Items.
+
+Status: generated and wired.
 
 Prompt:
 
@@ -183,6 +189,8 @@ Constraints: no brand logos, no readable labels, no personal data, no phone numb
 
 Use for: Kitchen and Tableware.
 
+Status: generated and wired.
+
 Prompt:
 
 ```text
@@ -192,6 +200,8 @@ Create a realistic kitchenware and tableware production scene: stainless cookwar
 ### 4.3 `industry-gifts-premiums-packaging.webp`
 
 Use for: Gifts & Premiums, Festive Supplies, Festival Supplies, Festive Products.
+
+Status: generated and wired.
 
 Prompt:
 
@@ -203,6 +213,8 @@ Create a realistic gifts and promotional products assembly and packaging scene w
 
 Use for: Food.
 
+Status: generated and wired.
+
 Prompt:
 
 ```text
@@ -212,6 +224,8 @@ Create a realistic clean food processing and packaged food production line with 
 ### 4.5 `industry-auto-parts-manufacturing.webp`
 
 Use for: Auto Parts, Vehicles.
+
+Status: generated and wired.
 
 Prompt:
 
@@ -223,6 +237,8 @@ Create a realistic auto parts manufacturing scene with brake components, engine 
 
 Use for: Men's and Women's Clothing, Sportswear and Casual Wear, Underwear, Children's Clothing.
 
+Status: generated and wired.
+
 Prompt:
 
 ```text
@@ -232,6 +248,8 @@ Create a realistic garment factory scene with sewing machines, fabric cutting ta
 ### 4.7 `industry-leather-down-products.webp`
 
 Use for: Fur, Leather, Down and Products.
+
+Status: generated and wired.
 
 Prompt:
 
@@ -243,6 +261,8 @@ Create a realistic leather and down goods production scene with leather panels, 
 
 Use for: Sports, Travel and Leisure Products.
 
+Status: generated and wired.
+
 Prompt:
 
 ```text
@@ -252,6 +272,8 @@ Create a realistic sports and travel leisure goods manufacturing scene with fitn
 ### 4.9 `industry-footwear-production.webp`
 
 Use for: Shoes, Footwear.
+
+Status: generated and wired.
 
 Prompt:
 
@@ -263,6 +285,8 @@ Create a realistic footwear production line with shoe uppers, soles, stitching, 
 
 Use for: Bathroom Equipment.
 
+Status: generated and wired.
+
 Prompt:
 
 ```text
@@ -272,6 +296,8 @@ Create a realistic sanitary ware and bathroom fixture manufacturing scene with c
 ### 4.11 `industry-bags-luggage-production.webp`
 
 Use for: Bags and Luggage.
+
+Status: generated and wired.
 
 Prompt:
 
@@ -283,6 +309,8 @@ Create a realistic luggage and bag production scene with suitcase shells, fabric
 
 Use for: Toys, Baby and Maternity Products.
 
+Status: generated and wired.
+
 Prompt:
 
 ```text
@@ -292,6 +320,8 @@ Create a realistic toy and baby products manufacturing scene with educational to
 ### 4.13 `industry-garden-outdoor-supplies.webp`
 
 Use for: Garden Supplies.
+
+Status: generated and wired.
 
 Prompt:
 
@@ -303,6 +333,8 @@ Create a realistic garden and outdoor supplies manufacturing scene with garden t
 
 Use for: Office and School Supplies.
 
+Status: generated and wired.
+
 Prompt:
 
 ```text
@@ -312,6 +344,8 @@ Create a realistic office and school supplies production scene with notebooks, p
 ### 4.15 `industry-ceramics-production.webp`
 
 Use for: Daily-use Ceramics, Artistic Ceramics.
+
+Status: generated and wired.
 
 Prompt:
 
@@ -323,6 +357,8 @@ Create a realistic ceramics production scene with ceramic cups, plates, glazing 
 
 Use for: Medicines, Health Products and Medical Devices, Medical Equipment & Supplies fallback card.
 
+Status: generated and wired.
+
 Prompt:
 
 ```text
@@ -332,6 +368,8 @@ Create a realistic medical devices and healthcare products manufacturing scene w
 ### 4.17 `industry-led-lighting-assembly.webp`
 
 Use for: Lighting Products.
+
+Status: generated and wired.
 
 Prompt:
 
@@ -343,6 +381,8 @@ Create a realistic LED lighting products assembly and testing line with downligh
 
 Use for: New Materials and Chemical Products.
 
+Status: generated and wired.
+
 Prompt:
 
 ```text
@@ -352,6 +392,8 @@ Create a realistic new materials and chemical products production scene with saf
 ### 4.19 `industry-glass-crafts-production.webp`
 
 Use for: Glass Crafts.
+
+Status: generated and wired.
 
 Prompt:
 
@@ -363,6 +405,8 @@ Create a realistic glass crafts production scene with glassware, decorative glas
 
 Use for: Power and Electrical Equipment, Electronic and Electrical Products if not consumer electronics.
 
+Status: generated and wired.
+
 Prompt:
 
 ```text
@@ -372,6 +416,8 @@ Create a realistic power and electrical equipment manufacturing scene with elect
 ### 4.21 `industry-motorcycle-bicycle-assembly.webp`
 
 Use for: Motorcycles, Bicycles, New Energy Vehicles and Smart Mobility.
+
+Status: generated and wired.
 
 Prompt:
 
@@ -383,6 +429,8 @@ Create a realistic two-wheel mobility assembly scene with motorcycle frames, bic
 
 Use for: Personal Care Appliances.
 
+Status: generated and wired.
+
 Prompt:
 
 ```text
@@ -392,6 +440,8 @@ Create a realistic personal care appliance assembly scene with electric shavers,
 ### 4.23 `industry-agricultural-machinery.webp`
 
 Use for: Agricultural Machinery.
+
+Status: generated and wired.
 
 Prompt:
 
@@ -403,6 +453,8 @@ Create a realistic agricultural machinery manufacturing scene with small tractor
 
 Use for: Woven, Rattan and Iron Crafts, Carpets & Tapestries.
 
+Status: generated and wired.
+
 Prompt:
 
 ```text
@@ -412,6 +464,8 @@ Create a realistic woven, rattan, iron craft, carpet and tapestry production sce
 ### 4.25 `industry-modular-building-facilities.webp`
 
 Use for: Integrated Housing and Courtyard Facilities.
+
+Status: generated and wired.
 
 Prompt:
 
@@ -423,6 +477,8 @@ Create a realistic modular building and courtyard facilities manufacturing scene
 
 Use for: Clocks, Watches and Glasses.
 
+Status: generated and wired.
+
 Prompt:
 
 ```text
@@ -433,6 +489,8 @@ Create a realistic precision assembly scene for clocks, watches, and glasses wit
 
 Use for: Building and Decoration Materials.
 
+Status: generated and wired.
+
 Prompt:
 
 ```text
@@ -442,6 +500,8 @@ Create a realistic building and decoration materials production scene with ceram
 ### 4.28 `industry-furniture-interior-production.webp`
 
 Use for: Furniture & Interior Decor.
+
+Status: generated and wired.
 
 Prompt:
 
@@ -482,6 +542,8 @@ Use for: real DB city cards when no dominant industry is available.
 
 File: `city-neutral-industrial-cluster-card.webp`
 
+Status: generated and wired for real DB city cards on `/cities`.
+
 Prompt:
 
 ```text
@@ -502,6 +564,8 @@ Use for: city cards where the page wants a stronger manufacturing-cluster feelin
 
 File: `city-dense-export-industrial-park-card.webp`
 
+Status: generated and available in `mediaAssets`; not used by default yet because `/cities` real DB cards now use the safer neutral cluster image.
+
 Prompt:
 
 ```text
@@ -518,30 +582,42 @@ Avoid: foggy aerial view, abstract skyline, empty dark warehouse, excessive shad
 
 ## 6. Implementation Notes For Tomorrow
 
-After the replacement images are generated:
+Implementation status:
 
-1. Add new paths to `src/config/media.ts`.
-2. Replace `getCityUnderlayAsset()` with a more complete `getIndustryVisualAsset(input)` mapping.
-3. Use `getIndustryVisualAsset(industryName)` for:
+1. Added new paths to `src/config/media.ts`.
+2. Added a more complete `getIndustryVisualAsset(input)` mapping.
+3. Now uses `getIndustryVisualAsset(industryName)` for:
    - `/industries` standardized industry cards
    - `/industries` real DB industry cards
    - `/industries/[slug]` Top Sourcing Cities cards
-4. For `/cities` real DB cards:
-   - best: query dominant city industries and map to `getIndustryVisualAsset(topIndustryName)`
-   - acceptable: use `city-neutral-industrial-cluster-card.webp`
+4. `/cities` real DB cards now use `city-neutral-industrial-cluster-card.webp` to avoid false industry inference from generic city titles.
 5. Keep the current static homepage, diagnostic, directory matrix, heatmap, and locked spreadsheet images.
+
+Additional generated coverage:
+
+- `industry-new-energy-solar-battery.webp` for New Energy / PV / battery / charging categories.
+- `industry-heavy-construction-machinery.webp` for Construction and Engineering Machinery.
 
 ## 7. Highest Priority Fix List
 
-Generate these first because they fix the most visible mismatches:
+Completion status:
 
-1. `industry-medical-health-devices.webp`
-2. `industry-auto-parts-manufacturing.webp`
-3. `industry-new-energy` equivalent: use `industry-power-electrical-equipment.webp` plus a solar/battery-specific image if possible.
-4. `industry-building-materials.webp`
-5. `industry-furniture-interior-production.webp`
-6. `industry-led-lighting-assembly.webp`
-7. `industry-toys-baby-products.webp`
-8. `industry-office-school-supplies.webp`
-9. `industry-apparel-garment-factory.webp`
-10. `city-neutral-industrial-cluster-card.webp`
+1. `industry-medical-health-devices.webp` generated and wired.
+2. `industry-auto-parts-manufacturing.webp` generated and wired.
+3. `industry-new-energy-solar-battery.webp` generated and wired.
+4. `industry-building-materials.webp` generated and wired.
+5. `industry-furniture-interior-production.webp` generated and wired.
+6. `industry-led-lighting-assembly.webp` generated and wired.
+7. `industry-toys-baby-products.webp` generated and wired.
+8. `industry-office-school-supplies.webp` generated and wired.
+9. `industry-apparel-garment-factory.webp` generated and wired.
+10. `city-neutral-industrial-cluster-card.webp` generated and wired.
+
+## 8. Generated File Count
+
+Newly generated in this replacement pass:
+
+- 30 industry/category visuals, including the planned replacement set plus New Energy and Heavy Construction Machinery.
+- 2 city card visuals for dark-overlay city cards.
+
+Total newly generated and converted in this pass: 32 WebP files.

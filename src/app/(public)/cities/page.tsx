@@ -4,7 +4,7 @@ import { Sparkles, MapPin, CheckCircle2 } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { FaqSection } from "@/components/marketing/faq-section";
 import { Card } from "@/components/ui/card";
-import { getCityUnderlayAsset, mediaAssets } from "@/config/media";
+import { getIndustryVisualAsset, mediaAssets } from "@/config/media";
 import { createMetadata } from "@/config/seo";
 import { listCityPages } from "@/server/suppliers";
 import { ButtonLink } from "@/components/ui/button";
@@ -182,7 +182,7 @@ export default async function CitiesPage() {
                       className="group relative min-h-[210px] overflow-hidden rounded-xl border border-slate-200 bg-slate-950 text-white transition-all duration-200 hover:-translate-y-0.5 hover:border-teal-500/40 hover:shadow-md"
                     >
                       <Image
-                        src={getCityUnderlayAsset(`${city.city} ${city.title}`)}
+                        src={mediaAssets.cityNeutralIndustrialClusterCard}
                         alt={`${city.city} manufacturing cluster visual`}
                         fill
                         sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
@@ -221,7 +221,7 @@ export default async function CitiesPage() {
                   className="group relative min-h-[230px] overflow-hidden rounded-xl border border-slate-200 bg-slate-950 text-white transition-all duration-200 hover:-translate-y-0.5 hover:border-teal-500/40 hover:shadow-md"
                 >
                   <Image
-                    src={getCityUnderlayAsset(`${city.city} ${city.specialty}`)}
+                    src={getIndustryVisualAsset(`${city.city} ${city.specialty}`)}
                     alt={`${city.city} manufacturing cluster visual`}
                     fill
                     sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"

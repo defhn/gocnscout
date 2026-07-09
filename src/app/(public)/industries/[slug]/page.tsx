@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { MapPin, ArrowRight, Globe, Users, HelpCircle, CheckCircle2, Calendar, Database, Sparkles, Award } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { Card, CardContent } from "@/components/ui/card";
-import { getCityUnderlayAsset, mediaAssets } from "@/config/media";
+import { getIndustryVisualAsset, mediaAssets } from "@/config/media";
 import { createMetadata } from "@/config/seo";
 import { getIndustryPage } from "@/server/suppliers";
 
@@ -285,7 +285,7 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
                     className="relative flex min-h-[116px] items-end justify-between overflow-hidden rounded-xl border border-slate-200 bg-slate-950 px-4 py-3 text-white shadow-sm transition-all hover:border-teal-500 hover:shadow-md group"
                   >
                     <Image
-                      src={getCityUnderlayAsset(`${c.city} ${industryName}`)}
+                      src={getIndustryVisualAsset(industryName)}
                       alt={`${c.cityEn} ${industryName} industrial cluster background`}
                       fill
                       sizes="(min-width: 1024px) 28vw, 50vw"
