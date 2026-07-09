@@ -16,7 +16,7 @@ const RETRY_DELAY_MS = 3000;
 const CONNECTION_TIMEOUT_MS = 20000;
 const STATEMENT_TIMEOUT_MS = 60000;
 const SYNC_LIMIT = Number(process.env.CANTON_FAIR_SYNC_LIMIT || 0);
-const CONCURRENCY = Number(process.env.CANTON_FAIR_SYNC_CONCURRENCY || 5);
+const CONCURRENCY = Number(process.env.CANTON_FAIR_SYNC_CONCURRENCY || 10);
 
 function clean(value) {
   const text = String(value ?? "").trim();
@@ -67,6 +67,15 @@ function archiveFile(filePath) {
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+const usedSlugs = new Set();
+
+async function getExistingSlugs(pool) {
+  console.log("[db] loading existing imported supplier slugs...");
+  const result = await pool.query('select "slug" from "Supplier"');
+  console.log(`[db] existing supplier slugs=${result.rows.length}`);
+  return new Set(result.rows.map((row) => row.slug));
 }
 
 async function getExistingHashes(pool) {
@@ -127,7 +136,15 @@ async function upsertRecord(client, record) {
   const city = clean(t.cityEn) || r.cityCn || null;
   const productsEn = Array.isArray(t.productsEn) && t.productsEn.length ? t.productsEn : c.productsCn || [];
   const keywordsEn = Array.isArray(t.keywordsEn) && t.keywordsEn.length ? t.keywordsEn : c.keywordsCn || [];
-  const slug = slugify(`${exhibitorName}-${city || ""}-${record.sourceRowNumber}`);
+  let baseSlug = slugify(`${exhibitorName}-${city || ""}`);
+  let finalSlug = baseSlug;
+  let counter = 1;
+  while (usedSlugs.has(finalSlug)) {
+    counter++;
+    finalSlug = `${baseSlug}-${counter}`;
+  }
+  usedSlugs.add(finalSlug);
+  const slug = finalSlug;
   const industrySlug = slugify(industryName);
   const citySlug = city ? slugify(`${city}-${province || ""}`) : null;
   const searchTextEn = [industryName, exhibitorName, province, city, productsEn.join(", "), keywordsEn.join(", "), t.companyTypeEn, t.companySizeEn, c.tradeModes?.join(", ")].filter(Boolean).join(" ");
@@ -289,9 +306,13 @@ async function main() {
     connectionTimeoutMillis: CONNECTION_TIMEOUT_MS,
     statement_timeout: STATEMENT_TIMEOUT_MS,
     query_timeout: STATEMENT_TIMEOUT_MS + 10000,
-    max: 5,
+    max: 15,
   });
   const existing = await getExistingHashes(pool);
+  const existingSlugs = await getExistingSlugs(pool);
+  for (const s of existingSlugs) {
+    usedSlugs.add(s);
+  }
   const totals = { total: rows.length, synced: 0, skipped: 0, failed: 0 };
   const failures = [];
   const pendingBatches = [];

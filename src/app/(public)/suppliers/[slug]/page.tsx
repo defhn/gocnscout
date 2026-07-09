@@ -57,17 +57,13 @@ export default async function SupplierPage({ params }: { params: Promise<{ slug:
     cityPageSlug = cp?.slug || "";
   }
 
-  // 1. 强制登录才能查看供应商详情页
-  if (!appUser) {
-    redirect(`/sign-in?redirect_url=/suppliers/${slug}`);
-  }
+  // 1. 允许游客直接访问供应商详情页以利于 SEO 抓取，但高级字段仍受 planCode="FREE" 限制
+  const planCode = (appUser?.planCode ?? "FREE") as AppPlanCode;
+  const userId = appUser?.id;
+  const planLimit = appUser ? getPlan(planCode).profileViewsPerMonth : "limited";
 
-  const planCode = (appUser.planCode ?? "FREE") as AppPlanCode;
-  const userId = appUser.id;
-  const planLimit = getPlan(planCode).profileViewsPerMonth;
-
-  // 2. 检查本月查看详情页次数配额限制 (免费版限制 5 次/月)
-  if (planLimit !== "unlimited") {
+  // 2. 仅对已登录且有额度限制的用户进行配额检查与扣减
+  if (appUser && userId && planLimit !== "unlimited") {
     const mKey = monthKey();
     // 检查本月是否已看过该供应商 (去重：重复看同一个不重复扣减次数)
     const existingView = await prisma.supplierProfileView.findFirst({
