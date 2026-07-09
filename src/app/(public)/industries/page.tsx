@@ -204,13 +204,11 @@ export default async function IndustriesPage() {
                 key={ind.slug} 
                 className="overflow-hidden border border-slate-200 bg-white hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 rounded-xl"
               >
-                <div className="relative aspect-[16/9] bg-slate-100">
-                  <Image
+                <div className="relative aspect-[16/9] bg-slate-100 overflow-hidden rounded-t-xl">
+                  <img
                     src={getIndustryVisualAsset(ind.industryName)}
                     alt={`${ind.industryName} sourcing category visual`}
-                    fill
-                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                    className="object-cover"
+                    className="absolute inset-0 w-full h-full object-cover"
                   />
                 </div>
                 <CardContent className="p-5 flex flex-col justify-between h-full">
@@ -238,13 +236,11 @@ export default async function IndustriesPage() {
                 key={ind.slug} 
                 className="overflow-hidden border border-slate-200 bg-white hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 rounded-xl"
               >
-                <div className="relative aspect-[16/9] bg-slate-100">
-                  <Image
+                <div className="relative aspect-[16/9] bg-slate-100 overflow-hidden rounded-t-xl">
+                  <img
                     src={getIndustryVisualAsset(`${ind.name} ${ind.desc}`)}
                     alt={`${ind.name} sourcing category visual`}
-                    fill
-                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                    className="object-cover"
+                    className="absolute inset-0 w-full h-full object-cover"
                   />
                 </div>
                 <CardContent className="p-5 flex flex-col justify-between h-full">
