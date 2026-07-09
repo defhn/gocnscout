@@ -15,7 +15,7 @@ export async function PublicHeader() {
       <div className="mx-auto flex h-16 w-full max-w-[1440px] items-center justify-between gap-4 px-4 lg:px-6">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-slate-950 shrink-0">
-          <img src="/logo.png" alt="GoCNScout Logo" className="h-8 w-8 object-contain" />
+          <img src="/logo-96.webp" alt="GoCNScout Logo" width={32} height={32} className="h-8 w-8 object-contain" />
           <span>gocnscout</span>
         </Link>
 

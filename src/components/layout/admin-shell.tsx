@@ -19,7 +19,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-slate-100">
       <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-border bg-slate-950 p-4 text-white lg:block">
         <Link href="/admin" className="flex items-center gap-2 text-lg font-extrabold text-white">
-          <img src="/logo.png" alt="GoCNScout Logo" className="h-8 w-8 object-contain" />
+          <img src="/logo-96.webp" alt="GoCNScout Logo" width={32} height={32} className="h-8 w-8 object-contain" />
           <span>gocnscout 管理后台</span>
         </Link>
         <nav className="mt-8 grid gap-1" aria-label="Admin navigation">

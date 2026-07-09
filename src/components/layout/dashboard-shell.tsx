@@ -19,7 +19,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-slate-50">
       <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-border bg-white p-4 lg:block">
         <Link href="/" className="flex items-center gap-2 text-lg font-extrabold text-slate-950">
-          <img src="/logo.png" alt="GoCNScout Logo" className="h-8 w-8 object-contain" />
+          <img src="/logo-96.webp" alt="GoCNScout Logo" width={32} height={32} className="h-8 w-8 object-contain" />
           <span>gocnscout</span>
         </Link>
         <nav className="mt-8 grid gap-1" aria-label="Dashboard navigation">

@@ -7,7 +7,7 @@ export function PublicFooter() {
       <div className="container-page grid gap-8 py-10 md:grid-cols-5">
         <div>
           <div className="flex items-center gap-2 text-lg font-extrabold text-slate-950">
-            <img src="/logo.png" alt="GoCNScout Logo" className="h-10 w-10 object-contain" />
+            <img src="/logo-96.webp" alt="GoCNScout Logo" width={40} height={40} className="h-10 w-10 object-contain" />
             <span>gocnscout</span>
           </div>
           <p className="mt-3 text-sm leading-6 text-slate-600">

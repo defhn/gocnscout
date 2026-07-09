@@ -296,7 +296,7 @@ export default async function HomePage() {
 function MediaPanel({ src, alt }: { src: string; alt: string }) {
   return (
     <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
-      <Image src={src} alt={alt} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+      <Image src={src} alt={alt} fill sizes="(min-width: 768px) 33vw, 100vw" quality={58} className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
     </div>
   );
 }
@@ -305,7 +305,7 @@ function WorkflowStep({ num, title, text, image }: { num: string; title: string;
   return (
     <Card className="overflow-hidden border border-slate-200 bg-white transition-all duration-300 hover:shadow-sm">
       <div className="relative aspect-square bg-slate-100">
-        <Image src={image} alt={`${title} sourcing workflow visual`} fill sizes="(min-width: 768px) 25vw, 100vw" className="object-cover" />
+        <Image src={image} alt={`${title} sourcing workflow visual`} fill sizes="(min-width: 768px) 25vw, 100vw" quality={56} className="object-cover" />
       </div>
       <CardContent className="p-6 relative overflow-hidden">
         <span className="absolute right-6 top-2 text-5xl font-extrabold text-slate-200/40 font-mono tracking-tighter select-none">{num}</span>
@@ -320,7 +320,7 @@ function DirectoryBlock({ title, href, image, items }: { title: string; href: st
   return (
     <Card className="overflow-hidden border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:border-teal-500/20">
       <div className="relative aspect-[16/9] bg-slate-100">
-        <Image src={image} alt={`${title} visual`} fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
+        <Image src={image} alt={`${title} visual`} fill sizes="(min-width: 1024px) 50vw, 100vw" quality={58} className="object-cover" />
       </div>
       <CardHeader className="border-b border-slate-100 pb-4">
         <CardTitle className="text-base font-bold text-slate-950">{title}</CardTitle>
