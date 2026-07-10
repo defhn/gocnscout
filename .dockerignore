@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+.github
+*.log
+README.md
+139th Canton Fair Exhibitor Database (Full Version).xlsx
+customs_exportGoods.html
+customs_exportGoods.png
+page.html
+tmp
