@@ -165,7 +165,15 @@ export async function getSupplierBySlug(slug: string) {
   });
 }
 
+let cachedFacets: any = null;
+let cachedFacetsExpiry = 0;
+
 export async function getDatabaseFacets() {
+  const now = Date.now();
+  if (cachedFacets && now < cachedFacetsExpiry) {
+    return cachedFacets;
+  }
+
   const [industries, provinces, cities, companyTypes, companySizes, companyNatures, foundedYears, registeredCapitals, tradeModes, websiteCount] = await Promise.all([
     prisma.supplier.groupBy({
       by: ["industryName"],
@@ -226,7 +234,7 @@ export async function getDatabaseFacets() {
     prisma.supplier.findMany({
       where: { isPublished: true, NOT: { tradeModes: { isEmpty: true } } },
       select: { tradeModes: true },
-      take: 10000,
+      take: 1000,
     }),
     prisma.supplier.count({ where: { isPublished: true, websiteUrl: { not: null } } }),
   ]);
@@ -239,7 +247,7 @@ export async function getDatabaseFacets() {
     }
   }
 
-  return {
+  const result = {
     industries,
     provinces,
     cities,
@@ -254,6 +262,10 @@ export async function getDatabaseFacets() {
       .map(([label, count]) => ({ label, count })),
     websiteCount,
   };
+
+  cachedFacets = result;
+  cachedFacetsExpiry = now + 1000 * 60 * 10; // Cache for 10 minutes
+  return result;
 }
 
 export async function getHomeStats() {

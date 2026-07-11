@@ -122,8 +122,8 @@ export function BlogEditor({ content, onChange }: Props) {
     }
   };
 
-  return <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
-    <div className="flex flex-wrap items-center gap-1 border-b border-slate-200 bg-slate-50 p-2">
+  return <div className="rounded-md border border-slate-200 bg-white">
+    <div className="sticky top-0 z-10 flex flex-wrap items-center gap-1 border-b border-slate-200 bg-slate-50 p-2 rounded-t-md">
       <Tool title="粗体" onClick={() => editor.chain().focus().toggleBold().run()}><Bold size={15} /></Tool>
       <Tool title="斜体" onClick={() => editor.chain().focus().toggleItalic().run()}><Italic size={15} /></Tool>
       <Tool title="二级标题" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}><Heading2 size={15} /></Tool>

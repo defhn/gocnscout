@@ -12,7 +12,7 @@ type Post = {
 };
 
 function BulkButton({ children, onClick, disabled }: { children: React.ReactNode; onClick: () => void; disabled?: boolean }) {
-  return <button type="button" onClick={onClick} disabled={disabled} className="inline-flex h-9 items-center gap-1 rounded-md border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50">{children}</button>;
+  return <button type="button" onClick={onClick} disabled={disabled} className="inline-flex h-8 items-center gap-1 rounded-md border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50">{children}</button>;
 }
 
 export function AdminBulkActions({ posts }: { posts: Post[] }) {
@@ -40,7 +40,7 @@ export function AdminBulkActions({ posts }: { posts: Post[] }) {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-md border border-slate-200 bg-white p-3">
+    <div className="flex items-center gap-2">
       <BulkButton onClick={() => void copy(posts.map((post) => post.title).join("\n"), "标题")}>
         <Copy size={14} />
         复制所有标题

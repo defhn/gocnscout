@@ -95,41 +95,66 @@ export default async function AdminBlogPage({ searchParams }: Props) {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-extrabold text-slate-950">系统官方博客管理</h1>
-          <p className="mt-1 text-sm text-slate-500">创建、编辑和发布 GoCNScout 官方博客文章，作为重要 SEO 流量来源。</p>
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-md border border-slate-200 bg-white p-3">
+        {/* Left: Title and compact inline stats */}
+        <div className="flex flex-wrap items-center gap-4">
+          <h1 className="text-lg font-bold text-slate-900">系统官方博客管理</h1>
+          <div className="hidden h-6 w-px bg-slate-200 sm:block" />
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <span className="inline-flex items-center gap-1 rounded bg-slate-100 px-2 py-1 font-semibold text-slate-700">
+              总文章数: <strong className="text-slate-900">{stats._count.id}</strong>
+            </span>
+            <span className="inline-flex items-center gap-1 rounded bg-emerald-50 px-2 py-1 font-semibold text-emerald-700">
+              已发布: <strong className="text-emerald-900">{publishedCount}</strong>
+            </span>
+            <span className="inline-flex items-center gap-1 rounded bg-amber-50 px-2 py-1 font-semibold text-amber-700">
+              草稿箱: <strong className="text-amber-900">{draftCount}</strong>
+            </span>
+            <span className="inline-flex items-center gap-1 rounded bg-teal-50 px-2 py-1 font-semibold text-teal-700">
+              总阅读量: <strong className="text-teal-900">{stats._sum.viewCount ?? 0}</strong>
+            </span>
+          </div>
         </div>
-        <Link href="/admin/blog/new" className="inline-flex items-center gap-2 rounded-md bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700">
-          <Plus size={16} />
-          撰写新文章
-        </Link>
+
+        {/* Right: Bulk copy controls and new article button */}
+        <div className="flex flex-wrap items-center gap-2">
+          <AdminBulkActions posts={posts.map((post) => ({ title: post.title, slug: post.slug, category: post.category, tags: post.tags, viewCount: post.viewCount }))} />
+          <Link href="/admin/blog/new" className="inline-flex h-8 items-center gap-1 rounded-md bg-teal-600 px-3 text-xs font-semibold text-white hover:bg-teal-700">
+            <Plus size={14} />
+            撰写新文章
+          </Link>
+        </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
-        <div className="rounded-md border border-slate-200 bg-white p-4"><FileText size={16} className="text-slate-400" /><p className="mt-2 text-xs font-bold text-slate-500">总文章数</p><p className="mt-2 text-2xl font-bold text-slate-950">{stats._count.id}</p></div>
-        <div className="rounded-md border border-slate-200 bg-white p-4"><Globe size={16} className="text-slate-400" /><p className="mt-2 text-xs font-bold text-slate-500">已发布</p><p className="mt-2 text-2xl font-bold text-emerald-600">{publishedCount}</p></div>
-        <div className="rounded-md border border-slate-200 bg-white p-4"><Save size={16} className="text-slate-400" /><p className="mt-2 text-xs font-bold text-slate-500">草稿箱</p><p className="mt-2 text-2xl font-bold text-amber-600">{draftCount}</p></div>
-        <div className="rounded-md border border-slate-200 bg-white p-4"><TrendingUp size={16} className="text-slate-400" /><p className="mt-2 text-xs font-bold text-slate-500">全站总阅读量</p><p className="mt-2 text-2xl font-bold text-teal-600">{stats._sum.viewCount ?? 0}</p></div>
-      </div>
-
-      <AdminBulkActions posts={posts.map((post) => ({ title: post.title, slug: post.slug, category: post.category, tags: post.tags, viewCount: post.viewCount }))} />
-
-      <form className="rounded-md border border-slate-200 bg-white p-4">
-        <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_160px_180px_170px_auto]">
-          <input name="search" defaultValue={search} placeholder="搜索文章标题或 Slug..." className="field-input" />
-          <select name="status" defaultValue={status} className="field-input"><option value="">全部状态</option><option value="PUBLISHED">已发布</option><option value="DRAFT">草稿</option><option value="ARCHIVED">已归档</option></select>
-          <select name="category" defaultValue={category} className="field-input"><option value="">所有分类</option>{categories.map((item) => item.category && <option key={item.category} value={item.category}>{item.category}</option>)}</select>
-          <select name="timeType" defaultValue={timeType} className="field-input"><option value="updatedAt">更新时间</option><option value="createdAt">上传时间</option></select>
-          <button className="rounded-md bg-slate-950 px-4 py-2 text-sm font-semibold text-white">筛选</button>
+      <form className="flex flex-wrap items-center gap-2 rounded-md border border-slate-200 bg-white p-2 text-xs">
+        <input name="search" defaultValue={search} placeholder="搜索标题或 Slug..." className="h-9 px-3 text-xs border border-slate-300 rounded-md bg-white w-44 focus:border-teal-600 outline-none" />
+        
+        <select name="status" defaultValue={status} className="h-9 px-2 text-xs border border-slate-300 rounded-md bg-white w-28 focus:border-teal-600 outline-none cursor-pointer">
+          <option value="">全部状态</option>
+          <option value="PUBLISHED">已发布</option>
+          <option value="DRAFT">草稿</option>
+          <option value="ARCHIVED">已归档</option>
+        </select>
+        
+        <select name="category" defaultValue={category} className="h-9 px-2 text-xs border border-slate-300 rounded-md bg-white w-36 focus:border-teal-600 outline-none cursor-pointer">
+          <option value="">所有分类</option>
+          {categories.map((item) => item.category && <option key={item.category} value={item.category}>{item.category}</option>)}
+        </select>
+        
+        <select name="timeType" defaultValue={timeType} className="h-9 px-2 text-xs border border-slate-300 rounded-md bg-white w-28 focus:border-teal-600 outline-none cursor-pointer">
+          <option value="updatedAt">更新时间</option>
+          <option value="createdAt">上传时间</option>
+        </select>
+        
+        <div className="flex items-center gap-1 border-l pl-2 border-slate-200">
+          <input name="year" defaultValue={params.year ?? ""} placeholder="年" className="h-9 px-1 text-xs border border-slate-300 rounded-md bg-white w-14 text-center focus:border-teal-600 outline-none" />
+          <input name="month" defaultValue={params.month ?? ""} placeholder="月" className="h-9 px-1 text-xs border border-slate-300 rounded-md bg-white w-10 text-center focus:border-teal-600 outline-none" />
+          <input name="date" defaultValue={params.date ?? ""} placeholder="日" className="h-9 px-1 text-xs border border-slate-300 rounded-md bg-white w-10 text-center focus:border-teal-600 outline-none" />
         </div>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <input name="year" defaultValue={params.year ?? ""} placeholder="年份" className="field-input h-9 w-24" />
-          <input name="month" defaultValue={params.month ?? ""} placeholder="月份" className="field-input h-9 w-24" />
-          <input name="date" defaultValue={params.date ?? ""} placeholder="日" className="field-input h-9 w-20" />
-          <Link href="/admin/blog" className="inline-flex h-9 items-center rounded-md border border-slate-300 px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">清除过滤</Link>
-        </div>
+        
+        <button className="rounded-md bg-slate-950 px-4 py-2 h-9 text-xs font-semibold text-white hover:bg-slate-800 transition-colors">筛选</button>
+        <Link href="/admin/blog" className="inline-flex h-9 items-center rounded-md border border-slate-300 px-3 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors">清除</Link>
       </form>
 
       <div className="overflow-hidden rounded-md border border-slate-200 bg-white">

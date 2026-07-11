@@ -58,7 +58,7 @@ export default async function BlogPostPage({ params }: Props) {
   const description = post.excerpt ?? "GoCNScout sourcing research";
   const published = post.publishedAt?.toISOString() ?? new Date().toISOString();
   const modified = post.updatedAt?.toISOString() ?? published;
-  const author = post.authorName ?? "GoCNScout 编辑部";
+  const author = post.authorName ?? "GoCNScout Editorial Team";
   const image = post.coverImage ?? "/favicon.ico";
   const category = post.category;
   const tags = post.tags;
@@ -74,7 +74,7 @@ export default async function BlogPostPage({ params }: Props) {
         <div className="py-5">
           <Link href="/blog" className="inline-flex items-center gap-1 text-sm font-semibold text-slate-500 hover:text-teal-700">
             <ArrowLeft size={15} />
-            返回博客
+            Back to Blog
           </Link>
         </div>
 
@@ -82,9 +82,9 @@ export default async function BlogPostPage({ params }: Props) {
           {category && <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-teal-700">{category}</p>}
           <h1 className="text-3xl font-extrabold leading-tight text-slate-950 md:text-5xl">{post.title}</h1>
           <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-slate-500">
-            <span className="inline-flex items-center gap-1"><Calendar size={15} />{new Date(published).toLocaleDateString("zh-CN")}</span>
+            <span className="inline-flex items-center gap-1"><Calendar size={15} />{new Date(published).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</span>
             <span className="inline-flex items-center gap-1"><User size={15} />{author}</span>
-            <span>{dbDocument ? `${readingMinutes(dbDocument)} 分钟阅读` : "研究指南"}</span>
+            <span>{dbDocument ? `${readingMinutes(dbDocument)} min read` : "Research Guide"}</span>
           </div>
         </header>
 
@@ -96,17 +96,17 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
 
             <aside className="mt-10 rounded-md border border-slate-200 bg-slate-50 p-5 text-sm leading-6 text-slate-600">
-              <strong className="text-slate-900">合规说明：</strong>
-              本文基于公开企业与贸易信息整理。GoCNScout 不提供个人联系人、私人手机号或私人邮箱目录。
+              <strong className="text-slate-900">Compliance Notice: </strong>
+              This article is compiled based on public corporate and trade information. GoCNScout does not provide private contact details, personal mobile numbers, or personal email directories.
             </aside>
 
             {related.length > 0 && (
               <section className="mt-10 border-t border-slate-200 pt-8">
-                <h2 className="text-xl font-bold text-slate-950">相关文章</h2>
+                <h2 className="text-xl font-bold text-slate-950">Related Articles</h2>
                 <div className="mt-4 grid gap-4 md:grid-cols-3">
                   {related.map((item) => (
                     <Link key={item.slug} href={`/blog/${item.slug}`} className="rounded-md border border-slate-200 bg-white p-4 hover:border-teal-300 hover:shadow-sm">
-                      <p className="text-xs font-semibold text-teal-700">{item.category || "行业研究"}</p>
+                      <p className="text-xs font-semibold text-teal-700">{item.category || "Sourcing Research"}</p>
                       <h3 className="mt-2 text-sm font-bold leading-5 text-slate-950">{item.title}</h3>
                       {item.excerpt && <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-500">{item.excerpt}</p>}
                     </Link>
@@ -118,10 +118,10 @@ export default async function BlogPostPage({ params }: Props) {
 
           <aside className="space-y-5 lg:sticky lg:top-24">
             <div className="rounded-md bg-slate-950 p-5 text-white">
-              <h2 className="font-bold">搜索真实出口商</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-300">按行业、城市、产品和企业信号筛选公开的供应商记录。</p>
+              <h2 className="font-bold">Search Real Exporters</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-300">Filter public supplier records by industry, city, product, and company signals.</p>
               <Link href="/database" className="mt-4 inline-flex w-full justify-center rounded bg-teal-500 px-3 py-2 text-sm font-bold text-slate-950 hover:bg-teal-400">
-                打开供应商数据库
+                Open Supplier Database
               </Link>
             </div>
           </aside>

@@ -6,48 +6,44 @@ export async function getCurrentAppUser() {
   const session = await auth();
   if (!session.userId) return null;
 
+  // 1. Check database first to avoid slow Clerk HTTP requests and write queries on every single request
+  let appUser = await prisma.user.findUnique({
+    where: { clerkId: session.userId },
+  });
+
+  if (appUser) {
+    return appUser;
+  }
+
+  // 2. Fallback to slow Clerk API only if user profile is not built in our database yet
   const clerkUser = await currentUser();
   const email = clerkUser?.emailAddresses[0]?.emailAddress;
 
   if (!email) return null;
 
-  let appUser = await prisma.user.findUnique({
-    where: { clerkId: session.userId },
-  });
-
   const userName = clerkUser?.fullName || clerkUser?.firstName || null;
 
-  if (appUser) {
+  const existingUserByEmail = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (existingUserByEmail) {
+    console.log(`[Auth] Clerk ID mismatch for email ${email}. Updating clerkId from ${existingUserByEmail.clerkId} to ${session.userId}`);
     appUser = await prisma.user.update({
-      where: { clerkId: session.userId },
+      where: { id: existingUserByEmail.id },
       data: {
-        email,
+        clerkId: session.userId,
         name: userName,
       },
     });
   } else {
-    const existingUserByEmail = await prisma.user.findUnique({
-      where: { email },
+    appUser = await prisma.user.create({
+      data: {
+        clerkId: session.userId,
+        email,
+        name: userName,
+      },
     });
-
-    if (existingUserByEmail) {
-      console.log(`[Auth] Clerk ID mismatch for email ${email}. Updating clerkId from ${existingUserByEmail.clerkId} to ${session.userId}`);
-      appUser = await prisma.user.update({
-        where: { id: existingUserByEmail.id },
-        data: {
-          clerkId: session.userId,
-          name: userName,
-        },
-      });
-    } else {
-      appUser = await prisma.user.create({
-        data: {
-          clerkId: session.userId,
-          email,
-          name: userName,
-        },
-      });
-    }
   }
 
   const adminEmails = (env.ADMIN_EMAILS || "")

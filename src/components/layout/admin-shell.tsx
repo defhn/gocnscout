@@ -33,12 +33,6 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </nav>
       </aside>
       <div className="lg:pl-64">
-        <header className="sticky top-0 z-20 border-b border-border bg-white">
-          <div className="flex h-16 items-center justify-between px-4 lg:px-8">
-            <p className="text-sm font-medium text-slate-600">中文 Admin，仅内部使用</p>
-            {clerkEnabled ? <UserButton /> : null}
-          </div>
-        </header>
         <main className="px-4 py-8 lg:px-8">{children}</main>
       </div>
     </div>
