@@ -64,18 +64,42 @@ export async function POST(req: Request) {
     const name = [first_name, last_name].filter(Boolean).join(" ") || null;
 
     try {
-      await prisma.user.upsert({
+      const existingUserByClerkId = await prisma.user.findUnique({
         where: { clerkId },
-        update: {
-          email,
-          name,
-        },
-        create: {
-          clerkId,
-          email,
-          name,
-        },
       });
+
+      if (existingUserByClerkId) {
+        await prisma.user.update({
+          where: { clerkId },
+          data: {
+            email,
+            name,
+          },
+        });
+      } else {
+        const existingUserByEmail = await prisma.user.findUnique({
+          where: { email },
+        });
+
+        if (existingUserByEmail) {
+          console.log(`[Webhook] Clerk ID mismatch for email ${email}. Updating clerkId from ${existingUserByEmail.clerkId} to ${clerkId}`);
+          await prisma.user.update({
+            where: { id: existingUserByEmail.id },
+            data: {
+              clerkId,
+              name,
+            },
+          });
+        } else {
+          await prisma.user.create({
+            data: {
+              clerkId,
+              email,
+              name,
+            },
+          });
+        }
+      }
     } catch (dbError) {
       console.error("Error syncing user to database in Clerk webhook:", dbError);
       return new Response("Error: Database sync failed", { status: 500 });

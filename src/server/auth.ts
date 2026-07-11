@@ -11,18 +11,44 @@ export async function getCurrentAppUser() {
 
   if (!email) return null;
 
-  const appUser = await prisma.user.upsert({
+  let appUser = await prisma.user.findUnique({
     where: { clerkId: session.userId },
-    update: {
-      email,
-      name: clerkUser?.fullName || clerkUser?.firstName || null,
-    },
-    create: {
-      clerkId: session.userId,
-      email,
-      name: clerkUser?.fullName || clerkUser?.firstName || null,
-    },
   });
+
+  const userName = clerkUser?.fullName || clerkUser?.firstName || null;
+
+  if (appUser) {
+    appUser = await prisma.user.update({
+      where: { clerkId: session.userId },
+      data: {
+        email,
+        name: userName,
+      },
+    });
+  } else {
+    const existingUserByEmail = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUserByEmail) {
+      console.log(`[Auth] Clerk ID mismatch for email ${email}. Updating clerkId from ${existingUserByEmail.clerkId} to ${session.userId}`);
+      appUser = await prisma.user.update({
+        where: { id: existingUserByEmail.id },
+        data: {
+          clerkId: session.userId,
+          name: userName,
+        },
+      });
+    } else {
+      appUser = await prisma.user.create({
+        data: {
+          clerkId: session.userId,
+          email,
+          name: userName,
+        },
+      });
+    }
+  }
 
   const adminEmails = (env.ADMIN_EMAILS || "")
     .split(",")
