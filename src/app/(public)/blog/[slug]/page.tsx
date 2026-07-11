@@ -5,7 +5,6 @@ import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { BlogContent } from "@/components/blog/blog-content";
 import { BlogInteractions } from "@/components/blog/blog-interactions";
 import { createMetadata, blogPostingJsonLd } from "@/config/seo";
-import { BLOG_POSTS } from "@/config/blog-data";
 import { prisma } from "@/lib/db";
 import { isBlogDocument, readingMinutes } from "@/lib/blog/content";
 
@@ -16,35 +15,27 @@ type Props = {
 };
 
 async function getPost(slug: string) {
-  const dbPost = await prisma.blogPost.findFirst({ where: { slug, status: "PUBLISHED" } }).catch(() => null);
-  if (dbPost) return { ...dbPost, source: "database" as const };
-  const legacy = BLOG_POSTS.find((post) => post.slug === slug);
-  return legacy ? { ...legacy, source: "legacy" as const } : null;
+  return prisma.blogPost.findFirst({ where: { slug, status: "PUBLISHED" } }).catch(() => null);
 }
 
 async function getRelatedPosts(slug: string, category?: string | null, tags: string[] = []) {
-  const dbRelated = await prisma.blogPost
+  const signals = [
+    ...(category ? [{ category }] : []),
+    ...(tags.length ? [{ tags: { hasSome: tags } }] : []),
+  ];
+
+  return prisma.blogPost
     .findMany({
       where: {
         slug: { not: slug },
         status: "PUBLISHED",
-        OR: [
-          ...(category ? [{ category }] : []),
-          ...(tags.length ? [{ tags: { hasSome: tags } }] : []),
-        ],
+        ...(signals.length ? { OR: signals } : {}),
       },
       orderBy: { publishedAt: "desc" },
       take: 3,
       select: { slug: true, title: true, excerpt: true, category: true },
     })
     .catch(() => []);
-
-  if (dbRelated.length > 0) return dbRelated;
-
-  return BLOG_POSTS
-    .filter((post) => post.slug !== slug)
-    .slice(0, 3)
-    .map((post) => ({ slug: post.slug, title: post.title, excerpt: post.description, category: category ?? "Sourcing Research" }));
 }
 
 export async function generateMetadata({ params }: Props) {
@@ -53,8 +44,8 @@ export async function generateMetadata({ params }: Props) {
   if (!post) return {};
 
   return createMetadata({
-    title: "metaTitle" in post && post.metaTitle ? post.metaTitle : post.title,
-    description: "description" in post ? post.description : post.metaDescription ?? post.excerpt ?? "GoCNScout sourcing research",
+    title: post.metaTitle || post.title,
+    description: post.metaDescription || post.excerpt || "GoCNScout sourcing research",
     path: `/blog/${slug}`,
   });
 }
@@ -64,15 +55,15 @@ export default async function BlogPostPage({ params }: Props) {
   const post = await getPost(slug);
   if (!post) notFound();
 
-  const description = "description" in post ? post.description : post.excerpt ?? "GoCNScout sourcing research";
-  const published = "datePublished" in post ? post.datePublished : post.publishedAt?.toISOString() ?? new Date().toISOString();
-  const modified = "dateModified" in post ? post.dateModified : post.updatedAt?.toISOString() ?? published;
-  const author = "author" in post ? post.author : post.authorName ?? "GoCNScout 编辑部";
-  const image = "image" in post ? post.image : post.coverImage ?? "/favicon.ico";
-  const category = post.source === "database" ? post.category : "Sourcing Research";
-  const tags = post.source === "database" ? post.tags : [];
+  const description = post.excerpt ?? "GoCNScout sourcing research";
+  const published = post.publishedAt?.toISOString() ?? new Date().toISOString();
+  const modified = post.updatedAt?.toISOString() ?? published;
+  const author = post.authorName ?? "GoCNScout 编辑部";
+  const image = post.coverImage ?? "/favicon.ico";
+  const category = post.category;
+  const tags = post.tags;
   const jsonLd = blogPostingJsonLd({ title: post.title, description, slug, datePublished: published, dateModified: modified, authorName: author, imageName: image });
-  const dbDocument = post.source === "database" && isBlogDocument(post.content) ? post.content : null;
+  const dbDocument = isBlogDocument(post.content) ? post.content : null;
   const related = await getRelatedPosts(slug, category, tags);
 
   return (
@@ -101,7 +92,7 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="min-w-0">
             <BlogInteractions slug={slug} title={post.title} />
             <div className="mt-8">
-              {dbDocument ? <BlogContent document={dbDocument} /> : <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: post.source === "legacy" ? post.content : "" }} />}
+              {dbDocument ? <BlogContent document={dbDocument} /> : null}
             </div>
 
             <aside className="mt-10 rounded-md border border-slate-200 bg-slate-50 p-5 text-sm leading-6 text-slate-600">
