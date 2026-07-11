@@ -184,7 +184,7 @@ export function BlogPostForm({ initialPost }: { initialPost?: InitialPost }) {
   };
 
   return (
-    <form onSubmit={(event) => { event.preventDefault(); void submit(); }} className="space-y-5">
+    <form onSubmit={(event) => { event.preventDefault(); void submit(); }} className="space-y-5 max-w-7xl mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div><h1 className="text-xl font-bold text-slate-950">{initialPost ? "编辑文章" : "新建博客文章"}</h1><p className="mt-1 text-sm text-slate-500">支持直接粘贴 Markdown，也可以导入本地 .md 文件。</p></div>
         <div className="flex gap-2"><input ref={fileRef} type="file" accept=".md,.markdown,text/markdown" className="hidden" onChange={(event) => { const file = event.target.files?.[0]; if (file) void importMarkdown(file); event.target.value = ""; }} /><button type="button" onClick={() => fileRef.current?.click()} className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">导入 Markdown</button><button disabled={saving} className="rounded-md bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700 disabled:opacity-50">{saving ? "保存中..." : "保存文章"}</button></div>
