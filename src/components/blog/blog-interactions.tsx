@@ -13,8 +13,9 @@ export function BlogInteractions({ slug, title }: { slug: string; title: string 
     const items = Array.from(article?.querySelectorAll("h2, h3") ?? []).map((node, index) => { const id = node.id || `section-${index + 1}`; node.id = id; return { id, text: node.textContent ?? "", level: Number(node.tagName.slice(1)) }; });
     const frame = window.requestAnimationFrame(() => { setHeadings(items); update(); });
     window.addEventListener("scroll", update, { passive: true });
-    const source = new URLSearchParams(window.location.search).get("utm_source");
-    void fetch(`/api/blog/${slug}/view`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ source: source?.includes("google") || source?.includes("bing") ? "search" : source ? "social" : "other" }) }).catch(() => undefined);
+    const source = (new URLSearchParams(window.location.search).get("utm_source") ?? "").toLowerCase();
+    const channel = source.includes("google") || source.includes("bing") ? "search" : source.includes("linkedin") ? "linkedin" : source === "x" || source.includes("twitter") ? "x" : source.includes("youtube") ? "youtube" : "other";
+    void fetch(`/api/blog/${slug}/view`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ source: channel }) }).catch(() => undefined);
     return () => { window.cancelAnimationFrame(frame); window.removeEventListener("scroll", update); };
   }, [slug]);
   const share = (network: string) => { const url = encodeURIComponent(window.location.href); const text = encodeURIComponent(title); const href = network === "linkedin" ? `https://www.linkedin.com/sharing/share-offsite/?url=${url}` : `https://twitter.com/intent/tweet?url=${url}&text=${text}`; window.open(href, "_blank", "noopener,noreferrer"); };

@@ -2,11 +2,12 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireAdminUser } from "@/server/auth";
+import { slugify } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 const postSchema = z.object({
-  slug: z.string().trim().min(1).max(180).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+  slug: z.string().trim().max(180).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).optional().nullable().or(z.literal("")),
   title: z.string().trim().min(1).max(240),
   excerpt: z.string().max(600).optional().nullable(),
   content: z.record(z.string(), z.unknown()),
@@ -18,7 +19,24 @@ const postSchema = z.object({
   metaDescription: z.string().max(600).optional().nullable(),
   authorName: z.string().max(100).optional().nullable(),
   sourceFileName: z.string().max(255).optional().nullable(),
+  trafficSource: z.string().max(40).optional(),
+  searchViews: z.coerce.number().int().min(0).optional(),
+  linkedinViews: z.coerce.number().int().min(0).optional(),
+  xViews: z.coerce.number().int().min(0).optional(),
+  youtubeViews: z.coerce.number().int().min(0).optional(),
+  otherViews: z.coerce.number().int().min(0).optional(),
 });
+
+async function uniqueBlogSlug(title: string, requested?: string | null) {
+  const base = (requested?.trim() || slugify(title)).replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "").slice(0, 120) || "blog-post";
+  let candidate = base;
+  let suffix = 2;
+  while (await prisma.blogPost.findUnique({ where: { slug: candidate }, select: { id: true } })) {
+    candidate = `${base}-${suffix}`;
+    suffix += 1;
+  }
+  return candidate;
+}
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -42,13 +60,21 @@ export async function POST(request: Request) {
   try {
     const { user } = await requireAdminUser();
     const payload = postSchema.parse(await request.json());
+    const slug = await uniqueBlogSlug(payload.title, payload.slug);
     const post = await prisma.blogPost.create({
       data: {
         ...payload,
+        slug,
         content: payload.content as object,
         coverImage: payload.coverImage || null,
         authorId: user.id,
         authorName: payload.authorName || user.name || "GoCNScout 编辑部",
+        trafficSource: payload.trafficSource || "SEARCH",
+        searchViews: payload.searchViews ?? 0,
+        linkedinViews: payload.linkedinViews ?? 0,
+        xViews: payload.xViews ?? 0,
+        youtubeViews: payload.youtubeViews ?? 0,
+        otherViews: payload.otherViews ?? 0,
         publishedAt: payload.status === "PUBLISHED" ? new Date() : null,
       },
     });

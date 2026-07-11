@@ -530,14 +530,23 @@ model BlogPost {
   tags            String[]       @default([])
   metaTitle       String?
   metaDescription String?
+  metadata        Json?
   authorId        String?
   authorName      String?
   sourceFileName  String?
   publishedAt     DateTime?
   viewCount       Int            @default(0)
+  trafficSource   String         @default("SEARCH")
+  searchViews     Int            @default(0)
+  linkedinViews   Int            @default(0)
+  xViews          Int            @default(0)
+  youtubeViews    Int            @default(0)
+  otherViews      Int            @default(0)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
   dailyViews      BlogPostDailyView[]
+  seoLogs         BlogSeoLog[]
+  gscKeywordStats BlogGscKeywordStat[]
 
   @@index([status, publishedAt])
   @@index([category])
@@ -550,7 +559,9 @@ model BlogPostDailyView {
   date        DateTime
   views       Int      @default(0)
   searchViews Int      @default(0)
-  socialViews Int      @default(0)
+  linkedinViews Int    @default(0)
+  xViews      Int      @default(0)
+  youtubeViews Int     @default(0)
   otherViews  Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -558,6 +569,43 @@ model BlogPostDailyView {
   post BlogPost @relation(fields: [postSlug], references: [slug], onDelete: Cascade)
 
   @@unique([postSlug, date])
+  @@index([postSlug])
+  @@index([date])
+}
+
+model BlogSeoLog {
+  id          String   @id @default(cuid())
+  postId      String
+  postTitle   String
+  postSlug    String
+  actionType  String
+  fieldName   String
+  imageUrl    String?  @db.Text
+  oldValue    String?  @db.Text
+  newValue    String?  @db.Text
+  createdAt   DateTime @default(now())
+
+  post BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@index([createdAt])
+}
+
+model BlogGscKeywordStat {
+  id          String   @id @default(cuid())
+  postSlug    String
+  date        DateTime
+  keyword     String
+  clicks      Int      @default(0)
+  impressions Int      @default(0)
+  ctr         Float    @default(0)
+  position    Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  post BlogPost @relation(fields: [postSlug], references: [slug], onDelete: Cascade)
+
+  @@unique([postSlug, date, keyword])
   @@index([postSlug])
   @@index([date])
 }

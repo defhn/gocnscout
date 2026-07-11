@@ -57,16 +57,25 @@ export default async function DatabasePage({
   const maxLimit = searchPageSize(planCode);
   const pageSize = rawLimit > 0 ? Math.min(rawLimit, maxLimit) : maxLimit;
 
+  const emptyFacets: Awaited<ReturnType<typeof getDatabaseFacets>> = {
+    industries: [],
+    provinces: [],
+    cities: [],
+    companyTypes: [],
+    companySizes: [],
+    companyNatures: [],
+    foundedYears: [],
+    registeredCapitals: [],
+    tradeModes: [],
+    websiteCount: 0,
+  };
 
   const [results, facets] = await Promise.all([
     searchSuppliersForDatabase({
       q, industry, province, city, companyType, companySize, companyNature,
       foundedYear, registeredCapital, tradeMode, page, pageSize,
     }).catch(() => ({ suppliers: [], total: 0, page: 1, pageSize, totalPages: 1 })),
-    getDatabaseFacets().catch(() => ({
-      industries: [], provinces: [], cities: [], companyTypes: [], companySizes: [],
-      companyNatures: [], foundedYears: [], registeredCapitals: [], tradeModes: [], websiteCount: 0,
-    })),
+    getDatabaseFacets().catch(() => emptyFacets),
   ]);
 
   const activeFilters = [
@@ -132,15 +141,15 @@ export default async function DatabasePage({
             </form>
           </div>
           <div className="space-y-2 p-3">
-            <Facet title="Industry" param="industry" currentQuery={currentQuery} visibleLimit={facetLimit(params, "industry")} items={facets.industries.map((i) => [i.industryName, i._count._all])} />
-            <Facet title="Province" param="province" currentQuery={currentQuery} visibleLimit={facetLimit(params, "province")} items={facets.provinces.filter((i) => i.province).map((i) => [i.province || "", i._count._all])} />
-            <Facet title="City" param="city" currentQuery={currentQuery} visibleLimit={facetLimit(params, "city")} items={facets.cities.filter((i) => i.city).map((i) => [i.city || "", i._count._all])} />
-            <Facet title="Company Size" param="companySize" currentQuery={currentQuery} visibleLimit={facetLimit(params, "companySize")} items={facets.companySizes.filter((i) => i.companySize).map((i) => [i.companySize || "", i._count._all])} />
-            <Facet title="Company Type" param="companyType" currentQuery={currentQuery} visibleLimit={facetLimit(params, "companyType")} items={facets.companyTypes.filter((i) => i.companyType).map((i) => [i.companyType || "", i._count._all])} />
-            <Facet title="Trade Mode" param="tradeMode" currentQuery={currentQuery} visibleLimit={facetLimit(params, "tradeMode")} items={facets.tradeModes.map((i) => [i.label, i.count])} />
-            <Facet title="Company Nature" param="companyNature" currentQuery={currentQuery} visibleLimit={facetLimit(params, "companyNature")} items={facets.companyNatures.filter((i) => i.companyNature).map((i) => [i.companyNature || "", i._count._all])} />
-            <Facet title="Founded Year" param="foundedYear" currentQuery={currentQuery} visibleLimit={facetLimit(params, "foundedYear")} items={facets.foundedYears.filter((i) => i.foundedYear).map((i) => [String(i.foundedYear), i._count._all])} />
-            <Facet title="Registered Capital" param="registeredCapital" currentQuery={currentQuery} visibleLimit={facetLimit(params, "registeredCapital")} items={facets.registeredCapitals.filter((i) => i.registeredCapital).map((i) => [i.registeredCapital || "", i._count._all])} />
+            <Facet title="Industry" param="industry" currentQuery={currentQuery} visibleLimit={facetLimit(params, "industry")} items={facets.industries.map((i: { industryName: string; _count: { _all: number } }) => [i.industryName, i._count._all])} />
+            <Facet title="Province" param="province" currentQuery={currentQuery} visibleLimit={facetLimit(params, "province")} items={facets.provinces.filter((i: { province: string | null }) => i.province).map((i: { province: string | null; _count: { _all: number } }) => [i.province || "", i._count._all])} />
+            <Facet title="City" param="city" currentQuery={currentQuery} visibleLimit={facetLimit(params, "city")} items={facets.cities.filter((i: { city: string | null }) => i.city).map((i: { city: string | null; _count: { _all: number } }) => [i.city || "", i._count._all])} />
+            <Facet title="Company Size" param="companySize" currentQuery={currentQuery} visibleLimit={facetLimit(params, "companySize")} items={facets.companySizes.filter((i: { companySize: string | null }) => i.companySize).map((i: { companySize: string | null; _count: { _all: number } }) => [i.companySize || "", i._count._all])} />
+            <Facet title="Company Type" param="companyType" currentQuery={currentQuery} visibleLimit={facetLimit(params, "companyType")} items={facets.companyTypes.filter((i: { companyType: string | null }) => i.companyType).map((i: { companyType: string | null; _count: { _all: number } }) => [i.companyType || "", i._count._all])} />
+            <Facet title="Trade Mode" param="tradeMode" currentQuery={currentQuery} visibleLimit={facetLimit(params, "tradeMode")} items={facets.tradeModes.map((i: { label: string; count: number }) => [i.label, i.count])} />
+            <Facet title="Company Nature" param="companyNature" currentQuery={currentQuery} visibleLimit={facetLimit(params, "companyNature")} items={facets.companyNatures.filter((i: { companyNature: string | null }) => i.companyNature).map((i: { companyNature: string | null; _count: { _all: number } }) => [i.companyNature || "", i._count._all])} />
+            <Facet title="Founded Year" param="foundedYear" currentQuery={currentQuery} visibleLimit={facetLimit(params, "foundedYear")} items={facets.foundedYears.filter((i: { foundedYear: number | null }) => i.foundedYear).map((i: { foundedYear: number | null; _count: { _all: number } }) => [String(i.foundedYear), i._count._all])} />
+            <Facet title="Registered Capital" param="registeredCapital" currentQuery={currentQuery} visibleLimit={facetLimit(params, "registeredCapital")} items={facets.registeredCapitals.filter((i: { registeredCapital: string | null }) => i.registeredCapital).map((i: { registeredCapital: string | null; _count: { _all: number } }) => [i.registeredCapital || "", i._count._all])} />
             <section className="rounded-md border border-[#cfd9e5] bg-white p-3">
               <h2 className="flex items-center justify-between text-sm font-medium text-slate-700">
                 Has Website

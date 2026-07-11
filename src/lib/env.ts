@@ -28,6 +28,13 @@ const envSchema = z.object({
   SENTRY_DSN: optionalString,
   ADMIN_EMAILS: optionalString,
   ADMIN_BOOTSTRAP_SECRET: optionalString,
+  DEEPSEEK_API_KEY: optionalString,
+  DEEPSEEK_BASE_URL: optionalUrl,
+  DEEPSEEK_MODEL: z.string().default("deepseek-chat"),
+  GOOGLE_SEARCH_CONSOLE_SITE_URL: optionalString,
+  GOOGLE_SEARCH_CONSOLE_CLIENT_EMAIL: optionalString,
+  GOOGLE_SEARCH_CONSOLE_PRIVATE_KEY: optionalString,
+  GOOGLE_SEARCH_CONSOLE_SERVICE_ACCOUNT_JSON: optionalString,
 });
 
 export const env = envSchema.parse(process.env);

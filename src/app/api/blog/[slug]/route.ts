@@ -18,6 +18,12 @@ const updateSchema = z.object({
   metaDescription: z.string().max(600).nullable().optional(),
   authorName: z.string().max(100).nullable().optional(),
   sourceFileName: z.string().max(255).nullable().optional(),
+  trafficSource: z.string().max(40).optional(),
+  searchViews: z.coerce.number().int().min(0).optional(),
+  linkedinViews: z.coerce.number().int().min(0).optional(),
+  xViews: z.coerce.number().int().min(0).optional(),
+  youtubeViews: z.coerce.number().int().min(0).optional(),
+  otherViews: z.coerce.number().int().min(0).optional(),
 });
 
 type Props = { params: Promise<{ slug: string }> };
