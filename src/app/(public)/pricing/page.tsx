@@ -7,6 +7,7 @@ import { PLAN_DEFINITIONS } from "@/config/plans";
 import { STRIPE_CATALOG } from "@/config/pricing";
 import { createMetadata, productJsonLd } from "@/config/seo";
 import { formatUsd } from "@/lib/utils";
+import { PricingGrid } from "@/components/pricing/pricing-grid";
 
 export const metadata = createMetadata({
   title: "Pricing for Supplier Database, Reports and Shortlists",
@@ -73,82 +74,7 @@ export default function PricingPage() {
         </div>
 
         {/* Pricing Cards Grid */}
-        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4 items-stretch">
-          {plans.map((plan) => {
-            const isPro = plan.code === "PRO";
-            const btnVariant = isPro ? "teal" : plan.code === "FREE" ? "outline" : "dark";
-            return (
-              <Card 
-                key={plan.code} 
-                className={`flex flex-col h-full rounded-2xl transition-all duration-300 ${
-                  isPro 
-                    ? "border-teal-500 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 text-white shadow-xl scale-[1.03] relative border-2 hover:shadow-teal-500/10" 
-                    : "border-slate-200 bg-white hover:-translate-y-1 hover:shadow-md"
-                }`}
-              >
-                {isPro && (
-                  <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 inline-flex items-center space-x-1 rounded-full bg-teal-500 px-3 py-1 text-xs font-bold text-slate-950 uppercase tracking-wider shadow">
-                    <Sparkles className="h-3 w-3" />
-                    <span>Best Sourcing Value</span>
-                  </span>
-                )}
-                
-                <CardHeader className="p-6 pb-4">
-                  <div className={`text-xs font-bold uppercase tracking-wider ${isPro ? "text-teal-400" : "text-teal-600"}`}>
-                    {plan.name}
-                  </div>
-                  <div className="mt-3 flex items-baseline">
-                    <span className="text-4xl font-extrabold tracking-tight">
-                      {formatUsd(plan.monthlyUsdCents)}
-                    </span>
-                    <span className={`text-sm ml-1 font-semibold ${isPro ? "text-slate-400" : "text-slate-500"}`}>/mo</span>
-                  </div>
-                  {plan.yearlyUsdCents ? (
-                    <p className={`text-xs mt-1 ${isPro ? "text-teal-300/80" : "text-teal-600"}`}>
-                      {formatUsd(plan.yearlyUsdCents)}/year billed annually
-                    </p>
-                  ) : (
-                    <p className={`text-xs mt-1 ${isPro ? "text-slate-400" : "text-slate-500"}`}>
-                      No credit card required
-                    </p>
-                  )}
-                </CardHeader>
-
-                <CardContent className="p-6 pt-0 flex-1 flex flex-col justify-between">
-                  <div>
-                    <div className="h-px bg-slate-100 dark:bg-slate-800 my-4" />
-                    <p className={`text-xs leading-relaxed ${isPro ? "text-slate-300" : "text-slate-600"}`}>
-                      <strong>Ideal for</strong>: {bestFor(plan.code)}
-                    </p>
-                    
-                    <ul className="mt-5 space-y-3.5 text-xs">
-                      <FeatureItem isPro={isPro}>
-                        {plan.searchPages === "unlimited" ? "Unlimited search queries" : `${plan.searchPages} search pages`}
-                      </FeatureItem>
-                      <FeatureItem isPro={isPro}>
-                        {plan.profileViewsPerMonth === "unlimited" ? "Unlimited profile views" : `${plan.profileViewsPerMonth} profile details/mo`}
-                      </FeatureItem>
-                      <FeatureItem isPro={isPro}>
-                        {plan.exportRowsPerMonth > 0 ? `${plan.exportRowsPerMonth.toLocaleString("en-US")} CSV rows/mo` : "No CSV data exports"}
-                      </FeatureItem>
-                      <FeatureItem isPro={isPro}>
-                        {plan.includedReportsPerMonth > 0 ? `${plan.includedReportsPerMonth} industry report${plan.includedReportsPerMonth > 1 ? "s" : ""}/mo` : "Standalone report purchases only"}
-                      </FeatureItem>
-                    </ul>
-                  </div>
-
-                  <ButtonLink 
-                    href={plan.code === "FREE" ? "/database" : `/api/billing/checkout?plan=${plan.code}&interval=MONTH`} 
-                    className="mt-6 w-full text-xs font-bold py-2.5 rounded-xl"
-                    variant={btnVariant}
-                  >
-                    {plan.code === "FREE" ? "Explore for Free" : `Subscribe ${plan.name}`}
-                  </ButtonLink>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+        <PricingGrid plans={plans} />
 
         {/* Feature Comparison Table */}
         <section className="mt-16">
@@ -334,21 +260,6 @@ export default function PricingPage() {
   );
 }
 
-function bestFor(code: string) {
-  if (code === "FREE") return "Browsing structure and SEO pages.";
-  if (code === "STARTER") return "Sole importers, Amazon and Shopify e-commerce retailers, and individual buyers.";
-  if (code === "PRO") return "Sourcing professionals, trade advisors, wholesale procurement teams, and category managers.";
-  return "Procurement companies, import corporations, custom sourcing bureaus, and research departments.";
-}
-
-function FeatureItem({ children, isPro }: { children: React.ReactNode; isPro: boolean }) {
-  return (
-    <li className="flex items-start gap-2">
-      <Check className={`h-4 w-4 shrink-0 mt-0.5 ${isPro ? "text-teal-400" : "text-teal-600"}`} />
-      <span className={isPro ? "text-slate-300" : "text-slate-600"}>{children}</span>
-    </li>
-  );
-}
 
 function PriceLine({ label, cents }: { label: string; cents: number }) {
   return (

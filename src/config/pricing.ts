@@ -4,15 +4,15 @@ export const STRIPE_CATALOG = {
   subscriptions: {
     STARTER: {
       month: { name: "gocnscout Starter", amountUsdCents: 4900 },
-      year: { name: "gocnscout Starter Annual", amountUsdCents: 49000 },
+      year: { name: "gocnscout Starter Annual", amountUsdCents: 47000 },
     },
     PRO: {
       month: { name: "gocnscout Pro", amountUsdCents: 19900 },
-      year: { name: "gocnscout Pro Annual", amountUsdCents: 199000 },
+      year: { name: "gocnscout Pro Annual", amountUsdCents: 167000 },
     },
     TEAM: {
       month: { name: "gocnscout Team", amountUsdCents: 49900 },
-      year: { name: "gocnscout Team Annual", amountUsdCents: 499000 },
+      year: { name: "gocnscout Team Annual", amountUsdCents: 359000 },
     },
   },
   reports: {

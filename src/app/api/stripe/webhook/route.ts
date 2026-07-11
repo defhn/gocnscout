@@ -27,11 +27,13 @@ export async function POST(request: Request) {
     const reportId = session.metadata?.reportId;
 
     if (userId && planCode) {
+      const interval = session.metadata?.interval;
       await prisma.user.update({
         where: { id: userId },
         data: {
           planCode: planCode as "STARTER" | "PRO" | "TEAM",
           subscriptionStatus: "ACTIVE",
+          billingInterval: interval === "YEAR" ? "YEAR" : "MONTH",
           stripeCustomerId: typeof session.customer === "string" ? session.customer : undefined,
           subscriptionStartedAt: new Date(),
         },

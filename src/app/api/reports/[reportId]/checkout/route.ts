@@ -13,10 +13,34 @@ export async function GET(_request: Request, { params }: { params: Promise<{ rep
     return NextResponse.json({ error: "Report not available" }, { status: 404 });
   }
 
+  const isProTeamAnnual =
+    (user.planCode === "PRO" || user.planCode === "TEAM") &&
+    user.billingInterval === "YEAR" &&
+    user.subscriptionStatus === "ACTIVE";
+
+  const isStarterAnnual =
+    user.planCode === "STARTER" &&
+    user.billingInterval === "YEAR" &&
+    user.subscriptionStatus === "ACTIVE";
+
+  if (isProTeamAnnual) {
+    // 100% Free access - instantly fulfill purchase bypass Stripe
+    await prisma.reportPurchase.upsert({
+      where: { userId_reportId: { userId: user.id, reportId } },
+      update: { amountUsdCents: 0, status: "FULFILLED" },
+      create: { userId: user.id, reportId, amountUsdCents: 0, status: "FULFILLED" },
+    });
+    return NextResponse.redirect(absoluteUrl("/app/reports?checkout=success"));
+  }
+
+  const finalPriceCents = isStarterAnnual
+    ? Math.round(report.priceUsdCents / 2)
+    : report.priceUsdCents;
+
   const purchase = await prisma.reportPurchase.upsert({
     where: { userId_reportId: { userId: user.id, reportId } },
-    update: { amountUsdCents: report.priceUsdCents, status: "PENDING" },
-    create: { userId: user.id, reportId, amountUsdCents: report.priceUsdCents },
+    update: { amountUsdCents: finalPriceCents, status: "PENDING" },
+    create: { userId: user.id, reportId, amountUsdCents: finalPriceCents },
   });
 
   const session = await stripe().checkout.sessions.create({
@@ -30,7 +54,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ rep
         quantity: 1,
         price_data: {
           currency: "usd",
-          unit_amount: report.priceUsdCents,
+          unit_amount: finalPriceCents,
           product_data: { name: report.title },
         },
       },

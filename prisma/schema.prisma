@@ -86,6 +86,7 @@ model User {
   stripeCustomerId      String?              @unique
   planCode              PlanCode             @default(FREE)
   subscriptionStatus    SubscriptionStatus   @default(FREE)
+  billingInterval       BillingInterval?     @default(MONTH)
   subscriptionStartedAt DateTime?
   subscriptionEndsAt    DateTime?
   createdAt             DateTime             @default(now())

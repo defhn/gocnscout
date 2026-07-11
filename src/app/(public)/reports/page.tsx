@@ -36,28 +36,41 @@ export default async function ReportsPage() {
           </p>
         </div>
 
-        {/* Pricing tier boxes */}
-        <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 items-stretch mb-16">
-          <ReportPlan 
-            title="Basic Report" 
-            price={STRIPE_CATALOG.reports.BASIC.amountUsdCents} 
-            description="A concise industry overview for early category feasibility research." 
-          />
-          <ReportPlan 
-            title="Full Report" 
-            price={STRIPE_CATALOG.reports.FULL.amountUsdCents} 
-            description="A deeper industry assessment with detailed supplier count parameters and analysis." 
-          />
-          <ReportPlan 
-            title="Premium Report" 
-            price={STRIPE_CATALOG.reports.PREMIUM.amountUsdCents} 
-            description="Our full analytical report plus a broader shortlist-oriented custom research package." 
-          />
-          <ReportPlan 
-            title="Exhibitor Intelligence" 
-            price={STRIPE_CATALOG.reports.CANTON_FAIR_INTELLIGENCE.amountUsdCents} 
-            description="A dedicated intelligence report mapping major sourcing exhibition cohorts." 
-          />
+        {/* Reports Promotion Banner */}
+        <section className="rounded-2xl border border-slate-200 bg-slate-50 p-6 md:p-8 mb-16 shadow-2xs">
+          <h2 className="text-xl font-bold text-slate-950">Unlock Sourcing Reports with Annual Plans</h2>
+          <p className="mt-2 text-sm text-slate-600 max-w-3xl leading-relaxed">
+            Gain immediate access to full market intelligence PDF guides mapping regional supplier densities, capital sizes, and export mode ratios.
+          </p>
+          <div className="mt-6 grid gap-6 md:grid-cols-3">
+            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-3xs">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                <span className="rounded bg-teal-500/10 px-1.5 py-0.5 text-[10px] font-extrabold text-teal-600 uppercase">FREE</span>
+                <span>Pro & Team Annual</span>
+              </h3>
+              <p className="mt-2 text-xs text-slate-500 leading-relaxed">
+                All published industry reports are 100% free to download instantly. No additional checkouts required.
+              </p>
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-3xs">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                <span className="rounded bg-teal-500/10 px-1.5 py-0.5 text-[10px] font-extrabold text-teal-600 uppercase">50% OFF</span>
+                <span>Starter Annual</span>
+              </h3>
+              <p className="mt-2 text-xs text-slate-500 leading-relaxed">
+                Get half-price access on every PDF report purchase. Save $49.50 per industry intelligence publication.
+              </p>
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-3xs">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-extrabold text-slate-500 uppercase">Standard</span>
+                <span>Monthly & Free Users</span>
+              </h3>
+              <p className="mt-2 text-xs text-slate-500 leading-relaxed">
+                Standalone purchases at $99.00 per report. Upgrade to annual billing to unlock discount codes instantly.
+              </p>
+            </div>
+          </div>
         </section>
 
         {/* Main List Section Header */}
@@ -202,35 +215,13 @@ export default async function ReportsPage() {
                 answer: "No. In strict compliance with CCPA and GDPR, gocnscout prunes personal coordinates. We provide official business details and verified domains.",
               },
               {
-                question: "What is the differences between Basic, Full, and Premium reports?",
-                answer: "Basic outlines baseline stats. Full adds detailed geographical mappings and metrics. Premium includes full files plus a custom shortlist selection.",
+                question: "How do subscription plans benefit report purchases?",
+                answer: "Active Pro and Team Annual members get 100% free downloads of all published reports. Starter Annual members receive a 50% discount on every purchase ($49.50 instead of $99.00). Monthly plan subscribers pay standard pricing.",
               },
             ]}
           />
         </section>
       </section>
     </>
-  );
-}
-
-function ReportPlan({ title, price, description }: { title: string; price: number; description: string }) {
-  return (
-    <Card className="border border-slate-200 bg-white shadow-sm rounded-2xl flex flex-col justify-between overflow-hidden hover:shadow-md transition-all">
-      <CardHeader className="p-5 pb-3">
-        <span className="text-[10px] bg-teal-50 text-teal-700 px-2 py-0.5 rounded font-bold uppercase w-fit">Format: PDF</span>
-        <CardTitle className="text-base font-bold text-slate-950 mt-2">{title}</CardTitle>
-        <p className="mt-2 text-2xl font-extrabold text-slate-950">{formatUsd(price)}</p>
-      </CardHeader>
-      <CardContent className="p-5 pt-0 text-xs text-slate-600 leading-relaxed flex-1 flex flex-col justify-between">
-        <div>
-          <h4 className="font-bold text-slate-900 mt-2">Optimal Use Case</h4>
-          <p className="mt-0.5">{description}</p>
-        </div>
-        <div className="mt-4 pt-3 border-t border-slate-50 flex items-center space-x-1.5 text-slate-400 font-medium">
-          <ShieldCheck className="h-4 w-4 text-slate-400 shrink-0" />
-          <span>Excluded Personal Contacts</span>
-        </div>
-      </CardContent>
-    </Card>
   );
 }
