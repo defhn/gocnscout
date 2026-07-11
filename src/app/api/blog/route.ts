@@ -27,12 +27,22 @@ const postSchema = z.object({
   otherViews: z.coerce.number().int().min(0).optional(),
 });
 
+const STOP_WORDS = new Set(["a","an","the","and","or","but","in","on","at","to","for","of","with","by","is","it","its","if","be","as","was","are","how","your","my","our","can","do","did","from","this","that","have","has","what","which","who","will","up","out","about","into","not","step","guide","complete","every","must","know","before","making","first"]);
+
+function shortSlugFromTitle(title: string): string {
+  const words = slugify(title).split("-").filter(w => w.length > 0 && !STOP_WORDS.has(w));
+  return words.slice(0, 4).join("-") || slugify(title).split("-").slice(0, 4).join("-") || "blog-post";
+}
+
 async function uniqueBlogSlug(title: string, requested?: string | null) {
-  const base = (requested?.trim() || slugify(title)).replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "").slice(0, 120) || "blog-post";
-  let candidate = base;
+  const base = requested?.trim()
+    ? requested.replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "").slice(0, 120)
+    : shortSlugFromTitle(title);
+  const safeBase = base || "blog-post";
+  let candidate = safeBase;
   let suffix = 2;
   while (await prisma.blogPost.findUnique({ where: { slug: candidate }, select: { id: true } })) {
-    candidate = `${base}-${suffix}`;
+    candidate = `${safeBase}-${suffix}`;
     suffix += 1;
   }
   return candidate;

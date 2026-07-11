@@ -93,16 +93,24 @@ export function BlogPostForm({ initialPost }: { initialPost?: InitialPost }) {
   const imageStats = getBlogImageStats(form.content);
   const words = extractBlogText(form.content).split(/\s+/).filter(Boolean).length;
 
+  const STOP_WORDS_SET = new Set(["a","an","the","and","or","but","in","on","at","to","for","of","with","by","is","it","its","if","be","as","was","are","how","your","my","our","can","do","did","from","this","that","have","has","what","which","who","will","up","out","about","into","not","step","guide","complete","every","must","know","before","making","first"]);
   const importMarkdown = async (file: File) => {
     const raw = await file.text();
     const parsed = parseMarkdownFrontMatter(raw);
     const metadata = parsed.metadata;
     const tags = Array.isArray(metadata.tags) ? metadata.tags : typeof metadata.tags === "string" ? metadata.tags.split(",").map((tag) => tag.trim()).filter(Boolean) : [];
-    const slug = String(metadata.slug ?? metadata.Slug ?? file.name.replace(/\.md$/i, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""));
+    // Priority: Frontmatter Slug → short slug from title (4 keywords) → filename fallback
+    const frontmatterSlug = metadata.slug ?? metadata.Slug;
+    const titleForSlug = String(metadata.title ?? metadata.Title ?? "");
+    const autoSlug = titleForSlug
+      ? titleForSlug.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").split("-").filter(w => w.length > 0 && !STOP_WORDS_SET.has(w)).slice(0, 4).join("-")
+      : file.name.replace(/\.md$/i, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").split("-").slice(-4).join("-");
+    const slug = String(frontmatterSlug ?? autoSlug);
     setForm((current) => ({ ...current, slug, title: String(metadata.title ?? metadata.Title ?? current.title), excerpt: String(metadata.excerpt ?? metadata.Excerpt ?? current.excerpt ?? ""), category: String(metadata.category ?? metadata.Category ?? current.category ?? ""), metaTitle: String(metadata.metaTitle ?? metadata.MetaTitle ?? current.metaTitle ?? ""), metaDescription: String(metadata.metaDescription ?? metadata.MetaDescription ?? current.metaDescription ?? ""), authorName: String(metadata.author ?? metadata.Author ?? current.authorName ?? ""), tags, content: markdownToBlogDocument(parsed.body), sourceFileName: file.name }));
     setTagsText(tags.join(", "));
     setMessage(`已导入 ${file.name}，请检查后保存。`);
   };
+
 
   const uploadCover = async (file: File | undefined) => {
     if (!file) return;
