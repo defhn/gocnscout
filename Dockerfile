@@ -17,6 +17,7 @@ RUN pnpm install --frozen-lockfile
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
+ENV NODE_OPTIONS=--max-old-space-size=4096
 RUN npm install -g pnpm
 
 COPY --from=deps /app/node_modules ./node_modules
