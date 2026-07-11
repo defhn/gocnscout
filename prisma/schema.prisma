@@ -71,6 +71,12 @@ enum AdminRole {
   ANALYST
 }
 
+enum BlogPostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
 model User {
   id                    String               @id @default(cuid())
   clerkId               String               @unique
@@ -510,4 +516,60 @@ model AuditLog {
   metadata  Json?
   createdAt DateTime @default(now())
   user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model BlogPost {
+  id              String         @id @default(cuid())
+  slug            String         @unique
+  title           String
+  excerpt         String?
+  content         Json
+  coverImage      String?
+  status          BlogPostStatus @default(DRAFT)
+  category        String?
+  tags            String[]       @default([])
+  metaTitle       String?
+  metaDescription String?
+  authorId        String?
+  authorName      String?
+  sourceFileName  String?
+  publishedAt     DateTime?
+  viewCount       Int            @default(0)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  dailyViews      BlogPostDailyView[]
+
+  @@index([status, publishedAt])
+  @@index([category])
+  @@index([updatedAt])
+}
+
+model BlogPostDailyView {
+  id          String   @id @default(cuid())
+  postSlug    String
+  date        DateTime
+  views       Int      @default(0)
+  searchViews Int      @default(0)
+  socialViews Int      @default(0)
+  otherViews  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  post BlogPost @relation(fields: [postSlug], references: [slug], onDelete: Cascade)
+
+  @@unique([postSlug, date])
+  @@index([postSlug])
+  @@index([date])
+}
+
+model BlogMedia {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  publicUrl   String
+  fileName    String
+  contentType String
+  uploadedBy  String
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
 }

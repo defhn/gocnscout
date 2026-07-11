@@ -1,0 +1,14 @@
+"use client";
+
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import { ArrowRight, Calendar, Search } from "lucide-react";
+
+type Post = { slug: string; title: string; excerpt: string | null; coverImage: string | null; category: string | null; tags: string[]; authorName: string | null; publishedAt: string | Date | null };
+
+export function PublicBlogList({ posts }: { posts: Post[] }) {
+  const [query, setQuery] = useState(""); const [category, setCategory] = useState("全部");
+  const categories = ["全部", ...Array.from(new Set(posts.map((post) => post.category).filter(Boolean) as string[]))];
+  const filtered = useMemo(() => posts.filter((post) => (category === "全部" || post.category === category) && (!query || `${post.title} ${post.excerpt ?? ""}`.toLowerCase().includes(query.toLowerCase()))), [posts, query, category]);
+  return <div className="space-y-6"><div className="flex flex-col gap-3 rounded-md border border-slate-200 bg-white p-4 md:flex-row"><label className="relative flex-1"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="搜索文章标题或摘要" className="field-input pl-9" /></label><div className="flex flex-wrap gap-2">{categories.map((item) => <button type="button" key={item} onClick={() => setCategory(item)} className={`rounded px-3 py-2 text-xs font-semibold ${category === item ? "bg-teal-600 text-white" : "border border-slate-200 bg-white text-slate-600"}`}>{item}</button>)}</div></div><div className="grid gap-5 md:grid-cols-2">{filtered.map((post) => <article key={post.slug} className="group overflow-hidden rounded-md border border-slate-200 bg-white transition-shadow hover:shadow-md"><Link href={`/blog/${post.slug}`} className="block">{post.coverImage ? <img src={post.coverImage} alt={post.title} className="h-44 w-full object-cover" /> : <div className="flex h-44 items-end bg-slate-900 p-5 text-white"><span className="text-sm font-semibold text-teal-300">GoCNScout Research</span></div>}<div className="p-5"><div className="flex flex-wrap items-center gap-3 text-xs text-slate-400"><span>{post.category || "行业研究"}</span>{post.publishedAt && <span className="inline-flex items-center gap-1"><Calendar size={12} />{new Date(post.publishedAt).toLocaleDateString("zh-CN")}</span>}</div><h2 className="mt-3 text-lg font-bold text-slate-950 group-hover:text-teal-700">{post.title}</h2>{post.excerpt && <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-600">{post.excerpt}</p>}<span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-teal-700">阅读文章 <ArrowRight size={15} /></span></div></Link></article>)}</div>{filtered.length === 0 && <div className="py-16 text-center text-sm text-slate-500">没有找到匹配的文章。</div>}</div>;
+}

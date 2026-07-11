@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
-import { Database, FileUp, Home, Inbox, Shield, Users } from "lucide-react";
+import { BookOpen, Database, FileUp, Home, Inbox, Shield, Users } from "lucide-react";
 
 const nav = [
   { href: "/admin", label: "概览", icon: Home },
   { href: "/admin/suppliers", label: "供应商", icon: Database },
   { href: "/admin/reports", label: "PDF报告", icon: FileUp },
+  { href: "/admin/blog", label: "博客管理", icon: BookOpen },
   { href: "/admin/imports", label: "导入任务", icon: FileUp },
   { href: "/admin/inquiries", label: "咨询表单", icon: Inbox },
   { href: "/admin/users", label: "用户订阅", icon: Users },

@@ -1,147 +1,139 @@
 import Link from "next/link";
-import { Calendar, User, ArrowLeft, Database, Search } from "lucide-react";
 import { notFound } from "next/navigation";
+import { ArrowLeft, Calendar, User } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
-import { Card } from "@/components/ui/card";
-import { ButtonLink } from "@/components/ui/button";
+import { BlogContent } from "@/components/blog/blog-content";
+import { BlogInteractions } from "@/components/blog/blog-interactions";
 import { createMetadata, blogPostingJsonLd } from "@/config/seo";
 import { BLOG_POSTS } from "@/config/blog-data";
+import { prisma } from "@/lib/db";
+import { isBlogDocument, readingMinutes } from "@/lib/blog/content";
+
+export const revalidate = 60;
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateStaticParams() {
-  return BLOG_POSTS.map((post) => ({
-    slug: post.slug,
-  }));
+async function getPost(slug: string) {
+  const dbPost = await prisma.blogPost.findFirst({ where: { slug, status: "PUBLISHED" } }).catch(() => null);
+  if (dbPost) return { ...dbPost, source: "database" as const };
+  const legacy = BLOG_POSTS.find((post) => post.slug === slug);
+  return legacy ? { ...legacy, source: "legacy" as const } : null;
+}
+
+async function getRelatedPosts(slug: string, category?: string | null, tags: string[] = []) {
+  const dbRelated = await prisma.blogPost
+    .findMany({
+      where: {
+        slug: { not: slug },
+        status: "PUBLISHED",
+        OR: [
+          ...(category ? [{ category }] : []),
+          ...(tags.length ? [{ tags: { hasSome: tags } }] : []),
+        ],
+      },
+      orderBy: { publishedAt: "desc" },
+      take: 3,
+      select: { slug: true, title: true, excerpt: true, category: true },
+    })
+    .catch(() => []);
+
+  if (dbRelated.length > 0) return dbRelated;
+
+  return BLOG_POSTS
+    .filter((post) => post.slug !== slug)
+    .slice(0, 3)
+    .map((post) => ({ slug: post.slug, title: post.title, excerpt: post.description, category: category ?? "Sourcing Research" }));
 }
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const post = BLOG_POSTS.find((p) => p.slug === slug);
+  const post = await getPost(slug);
   if (!post) return {};
 
   return createMetadata({
-    title: post.title,
-    description: post.description,
+    title: "metaTitle" in post && post.metaTitle ? post.metaTitle : post.title,
+    description: "description" in post ? post.description : post.metaDescription ?? post.excerpt ?? "GoCNScout sourcing research",
     path: `/blog/${slug}`,
   });
 }
 
-export default async function BlogPostDetailPage({ params }: Props) {
+export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const post = BLOG_POSTS.find((p) => p.slug === slug);
+  const post = await getPost(slug);
+  if (!post) notFound();
 
-  if (!post) {
-    notFound();
-  }
-
-  const blogSchema = blogPostingJsonLd({
-    title: post.title,
-    description: post.description,
-    slug: post.slug,
-    datePublished: post.datePublished,
-    dateModified: post.dateModified,
-    authorName: post.author,
-    imageName: "/favicon.ico",
-  });
+  const description = "description" in post ? post.description : post.excerpt ?? "GoCNScout sourcing research";
+  const published = "datePublished" in post ? post.datePublished : post.publishedAt?.toISOString() ?? new Date().toISOString();
+  const modified = "dateModified" in post ? post.dateModified : post.updatedAt?.toISOString() ?? published;
+  const author = "author" in post ? post.author : post.authorName ?? "GoCNScout 编辑部";
+  const image = "image" in post ? post.image : post.coverImage ?? "/favicon.ico";
+  const category = post.source === "database" ? post.category : "Sourcing Research";
+  const tags = post.source === "database" ? post.tags : [];
+  const jsonLd = blogPostingJsonLd({ title: post.title, description, slug, datePublished: published, dateModified: modified, authorName: author, imageName: image });
+  const dbDocument = post.source === "database" && isBlogDocument(post.content) ? post.content : null;
+  const related = await getRelatedPosts(slug, category, tags);
 
   return (
     <>
-      {/* Schema Injection */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogSchema) }}
-      />
-
-      <Breadcrumbs 
-        items={[
-          { label: "Home", href: "/" }, 
-          { label: "Blog", href: "/blog" }, 
-          { label: "Article Details" }
-        ]} 
-      />
-
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Blog", href: "/blog" }, { label: post.title }]} />
       <article className="container-page pb-20">
-        {/* Back Link */}
-        <div className="py-4">
-          <Link
-            href="/blog"
-            className="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-teal-600 transition-colors"
-          >
-            <ArrowLeft className="h-3.5 w-3.5 mr-1" /> Back to blog list
+        <div className="py-5">
+          <Link href="/blog" className="inline-flex items-center gap-1 text-sm font-semibold text-slate-500 hover:text-teal-700">
+            <ArrowLeft size={15} />
+            返回博客
           </Link>
         </div>
 
-        {/* Hero Section */}
-        <header className="max-w-3xl py-6 mb-8 border-b border-slate-100">
-          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-950 leading-tight">
-            {post.title}
-          </h1>
-          <div className="flex flex-wrap items-center space-x-6 text-xs text-slate-500 mt-4">
-            <span className="flex items-center">
-              <Calendar className="h-4 w-4 mr-1 text-slate-400" />
-              {new Date(post.datePublished).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })}
-            </span>
-            <span className="flex items-center">
-              <User className="h-4 w-4 mr-1 text-slate-400" />
-              {post.author}
-            </span>
-            <span className="bg-teal-50 text-teal-700 px-2 py-0.5 rounded font-semibold text-[10px] uppercase tracking-wide">
-              Verified Guide
-            </span>
+        <header className="max-w-4xl border-b border-slate-200 py-6">
+          {category && <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-teal-700">{category}</p>}
+          <h1 className="text-3xl font-extrabold leading-tight text-slate-950 md:text-5xl">{post.title}</h1>
+          <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-slate-500">
+            <span className="inline-flex items-center gap-1"><Calendar size={15} />{new Date(published).toLocaleDateString("zh-CN")}</span>
+            <span className="inline-flex items-center gap-1"><User size={15} />{author}</span>
+            <span>{dbDocument ? `${readingMinutes(dbDocument)} 分钟阅读` : "研究指南"}</span>
           </div>
         </header>
 
-        {/* Two Column Article Body */}
-        <div className="grid gap-10 lg:grid-cols-[1fr_300px] items-start">
-          {/* Article Text Content */}
-          <div className="prose prose-slate max-w-none text-slate-700 text-sm leading-relaxed space-y-6">
-            <div dangerouslySetInnerHTML={{ __html: post.content }} />
-            
-            {/* Regulatory Exclusions notice at the bottom */}
-            <div className="rounded-xl bg-slate-50 border border-slate-100 p-5 mt-8 text-xs text-slate-500 leading-normal">
-              <strong>E-E-A-T Safety & Disclaimer</strong>: This article is built around public B2B trade structures and factory directories. gocnscout does not sell lists of personal contact persons, mobile phone indices, or direct private emails. Sourcing companies must perform standard credit checks and product sampling.
+        <div className="mt-8 grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_280px]">
+          <div className="min-w-0">
+            <BlogInteractions slug={slug} title={post.title} />
+            <div className="mt-8">
+              {dbDocument ? <BlogContent document={dbDocument} /> : <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: post.source === "legacy" ? post.content : "" }} />}
             </div>
-          </div>
 
-          {/* Sidebar Widgets */}
-          <div className="space-y-6">
-            {/* Database Promo Widget */}
-            <Card className="border border-slate-200 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 text-white rounded-2xl p-6 shadow-md relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/10 rounded-full blur-2xl pointer-events-none" />
-              <Database className="h-6 w-6 text-teal-400" />
-              <h3 className="text-base font-bold mt-4">Launch Supplier Search</h3>
-              <p className="text-xs text-slate-400 leading-relaxed mt-2">
-                Vet 20,000+ China export manufacturers. Use filters for locations, product tags, capital size, and domain records.
-              </p>
-              <ButtonLink href="/database" className="mt-5 w-full justify-center bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs">
-                Launch Search Engine <Search className="ml-1 h-3.5 w-3.5" />
-              </ButtonLink>
-            </Card>
+            <aside className="mt-10 rounded-md border border-slate-200 bg-slate-50 p-5 text-sm leading-6 text-slate-600">
+              <strong className="text-slate-900">合规说明：</strong>
+              本文基于公开企业与贸易信息整理。GoCNScout 不提供个人联系人、私人手机号或私人邮箱目录。
+            </aside>
 
-            {/* Read next */}
-            <Card className="border border-slate-200 bg-white rounded-2xl p-5 shadow-sm">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Read Next</h3>
-              <div className="mt-3.5 space-y-3.5">
-                {BLOG_POSTS.filter((p) => p.slug !== post.slug).slice(0, 2).map((p) => (
-                  <div key={p.slug} className="text-xs border-b border-slate-50 pb-3 last:border-0 last:pb-0">
-                    <Link href={`/blog/${p.slug}`} className="font-bold text-slate-900 hover:text-teal-600 transition-colors line-clamp-2">
-                      {p.title}
+            {related.length > 0 && (
+              <section className="mt-10 border-t border-slate-200 pt-8">
+                <h2 className="text-xl font-bold text-slate-950">相关文章</h2>
+                <div className="mt-4 grid gap-4 md:grid-cols-3">
+                  {related.map((item) => (
+                    <Link key={item.slug} href={`/blog/${item.slug}`} className="rounded-md border border-slate-200 bg-white p-4 hover:border-teal-300 hover:shadow-sm">
+                      <p className="text-xs font-semibold text-teal-700">{item.category || "行业研究"}</p>
+                      <h3 className="mt-2 text-sm font-bold leading-5 text-slate-950">{item.title}</h3>
+                      {item.excerpt && <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-500">{item.excerpt}</p>}
                     </Link>
-                    <span className="text-[10px] text-slate-400 mt-1 block">
-                      {new Date(p.datePublished).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </Card>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
+
+          <aside className="space-y-5 lg:sticky lg:top-24">
+            <div className="rounded-md bg-slate-950 p-5 text-white">
+              <h2 className="font-bold">搜索真实出口商</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-300">按行业、城市、产品和企业信号筛选公开的供应商记录。</p>
+              <Link href="/database" className="mt-4 inline-flex w-full justify-center rounded bg-teal-500 px-3 py-2 text-sm font-bold text-slate-950 hover:bg-teal-400">
+                打开供应商数据库
+              </Link>
+            </div>
+          </aside>
         </div>
       </article>
     </>

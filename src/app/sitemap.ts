@@ -25,12 +25,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/legal/refund-policy",
     "/legal/acceptable-use",
   ];
-  const [industries, products, cities, suppliers, reports] = await Promise.all([
+  const [industries, products, cities, suppliers, reports, blogPosts] = await Promise.all([
     prisma.industryPage.findMany({ where: { isIndexable: true }, select: { slug: true, updatedAt: true } }).catch(() => []),
     prisma.productKeywordPage.findMany({ where: { isIndexable: true }, select: { slug: true, updatedAt: true } }).catch(() => []),
     prisma.cityPage.findMany({ where: { isIndexable: true }, select: { slug: true, city: true, updatedAt: true } }).catch(() => []),
     prisma.supplier.findMany({ where: { isPublished: true }, select: { slug: true, updatedAt: true }, take: 50000 }).catch(() => []),
     prisma.report.findMany({ where: { status: "PUBLISHED" }, select: { slug: true, updatedAt: true } }).catch(() => []),
+    prisma.blogPost.findMany({ where: { status: "PUBLISHED" }, select: { slug: true, updatedAt: true } }).catch(() => []),
   ]);
 
   // 查询这 56 个可索引城市拥有的二级行业分类，进行 sitemap 关联生成
@@ -62,5 +63,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...cityIndustryRoutes,
     ...suppliers.map((item) => ({ url: absoluteUrl(`/suppliers/${item.slug}`), lastModified: item.updatedAt })),
     ...reports.map((item) => ({ url: absoluteUrl(`/reports/${item.slug}`), lastModified: item.updatedAt })),
+    ...blogPosts.map((item) => ({ url: absoluteUrl(`/blog/${item.slug}`), lastModified: item.updatedAt })),
   ];
 }
