@@ -143,47 +143,31 @@ export default function PricingPage() {
         </section>
 
         {/* Standalone Offerings Grid */}
-        <section className="mt-16 grid gap-6 lg:grid-cols-3">
+        <section className="mt-16 grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
           {/* PDF Reports Card */}
-          <Card className="border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-bold text-slate-950">Standalone PDF Reports</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pricing structures</h4>
-              <div className="mt-3.5 space-y-2 text-xs">
-                <PriceLine label="Basic Category Analysis" cents={STRIPE_CATALOG.reports.BASIC.amountUsdCents} />
-                <PriceLine label="Full Category Report" cents={STRIPE_CATALOG.reports.FULL.amountUsdCents} />
-                <PriceLine label="Premium Industry Report" cents={STRIPE_CATALOG.reports.PREMIUM.amountUsdCents} />
-                <PriceLine label="Exhibitor Sourcing Intelligence Special" cents={STRIPE_CATALOG.reports.CANTON_FAIR_INTELLIGENCE.amountUsdCents} />
-              </div>
-              <div className="mt-6 flex items-start space-x-2 rounded-lg bg-slate-50 border border-slate-100 p-3 text-xs leading-normal text-slate-500">
-                <ShieldAlert className="h-4 w-4 text-slate-400 mt-0.5 shrink-0" />
-                <span>Reports map regional clusters and manufacturer distribution. They do not sell list files of private contacts.</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Shortlist Card */}
           <Card className="border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl flex flex-col justify-between">
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-bold text-slate-950">Custom Supplier Shortlist</CardTitle>
+              <CardTitle className="text-lg font-bold text-slate-950">Standalone PDF Reports</CardTitle>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-between pt-0">
               <div>
                 <div className="mt-1 flex items-baseline">
                   <span className="text-3xl font-extrabold tracking-tight">
-                    {formatUsd(STRIPE_CATALOG.customShortlist.amountUsdCents)}
+                    $99.00
                   </span>
-                  <span className="text-xs ml-1 font-semibold text-slate-500">/request</span>
+                  <span className="text-xs ml-1 font-semibold text-slate-500">/report</span>
                 </div>
-                <h4 className="mt-4 text-xs font-bold text-slate-900">Curated procurement vetting</h4>
+                <h4 className="mt-4 text-xs font-bold text-slate-900 uppercase tracking-wider">Comprehensive sourcing guides</h4>
                 <p className="mt-2 text-xs leading-relaxed text-slate-600">
-                  Receive up to 50 vetted manufacturer candidates hand-selected by our sourcing consultants matching your specific tech parameters and locations.
+                  Download structural analysis reports detailing cluster density, exporter rankings, product keywords, and custom buyer checklists for a specific B2B export category.
                 </p>
+                <div className="mt-6 flex items-start space-x-2 rounded-lg bg-slate-50 border border-slate-100 p-3 text-xs leading-normal text-slate-500">
+                  <ShieldAlert className="h-4 w-4 text-slate-400 mt-0.5 shrink-0" />
+                  <span>Reports map regional clusters and manufacturer distribution. They do not sell list files of private contacts.</span>
+                </div>
               </div>
-              <ButtonLink href="/custom-shortlist" className="mt-6 w-full text-xs font-bold" variant="outline">
-                Request Sourcing Shortlist
+              <ButtonLink href="/reports" className="mt-6 w-full text-xs font-bold" variant="outline">
+                Browse Published Reports
               </ButtonLink>
             </CardContent>
           </Card>
