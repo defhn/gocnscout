@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Calendar, User } from "lucide-react";
+import { ArrowLeft, Calendar, ShieldAlert, User } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { BlogContent } from "@/components/blog/blog-content";
 import { BlogInteractions } from "@/components/blog/blog-interactions";
@@ -89,15 +89,24 @@ export default async function BlogPostPage({ params }: Props) {
         </header>
 
         <div className="mt-8 grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_280px]">
-          <div className="min-w-0">
+          <div className="min-w-0 max-w-3xl">
             <BlogInteractions slug={slug} title={post.title} />
             <div className="mt-8">
               {dbDocument ? <BlogContent document={dbDocument} /> : null}
             </div>
 
-            <aside className="mt-10 rounded-md border border-slate-200 bg-slate-50 p-5 text-sm leading-6 text-slate-600">
-              <strong className="text-slate-900">Compliance Notice: </strong>
-              This article is compiled based on public corporate and trade information. GoCNScout does not provide private contact details, personal mobile numbers, or personal email directories.
+            <aside className="mt-12 rounded-lg border-l-4 border-teal-600 bg-teal-50/40 p-5 text-sm shadow-xs">
+              <div className="flex gap-3">
+                <div className="text-teal-600 shrink-0 mt-0.5">
+                  <ShieldAlert size={18} />
+                </div>
+                <div>
+                  <h4 className="font-bold text-teal-950">Compliance & Trust Notice</h4>
+                  <p className="mt-1 leading-relaxed text-teal-900/80">
+                    This article is compiled based on public corporate and trade information. GoCNScout strictly adheres to data privacy regulations and does not provide private contact details, personal mobile numbers, or sensitive email directories.
+                  </p>
+                </div>
+              </div>
             </aside>
 
             {related.length > 0 && (

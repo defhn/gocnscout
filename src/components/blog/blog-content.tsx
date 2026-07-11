@@ -40,19 +40,69 @@ function block(node: BlogNode, key: string): ReactNode {
   const children = (node.content ?? []).map((child, index) => inline(child, `${key}-${index}`));
   if (node.type === "heading") {
     const level = Math.min(3, Math.max(2, Number(node.attrs?.level ?? 2)));
-    const Tag = `h${level}` as "h2" | "h3";
-    return <Tag key={key} className="scroll-mt-24 text-slate-950">{children}</Tag>;
+    if (level === 2) {
+      return <h2 key={key} className="scroll-mt-24 mt-10 mb-4 text-2xl font-extrabold text-slate-900 tracking-tight leading-8">{children}</h2>;
+    }
+    return <h3 key={key} className="scroll-mt-24 mt-8 mb-3 text-xl font-bold text-slate-900 tracking-tight leading-7">{children}</h3>;
   }
-  if (node.type === "paragraph") return <p key={key}>{children}</p>;
-  if (node.type === "blockquote") return <blockquote key={key}>{(node.content ?? []).map((child, index) => block(child, `${key}-${index}`))}</blockquote>;
-  if (node.type === "bulletList") return <ul key={key}>{(node.content ?? []).map((child, index) => <li key={`${key}-${index}`}>{(child.content ?? []).map((item, itemIndex) => block(item, `${key}-${index}-${itemIndex}`))}</li>)}</ul>;
-  if (node.type === "orderedList") return <ol key={key}>{(node.content ?? []).map((child, index) => <li key={`${key}-${index}`}>{(child.content ?? []).map((item, itemIndex) => block(item, `${key}-${index}-${itemIndex}`))}</li>)}</ol>;
-  if (node.type === "codeBlock") return <pre key={key}><code>{(node.content ?? []).map((child) => child.text ?? "").join("")}</code></pre>;
-  if (node.type === "horizontalRule") return <hr key={key} />;
-  if (node.type === "table") return <div key={key} className="overflow-x-auto"><table><tbody>{(node.content ?? []).map((row, rowIndex) => <tr key={`${key}-${rowIndex}`}>{(row.content ?? []).map((cell, cellIndex) => { const Cell = cell.type === "tableHeader" ? "th" : "td"; return <Cell key={`${key}-${rowIndex}-${cellIndex}`}>{(cell.content ?? []).map((item, itemIndex) => block(item, `${key}-${rowIndex}-${cellIndex}-${itemIndex}`))}</Cell>; })}</tr>)}</tbody></table></div>;
+  if (node.type === "paragraph") {
+    return <p key={key} className="my-5 text-[16px] leading-7 text-slate-700 font-normal">{children}</p>;
+  }
+  if (node.type === "blockquote") {
+    return (
+      <blockquote key={key} className="my-6 border-l-4 border-teal-600 bg-slate-50 py-3 pl-5 pr-4 italic text-slate-800 rounded-r-md leading-relaxed shadow-sm">
+        {(node.content ?? []).map((child, index) => block(child, `${key}-${index}`))}
+      </blockquote>
+    );
+  }
+  if (node.type === "bulletList") {
+    return <ul key={key} className="my-5 list-disc pl-6 space-y-2 text-slate-700 text-[16px] leading-7">{(node.content ?? []).map((child, index) => <li key={`${key}-${index}`}>{(child.content ?? []).map((item, itemIndex) => block(item, `${key}-${index}-${itemIndex}`))}</li>)}</ul>;
+  }
+  if (node.type === "orderedList") {
+    return <ol key={key} className="my-5 list-decimal pl-6 space-y-2 text-slate-700 text-[16px] leading-7">{(node.content ?? []).map((child, index) => <li key={`${key}-${index}`}>{(child.content ?? []).map((item, itemIndex) => block(item, `${key}-${index}-${itemIndex}`))}</li>)}</ol>;
+  }
+  if (node.type === "codeBlock") {
+    return <pre key={key} className="my-6 overflow-x-auto rounded-lg bg-slate-900 p-4 text-xs text-slate-100 font-mono"><code>{(node.content ?? []).map((child) => child.text ?? "").join("")}</code></pre>;
+  }
+  if (node.type === "horizontalRule") {
+    return <hr key={key} className="my-8 border-t border-slate-200" />;
+  }
+  if (node.type === "table") {
+    return (
+      <div key={key} className="my-8 overflow-hidden rounded-lg border border-slate-200 shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-slate-200 text-sm">
+            <tbody className="divide-y divide-slate-100">
+              {(node.content ?? []).map((row, rowIndex) => {
+                const isHeader = row.content?.some(cell => cell.type === "tableHeader");
+                return (
+                  <tr 
+                    key={`${key}-${rowIndex}`} 
+                    className={isHeader ? "bg-slate-50/80 font-bold" : "hover:bg-slate-50/40 transition-colors"}
+                  >
+                    {(row.content ?? []).map((cell, cellIndex) => {
+                      const Cell = cell.type === "tableHeader" ? "th" : "td";
+                      return (
+                        <Cell 
+                          key={`${key}-${rowIndex}-${cellIndex}`}
+                          className={`px-4 py-3 text-left ${Cell === "th" ? "text-slate-900 font-bold border-b border-slate-200" : "text-slate-700"}`}
+                        >
+                          {(cell.content ?? []).map((item, itemIndex) => block(item, `${key}-${rowIndex}-${cellIndex}-${itemIndex}`))}
+                        </Cell>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
   return null;
 }
 
 export function BlogContent({ document }: { document: BlogDocument }) {
-  return <div className="prose prose-slate max-w-none prose-headings:font-bold prose-a:text-teal-700 prose-a:no-underline hover:prose-a:underline">{(document.content ?? []).map((node, index) => block(node, String(index)))}</div>;
+  return <div className="max-w-none">{(document.content ?? []).map((node, index) => block(node, String(index)))}</div>;
 }
