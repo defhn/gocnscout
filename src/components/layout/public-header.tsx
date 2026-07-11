@@ -68,11 +68,15 @@ export async function PublicHeader() {
         {/* Right side CTA Button Panel */}
         <div className="flex shrink-0 items-center gap-2">
           {!isSignedIn ? (
-            <ButtonLink href="/sign-in" variant="outline">
-              Sign in
+            <ButtonLink href="/sign-up" variant="teal" className="font-semibold">
+              Register
             </ButtonLink>
           ) : null}
-          <ButtonLink href="/app" variant="secondary">
+          <ButtonLink
+            href="/app"
+            variant="outline"
+            className="border-teal-200 bg-teal-50 !text-teal-800 hover:border-teal-300 hover:bg-teal-100"
+          >
             Dashboard
           </ButtonLink>
           {isSignedIn ? <UserButton /> : null}
