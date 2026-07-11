@@ -95,15 +95,15 @@ export default async function BlogPostPage({ params }: Props) {
               {dbDocument ? <BlogContent document={dbDocument} /> : null}
             </div>
 
-            <aside className="mt-12 rounded-lg border-l-4 border-teal-600 bg-teal-50/40 p-5 text-sm shadow-xs">
-              <div className="flex gap-3">
-                <div className="text-teal-600 shrink-0 mt-0.5">
+            <aside className="mt-12 rounded-xl border border-slate-200 bg-slate-50/50 p-5 text-sm shadow-sm transition-all hover:shadow-md hover:border-teal-200">
+              <div className="flex gap-3.5">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-teal-100/80 text-teal-700">
                   <ShieldAlert size={18} />
                 </div>
-                <div>
-                  <h4 className="font-bold text-teal-950">Compliance & Trust Notice</h4>
-                  <p className="mt-1 leading-relaxed text-teal-900/80">
-                    This article is compiled based on public corporate and trade information. GoCNScout strictly adheres to data privacy regulations and does not provide private contact details, personal mobile numbers, or sensitive email directories.
+                <div className="space-y-1">
+                  <h4 className="font-semibold text-slate-900">Compliance & Trust Statement</h4>
+                  <p className="leading-relaxed text-slate-600">
+                    This article is compiled using verified, public corporate and trade information. GoCNScout is committed to data privacy and strictly adheres to compliance regulations—we never disclose private contact details, personal mobile numbers, or non-public email directories.
                   </p>
                 </div>
               </div>
