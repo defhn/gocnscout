@@ -8,6 +8,9 @@ import { BlogEditor } from "@/components/blog/blog-editor";
 import { emptyBlogDocument, markdownToBlogDocument, parseMarkdownFrontMatter, type BlogDocument } from "@/lib/blog/content";
 import { extractBlogText, getBlogImageStats, seoLengthStatus } from "@/lib/blog/seo";
 
+const STOP_WORDS_SET = new Set(["a","an","the","and","or","but","in","on","at","to","for","of","with","by","is","it","its","if","be","as","was","are","how","your","my","our","can","do","did","from","this","that","have","has","what","which","who","will","up","out","about","into","not","step","guide","complete","every","must","know","before","making","first"]);
+
+
 type InitialPost = {
   slug: string;
   title: string;
@@ -65,6 +68,7 @@ export function BlogPostForm({ initialPost }: { initialPost?: InitialPost }) {
   const [coverPrompt, setCoverPrompt] = useState("");
   const [categories, setCategories] = useState<string[]>([]);
   const [isCreatingNewCategory, setIsCreatingNewCategory] = useState(false);
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(!!initialPost?.slug);
 
   useEffect(() => {
     getExistingCategories().then((res) => {
@@ -93,7 +97,6 @@ export function BlogPostForm({ initialPost }: { initialPost?: InitialPost }) {
   const imageStats = getBlogImageStats(form.content);
   const words = extractBlogText(form.content).split(/\s+/).filter(Boolean).length;
 
-  const STOP_WORDS_SET = new Set(["a","an","the","and","or","but","in","on","at","to","for","of","with","by","is","it","its","if","be","as","was","are","how","your","my","our","can","do","did","from","this","that","have","has","what","which","who","will","up","out","about","into","not","step","guide","complete","every","must","know","before","making","first"]);
   const importMarkdown = async (file: File) => {
     const raw = await file.text();
     const parsed = parseMarkdownFrontMatter(raw);
@@ -106,6 +109,7 @@ export function BlogPostForm({ initialPost }: { initialPost?: InitialPost }) {
       ? titleForSlug.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").split("-").filter(w => w.length > 0 && !STOP_WORDS_SET.has(w)).slice(0, 4).join("-")
       : file.name.replace(/\.md$/i, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").split("-").slice(-4).join("-");
     const slug = String(frontmatterSlug ?? autoSlug);
+    setSlugManuallyEdited(false);
     setForm((current) => ({ ...current, slug, title: String(metadata.title ?? metadata.Title ?? current.title), excerpt: String(metadata.excerpt ?? metadata.Excerpt ?? current.excerpt ?? ""), category: String(metadata.category ?? metadata.Category ?? current.category ?? ""), metaTitle: String(metadata.metaTitle ?? metadata.MetaTitle ?? current.metaTitle ?? ""), metaDescription: String(metadata.metaDescription ?? metadata.MetaDescription ?? current.metaDescription ?? ""), authorName: String(metadata.author ?? metadata.Author ?? current.authorName ?? ""), tags, content: markdownToBlogDocument(parsed.body), sourceFileName: file.name }));
     setTagsText(tags.join(", "));
     setMessage(`已导入 ${file.name}，请检查后保存。`);
@@ -239,7 +243,14 @@ export function BlogPostForm({ initialPost }: { initialPost?: InitialPost }) {
             </div>
           </div>
 
-          <input required value={form.title} onChange={(event) => set("title", event.target.value)} placeholder="文章标题" className="w-full rounded-md border border-slate-200 bg-white px-4 py-3 text-2xl font-bold text-slate-950 outline-none focus:border-teal-500" />
+          <input required value={form.title} onChange={(event) => {
+            const newTitle = event.target.value;
+            set("title", newTitle);
+            if (!slugManuallyEdited) {
+              const autoSlug = newTitle.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").split("-").filter(w => w.length > 0 && !STOP_WORDS_SET.has(w)).slice(0, 4).join("-");
+              if (autoSlug) set("slug", autoSlug);
+            }
+          }} placeholder="文章标题" className="w-full rounded-md border border-slate-200 bg-white px-4 py-3 text-2xl font-bold text-slate-950 outline-none focus:border-teal-500" />
           <section className="rounded-md border border-slate-200 bg-white">
             <div className="flex items-center justify-between border-b border-slate-100 px-4 py-2"><span className="text-sm font-semibold text-slate-700">文章摘要</span><button type="button" onClick={() => void callAI("generate_excerpt")} className="inline-flex items-center gap-1 rounded border border-indigo-200 bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-700">{aiLoading === "generate_excerpt" ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}AI 辅助生成</button></div>
             <textarea rows={3} value={form.excerpt ?? ""} onChange={(event) => set("excerpt", event.target.value)} className="w-full resize-none px-4 py-3 text-sm outline-none" />
@@ -281,7 +292,7 @@ export function BlogPostForm({ initialPost }: { initialPost?: InitialPost }) {
 
           <section className="space-y-2 rounded-md border border-slate-200 bg-white p-2">
             <div className="grid grid-cols-2 gap-2">
-              <label><span className="text-[10px] font-semibold text-slate-500">URL 路径 (Slug)</span><input pattern="[a-z0-9]+(?:-[a-z0-9]+)*" value={form.slug} onChange={(event) => set("slug", event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))} placeholder="留空自动生成" className="field-input h-8 text-xs px-2 py-1 mt-0.5" /></label>
+              <label><span className="text-[10px] font-semibold text-slate-500">URL 路径 (Slug)</span><input pattern="[a-z0-9]+(?:-[a-z0-9]+)*" value={form.slug} onChange={(event) => { setSlugManuallyEdited(true); set("slug", event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "")); }} placeholder="留空自动生成" className="field-input h-8 text-xs px-2 py-1 mt-0.5" /></label>
               <label>
                 <span className="text-[10px] font-semibold text-slate-500">文章分类</span>
                 {!isCreatingNewCategory ? (
