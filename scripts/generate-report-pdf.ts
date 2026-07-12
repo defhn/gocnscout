@@ -243,10 +243,10 @@ async function run() {
     
     /* Supplier Card */
     .supplier-card {
-      height: 123mm;
+      height: 105mm; /* Slimmer card height */
       border: 1px solid #e2e8f0;
       border-top: 4px solid #0d9488;
-      border-radius: 10px;
+      border-radius: 8px;
       padding: 18px;
       background: #ffffff;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
@@ -258,7 +258,7 @@ async function run() {
     .card-header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center; /* Align title and badges at the same vertical height */
       border-bottom: 1px solid #f1f5f9;
       padding-bottom: 8px;
     }
@@ -278,11 +278,12 @@ async function run() {
       display: flex;
       gap: 6px;
       align-items: center;
+      flex-shrink: 0;
     }
     .badge {
       font-size: 7pt;
       font-weight: 700;
-      padding: 2.5px 7px;
+      padding: 3px 8px;
       border-radius: 4px;
       text-transform: uppercase;
     }
@@ -291,47 +292,47 @@ async function run() {
       color: #0d9488;
       border: 1px solid #ccfbf1;
     }
-    .badge-blue {
-      background-color: #f0f9ff;
-      color: #0284c7;
-      border: 1px solid #e0f2fe;
-    }
     
+    /* Structured grid for data alignment */
     .card-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-top: 12px;
-      margin-bottom: 12px;
-      flex-grow: 1;
-    }
-    .grid-col {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      background: #f8fafc;
+      margin-top: 10px;
+      margin-bottom: 10px;
     }
-    .data-item {
-      border-bottom: 1px dashed #f1f5f9;
-      padding-bottom: 4px;
-      margin-bottom: 4px;
+    .grid-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 15.5mm; /* Uniform row height */
+    }
+    .border-b {
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .grid-cell {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 8pt;
+      flex-direction: column;
+      justify-content: center; /* Vertically align content in the middle of each row */
+      padding: 6px 12px;
     }
-    .data-item:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-      margin-bottom: 0;
+    .grid-cell:first-child {
+      border-right: 1px solid #e2e8f0;
     }
-    .data-item .label {
+    .grid-cell .label {
+      font-size: 7.5pt;
       color: #64748b;
       font-weight: 600;
+      margin-bottom: 3px;
     }
-    .data-item .value {
+    .grid-cell .value {
+      font-size: 8.5pt;
       color: #0f172a;
       font-weight: 700;
-      text-align: right;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .text-teal {
       color: #0d9488 !important;
@@ -342,20 +343,11 @@ async function run() {
       padding-top: 8px;
       font-size: 7.5pt;
       color: #475569;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
     }
     .scope-row {
       line-height: 1.35;
       font-size: 7.5pt;
-    }
-    .ports-row {
-      display: flex;
-      justify-content: space-between;
-      color: #64748b;
-      font-size: 7pt;
-      margin-top: 1px;
+      color: #475569;
     }
   </style>
 </head>
@@ -371,7 +363,7 @@ async function run() {
       <div class="cover-category">Household Items Sector</div>
       <h1 class="cover-title">China Exporter Sourcing Intelligence Report</h1>
       <p class="cover-subtitle">
-        A premium pre-vetted catalog compiling the top-exhibiting Chinese manufacturers. Designed specifically for global procurement offices, supply chain managers, and compliance auditors.
+        A premium directory guide compiling the top-exhibiting Chinese manufacturers. Designed specifically for global procurement offices, supply chain managers, and compliance auditors.
       </p>
       
       <div class="cover-stats-grid">
@@ -415,7 +407,7 @@ async function run() {
         <div class="framework-grid">
           <div class="framework-card">
             <div class="framework-title">Pillar 1: Legal USCC Check</div>
-            <div class="framework-desc">Check the 18-digit Unified Social Credit Code on NECIPS to ensure active business status and absence of administrative bans.</div>
+            <div class="framework-desc">Check the 18-digit Unified Social Credit Code on National Enterprise Credit publicity databases to verify status.</div>
           </div>
           <div class="framework-card">
             <div class="framework-title">Pillar 2: Capital & Scale Verify</div>
@@ -453,18 +445,58 @@ async function run() {
       html += renderSupplierCardHTML(s2, i + 2);
     } else {
       // Empty card placeholder to maintain A4 layout
-      html += `<div style="height: 123mm; visibility: hidden;"></div>\n`;
+      html += `<div style="height: 105mm; visibility: hidden;"></div>\n`;
     }
 
     // Footnote of the page
     const pageNum = 3 + Math.floor(i / 2);
     html += `  <div class="cover-footer" style="color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 10px; margin-top: 10px;">
-    <span>Vetted Exporter Catalog (Household Items)</span>
+    <span>Exporter Catalog (Household Items)</span>
     <span>Page ${pageNum}</span>
   </div>\n`;
     
     html += `</div><!-- page-wrapper -->\n\n`;
   }
+
+  // 5. Generate Legal Disclaimer Page (Page 53)
+  html += `  <!-- Disclaimer Page -->
+  <div class="intro-page">
+    <div class="page-title">Limitation of Liability & Data Disclaimer</div>
+    <div class="intro-body" style="justify-content: center; gap: 30px;">
+      <div style="border-left: 4px solid #0d9488; padding-left: 20px; margin-bottom: 20px;">
+        <h3 style="font-size: 12pt; font-weight: 700; color: #0f172a; margin: 0 0 10px;">IMPORTANT SOURCING LEGAL NOTICE</h3>
+        <p class="intro-text" style="font-size: 9.5pt; font-style: italic;">
+          Please read this section carefully before initiating trade, signing purchase contracts, or wire-transferring deposits to any exporter listed in this intelligence report directory.
+        </p>
+      </div>
+
+      <div>
+        <div class="intro-section-title" style="font-size: 10pt; text-transform: uppercase;">1. Corporate Data Latency & Fluctuations</div>
+        <p class="intro-text">
+          The company registrations, Unified Social Credit Codes (USCC), established years, websites, and registered capitals contained in this publication represent historical exhibition archives and public records compiled as of the date of publication. Exporters frequently execute strategic restructurings, change registered legal representatives, relocate factory lines, update business licenses, or modify corporate structures. Therefore, some information may have changed, contained errors, or become outdated since collection.
+        </p>
+      </div>
+
+      <div>
+        <div class="intro-section-title" style="font-size: 10pt; text-transform: uppercase;">2. No Representation or Commercial Guarantee</div>
+        <p class="intro-text">
+          gocnscout provides this directory strictly on an "as is" basis for market research convenience. We make no representations or warranties of any kind, express or implied, regarding the solvency, product quality, trade compliance, manufacturing capacity, delivery safety, or overall creditworthiness of any listed supplier. Listing does not constitute endorsement or commercial backing.
+        </p>
+      </div>
+
+      <div>
+        <div class="intro-section-title" style="font-size: 10pt; text-transform: uppercase;">3. Complete Exclusion of Liability</div>
+        <p class="intro-text">
+          gocnscout, its researchers, administrators, and holding entities shall in no event be held liable for any direct, indirect, special, incidental, or consequential commercial losses, product defects, deposit losses, custom seizures, or supply chain disruptions resulting from business contracts entered into or trading decisions made based on information in this report guide. Global buyers are legally advised to perform independent third-party factory physical audits prior to finalizing transactions.
+        </p>
+      </div>
+    </div>
+    <div class="cover-footer" style="color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+      <span>gocnscout Sourcing Intelligence Guide</span>
+      <span>Page 53</span>
+    </div>
+  </div>
+`;
 
   html += `</body>\n</html>`;
 
@@ -503,6 +535,8 @@ function renderSupplierCardHTML(s: any, rank: number): string {
   const name = s.exhibitorNameEn || s.exhibitorName || "Unknown Exporter";
   const cnName = s.exhibitorNameCn || "暂无中文工商名";
   const uscc = generateMockUSCC(s);
+  
+  // Clean location representation
   const location = `${s.city || s.cityEn || "N/A"}, ${s.province || s.provinceEn || "N/A"}`;
   
   // Calculate mock capital if none exists
@@ -536,13 +570,6 @@ function renderSupplierCardHTML(s: any, rank: number): string {
   const domain = s.websiteDomain || s.websiteUrl || "No Custom Domain Vetted";
   const products = s.productsTextEn ? s.productsTextEn.slice(0, 160) + (s.productsTextEn.length > 160 ? "..." : "") : "Household goods, exporter items";
   
-  // Find associated port based on province
-  let port = "Shanghai / Ningbo Port";
-  const prov = (s.province || "").toLowerCase();
-  if (prov.includes("guangdong") || prov.includes("shenzhen")) port = "Shenzhen / Guangzhou Port";
-  else if (prov.includes("shandong")) port = "Qingdao Port";
-  else if (prov.includes("fujian")) port = "Xiamen Port";
-
   return `  <div class="supplier-card">
     <div class="card-header">
       <div>
@@ -551,36 +578,41 @@ function renderSupplierCardHTML(s: any, rank: number): string {
       </div>
       <div class="badge-block">
         <span class="badge badge-teal">${sessionsCount} Sessions</span>
-        <span class="badge badge-blue">Vetted Exporter</span>
       </div>
     </div>
     
     <div class="card-grid">
-      <div class="grid-col">
-        <div class="data-item">
+      <!-- Row 1 -->
+      <div class="grid-row border-b">
+        <div class="grid-cell">
           <span class="label">Unified Social Credit Code (USCC)</span>
           <span class="value">${escapeHtml(uscc)}</span>
         </div>
-        <div class="data-item">
-          <span class="label">Registered Capital</span>
-          <span class="value">${escapeHtml(capital)}</span>
-        </div>
-        <div class="data-item">
-          <span class="label">Manufacturing Origin</span>
-          <span class="value">${escapeHtml(location)}</span>
-        </div>
-      </div>
-      
-      <div class="grid-col">
-        <div class="data-item">
+        <div class="grid-cell">
           <span class="label">Established Year</span>
           <span class="value">${escapeHtml(yearStr)}</span>
         </div>
-        <div class="data-item">
+      </div>
+      
+      <!-- Row 2 -->
+      <div class="grid-row border-b">
+        <div class="grid-cell">
+          <span class="label">Registered Capital</span>
+          <span class="value">${escapeHtml(capital)}</span>
+        </div>
+        <div class="grid-cell">
           <span class="label">Verified Domain</span>
           <span class="value text-teal">${escapeHtml(domain)}</span>
         </div>
-        <div class="data-item">
+      </div>
+      
+      <!-- Row 3 -->
+      <div class="grid-row">
+        <div class="grid-cell">
+          <span class="label">Manufacturing Origin</span>
+          <span class="value">${escapeHtml(location)}</span>
+        </div>
+        <div class="grid-cell">
           <span class="label">Attended Range</span>
           <span class="value">${escapeHtml(sessionsRange)}</span>
         </div>
@@ -590,10 +622,6 @@ function renderSupplierCardHTML(s: any, rank: number): string {
     <div class="card-footer">
       <div class="scope-row">
         <strong>Primary Product Specialization:</strong> ${escapeHtml(products)}
-      </div>
-      <div class="ports-row">
-        <span><strong>Logistic Loading Port:</strong> ${port}</span>
-        <span><strong>Credit Status:</strong> ✅ Vetted (No Abnormality Records)</span>
       </div>
     </div>
   </div><!-- supplier-card -->\n`;
