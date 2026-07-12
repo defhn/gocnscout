@@ -233,11 +233,11 @@ export default function PricingPage() {
                     </ul>
                     
                     <ButtonLink 
-                      href="/supplier-check" 
+                      href={`/api/manual-review/checkout?package=${pkg.code}`} 
                       className="w-full text-xs font-semibold py-3 rounded-xl transition-all duration-200 mt-6 shadow-xs hover:shadow-md" 
                       variant={isDecision ? "teal" : "outline"}
                     >
-                      Start Free AI Check
+                      Order Verification
                     </ButtonLink>
                   </CardContent>
                 </Card>

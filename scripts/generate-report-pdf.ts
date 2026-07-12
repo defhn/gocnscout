@@ -781,7 +781,7 @@ async function run() {
               <li><strong>Human conclusion</strong>: initial confidence, main risk points, and documents the buyer should request before payment</li>
             </ul>
           </div>
-          <div class="pkg-cta-btn pkg-cta-btn-secondary">Start Free AI Check</div>
+          <div class="pkg-cta-btn pkg-cta-btn-secondary">Order Verification</div>
         </a>
 
         <!-- Card 2 -->
@@ -805,7 +805,7 @@ async function run() {
               <li><strong>Human conclusion</strong>: initial confidence, main risk points, and recommended documents checklist</li>
             </ul>
           </div>
-          <div class="pkg-cta-btn pkg-cta-btn-secondary">Start Free AI Check</div>
+          <div class="pkg-cta-btn pkg-cta-btn-secondary">Order Verification</div>
         </a>
 
         <!-- Card 3 -->
@@ -831,7 +831,7 @@ async function run() {
               <li><strong>Buyer decision advice</strong>: clear contact/pause recommendation, RFQ questions, and order notes</li>
             </ul>
           </div>
-          <div class="pkg-cta-btn">Start Free AI Check</div>
+          <div class="pkg-cta-btn">Order Verification</div>
         </a>
 
         <!-- Card 4 -->
@@ -856,7 +856,7 @@ async function run() {
               <li><strong>Social audit & decision guidance</strong>: social signals + negotiation question checklists</li>
             </ul>
           </div>
-          <div class="pkg-cta-btn">Start Free AI Check</div>
+          <div class="pkg-cta-btn">Order Verification</div>
         </a>
       </div>
     </div>
