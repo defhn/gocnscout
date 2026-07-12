@@ -25,6 +25,9 @@ export async function uploadPrivateFile(key: string, body: Buffer, contentType: 
 }
 
 export async function createPrivateDownloadUrl(key: string) {
+  if (key.startsWith("/")) {
+    return key;
+  }
   return getSignedUrl(
     r2Client(),
     new GetObjectCommand({
