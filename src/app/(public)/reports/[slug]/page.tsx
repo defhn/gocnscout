@@ -86,9 +86,6 @@ export default async function ReportPage({ params }: { params: Promise<{ slug: s
     "Executive Summary & Sourcing Standards",
     "gocnscout Supplier Audit Framework",
     isLess ? `Vetted Exporter Catalog (All ${totalExporters} Stable Firms)` : "Vetted Exporter Catalog (Top 100 Stable Firms)",
-    "Manufacturing Origins & Regional Hub Density",
-    "Corporate Size & Capitalization Breakdown",
-    "Historic Attendance Stability Index",
     "Supplier Vetting & Verification Checklist",
     "Data Standards & Licensing Disclaimer"
   ];
