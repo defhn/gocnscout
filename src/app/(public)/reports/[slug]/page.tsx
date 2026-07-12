@@ -117,7 +117,7 @@ export default async function ReportPage({ params }: { params: Promise<{ slug: s
               </CardHeader>
               <CardContent className="pt-6">
                 <p className="text-xs text-slate-500 mb-6 leading-relaxed">
-                  This sourcing intelligence guide is structured into 8 professional chapters to provide an exhaustive, audit-ready profile of manufacturers in this sector.
+                  This sourcing intelligence report covers 5 key sections — from executive summary and audit framework to a vetted exporter catalog and verification checklist.
                 </p>
                 <div className="grid gap-3 sm:grid-cols-2">
                   {includedSections.map((item, index) => (
@@ -229,12 +229,20 @@ export default async function ReportPage({ params }: { params: Promise<{ slug: s
               </div>
 
               {/* Action Button */}
-              <div className="p-6 pt-0 border-t border-slate-50 bg-slate-50/50">
+              <div className="p-6 pt-0 border-t border-slate-50 bg-slate-50/50 space-y-2">
                 <a
                   href={btnHref}
                   className="mt-4 inline-flex w-full h-11 items-center justify-center rounded-xl bg-brand !text-white hover:bg-brand-strong text-xs font-bold transition shadow-sm hover:shadow"
                 >
                   {btnText}
+                </a>
+                <a
+                  href={`/reports/samples/${report.slug}-sample-report.pdf`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full h-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:border-teal-400 hover:text-teal-700 text-xs font-semibold transition"
+                >
+                  ↓ Download Free Preview (6 pages)
                 </a>
               </div>
             </Card>
