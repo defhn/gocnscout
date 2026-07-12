@@ -123,7 +123,6 @@ const faqs = [
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { 
   CheckCircle2, 
-  AlertTriangle, 
   ShieldCheck, 
   HelpCircle, 
   ArrowRight, 
@@ -372,7 +371,7 @@ export default function SupplierCheckPage({
               </li>
               <li className="flex gap-2.5 items-start">
                 <Check className="h-4 w-4 shrink-0 text-teal-650 bg-teal-50 rounded-full p-0.5 mt-0.5" />
-                <span>Evaluation of the supplier's real business scale (insured employee counts, intellectual property ownership).</span>
+                <span>Evaluation of the supplier&apos;s real business scale (insured employee counts, intellectual property ownership).</span>
               </li>
               <li className="flex gap-2.5 items-start">
                 <Check className="h-4 w-4 shrink-0 text-teal-650 bg-teal-50 rounded-full p-0.5 mt-0.5" />
@@ -498,7 +497,7 @@ export default function SupplierCheckPage({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {comparisonRows.map(([option, covers, bestFor], idx) => (
+                {comparisonRows.map(([option, covers, bestFor]) => (
                   <tr key={option} className="hover:bg-slate-50/50 transition-colors">
                     <td className="px-6 py-4 font-bold text-slate-950">{option}</td>
                     <td className="px-6 py-4 leading-relaxed text-slate-600">{covers}</td>

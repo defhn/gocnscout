@@ -29,6 +29,9 @@ const MARKDOWN_LINK_RE = /\[([^\]]{1,120})\]\((https?:\/\/[^)\s]+|\/[^)\s]+)\)/g
 const IMPORTANT_PATH_RE = /(about|company|profile|product|capabilit|factory|manufactur|certificat|quality|service)/i;
 const LOW_VALUE_PATH_RE = /(blog|news|privacy|terms|policy|login|signin|cart|account|search|javascript|mailto:|tel:)/i;
 const ALIBABA_STORE_LINK_RE = /^https?:\/\/[a-z0-9-]+\.m?\.?en\.alibaba\.com/i;
+const WEBSITE_CERT_RE = /\b(SGS|Sedex|BSCI|ISO\s?14001|ISO\s?9001|ISO\s?\d{3,5}|RoHS|REACH|CE|FDA|MSDS)\b/gi;
+const WEBSITE_CATEGORY_RE = /\b(stationery|desk accessor(?:y|ies)|art material|arts? and hobby craft|erasable pens?|pencil case|office products?|DIY craft|packaging|cosmetics?|skin care|electronics?|hardware|furniture|textiles?|toys?|plastic products?)\b/gi;
+const WEBSITE_BUSINESS_MODEL_RE = /\b(OEM|ODM|private labels?|own branded|audited factories|retail chains?|manufacturer|factory|sourcing team|sample makers?|product developers?)\b/gi;
 
 export async function analyzeSupplierUrl(inputUrl: string, options: AnalyzeOptions = {}): Promise<SupplierAnalysisResult> {
   const initial = normalizeAnalysisUrl(inputUrl);
@@ -76,7 +79,10 @@ export async function analyzeSupplierUrl(inputUrl: string, options: AnalyzeOptio
       ];
     } else {
       const websiteSources = buildWebsiteSources(normalizedUrl, homepage.markdown);
-      const rest = await scrapeSources(websiteSources.slice(1), options.fetcher);
+      const restSources = websiteSources
+        .slice(1)
+        .filter((source) => !entryPage || !sameUrl(source.url, entryPage.source.url));
+      const rest = await scrapeSources(restSources, options.fetcher);
       scraped = [
         ...(entryPage ? [entryPage] : []),
         { ...homepage, source: websiteSources[0] },
@@ -244,11 +250,52 @@ function extractFacts(page: ScrapedPage) {
   const companyName = extractCompanyNameFromText(text);
   if (companyName) facts.add(`Company name: ${companyName}`);
 
+  if (page.source.label.startsWith("Website")) {
+    addWebsiteFootprintFacts(facts, text);
+  }
+
   if (facts.size <= 1 && text) {
     addCleanFact(facts, `Visible text sample: ${text.slice(0, 220)}`);
   }
 
   return Array.from(facts).slice(0, 12);
+}
+
+function addWebsiteFootprintFacts(facts: Set<string>, text: string) {
+  if (/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(text) || /(?:\+?\d[\d\s().-]{7,}\d|0\d{2,3}[-\s]?\d{7,8})/.test(text)) {
+    facts.add("Website contact signal: public email or phone is present");
+  }
+
+  if (/\b(Shanghai|Shenzhen|Guangzhou|Dongguan|Ningbo|Yiwu|Xiamen|Suzhou|Hangzhou|China)\b/i.test(text) && /\b(address|building|road|district|province|city|china)\b/i.test(text)) {
+    const city = text.match(/\b(Shanghai|Shenzhen|Guangzhou|Dongguan|Ningbo|Yiwu|Xiamen|Suzhou|Hangzhou)\b/i)?.[1] || "China";
+    facts.add(`Website address signal: ${city} address mentioned`);
+  }
+
+  for (const match of text.matchAll(WEBSITE_CERT_RE)) {
+    const claim = normalizeCertificateClaim(match[1] || match[0]);
+    if (claim) facts.add(`Certificate claim: ${claim}`);
+  }
+
+  for (const match of text.matchAll(WEBSITE_CATEGORY_RE)) {
+    const category = normalizeLowerSignal(match[1] || match[0]);
+    if (category) facts.add(`Product category signal: ${category}`);
+  }
+
+  for (const match of text.matchAll(WEBSITE_BUSINESS_MODEL_RE)) {
+    const model = normalizeLowerSignal(match[1] || match[0]);
+    if (model) facts.add(`Business model signal: ${model}`);
+  }
+}
+
+function normalizeCertificateClaim(input: string) {
+  return input.replace(/\s+/g, "").replace(/^Iso/i, "ISO").replace(/^Sgs$/i, "SGS").replace(/^BSCI$/i, "BSCI").replace(/^Sedex$/i, "Sedex");
+}
+
+function normalizeLowerSignal(input: string) {
+  const normalized = input.replace(/\s+/g, " ").trim().toLowerCase();
+  if (normalized === "private labels") return "private label";
+  if (normalized === "own branded") return "own brand";
+  return normalized;
 }
 
 function extractCompanyName(pages: ScrapedPage[]) {
@@ -319,10 +366,13 @@ function buildRiskFlags(sources: SupplierAnalysisResult["sources"], unavailable:
   const flags: string[] = [];
   const hasRatings = sources.some((source) => source.label.includes("ratings") && source.status === "AVAILABLE");
   const hasProducts = sources.some((source) => source.label.includes("product") && source.status === "AVAILABLE");
+  const isWebsite = sources.some((source) => source.label.startsWith("Website"));
   const confidence = buildConfidenceLabel(sources, unavailable);
 
   flags.push(`Initial buyer confidence: ${confidence}`);
-  if (hasRatings) {
+  if (isWebsite) {
+    flags.push("Website public footprint is available, but business registration and certificate authenticity still need manual verification.");
+  } else if (hasRatings) {
     flags.push("Alibaba ratings are available, but they should be checked against recent review text and order context.");
   } else {
     flags.push("Public marketplace rating evidence was not available in this automated pass.");
@@ -362,7 +412,12 @@ function buildBuyerQuestions(sourceType: SupplierAnalysisResult["sourceType"]) {
     return [...base, "Ask for recent Alibaba order references or review context if the rating count is low."];
   }
 
-  return [...base, "Ask for official company domain email confirmation and recent customer references."];
+  return [
+    ...base,
+    "Ask the supplier which legal entity owns the website domain and whether it matches the business license.",
+    "Ask for certificate numbers, issuing bodies, validity dates, and holder names for any website certificate claims.",
+    "Ask whether the website products are made in-house, subcontracted to audited factories, or sourced through trading partners.",
+  ];
 }
 
 function buildNextSteps(sourceType: SupplierAnalysisResult["sourceType"]) {

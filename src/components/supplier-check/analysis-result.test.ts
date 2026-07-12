@@ -62,4 +62,42 @@ describe("analysis result display helpers", () => {
       "Company name: Guangzhou Biying Cosmetics Co., Ltd.",
     ]);
   });
+
+  it("builds website-specific snapshot fields for company website analyses", () => {
+    const result = {
+      sourceType: "WEBSITE",
+      sourceUrl: "http://www.shanghai-alix.com/product.htm",
+      normalizedUrl: "http://www.shanghai-alix.com/",
+      companyName: "Alix Industrial Co., Ltd.",
+      summary: "Website footprint analysis.",
+      sources: [
+        {
+          label: "Website homepage",
+          url: "http://www.shanghai-alix.com/",
+          status: "AVAILABLE",
+          facts: [
+            "Company name: Alix Industrial Co., Ltd.",
+            "Website contact signal: public email or phone is present",
+            "Website address signal: Shanghai address mentioned",
+            "Certificate claim: SGS",
+            "Certificate claim: ISO9001",
+            "Product category signal: stationery",
+          ],
+        },
+      ],
+      unavailable: [],
+      riskFlags: ["Initial buyer confidence: Medium public-source coverage, needs manual verification before purchase decisions."],
+      buyerQuestions: [],
+      nextSteps: [],
+      limitations: [],
+      generatedAt: "2026-07-12T00:00:00.000Z",
+    } satisfies SupplierAnalysisResult;
+
+    const snapshot = buildSnapshot(result);
+
+    expect(snapshot.marketplaceSignals).toContain("Website contact signal");
+    expect(snapshot.marketplaceSignals).toContain("Shanghai address");
+    expect(snapshot.registrationSignals).toContain("Company name: Alix Industrial Co., Ltd.");
+    expect(snapshot.registrationSignals).toContain("Certificate claim: SGS");
+  });
 });

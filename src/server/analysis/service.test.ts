@@ -223,6 +223,66 @@ describe("supplier analysis service", () => {
     ]);
   });
 
+  it("extracts website-footprint signals from company websites", async () => {
+    const requestedUrls: string[] = [];
+    const fetcher = vi.fn(async (_url: Parameters<typeof fetch>[0], init?: RequestInit) => {
+      const body = JSON.parse(String(init?.body || "{}")) as { url: string };
+      requestedUrls.push(body.url);
+
+      const markdown =
+        body.url === "http://www.shanghai-alix.com/"
+          ? [
+              "Alix Industrial Co., Ltd.",
+              "Our audited factories have been certified by SGS for Sedex, BSCI, ISO14001, ISO9001 since 2003.",
+              "Our showroom has stationery, desk accessory, arts and hobby craft products.",
+              "Contact: sales@shanghai-alix.com Tel: +86(21)6427 8029",
+              "[Products](/product.htm)",
+              "[About Alix](/about.htm)",
+              "[Contact us](/contact.htm)",
+            ].join(" ")
+          : body.url.includes("product")
+            ? "Products include erasable pens, stationery back to school, art material, pencil case, office products, DIY craft products."
+            : body.url.includes("about")
+              ? "About Alix works for retail chains, private labels and own branded products. Every year we invest near 1 million USD on new product developments."
+              : "9F, Chuangxin Building, No.1009, Yishan Road, Xuhui District, Shanghai, China. sales@shanghai-alix.com";
+
+      return Response.json({
+        success: true,
+        data: { markdown, metadata: { title: "Alix Industrial Co., Ltd.", sourceURL: body.url } },
+      });
+    });
+
+    const result = await analyzeSupplierUrl("http://www.shanghai-alix.com/product.htm", {
+      fetcher,
+      aiGenerator: async () => "Website footprint analysis.",
+    });
+    const facts = result.sources.flatMap((source) => source.facts);
+
+    expect(result.sourceType).toBe("WEBSITE");
+    expect(result.normalizedUrl).toBe("http://www.shanghai-alix.com/");
+    expect(requestedUrls).toEqual([
+      "http://www.shanghai-alix.com/product.htm",
+      "http://www.shanghai-alix.com/",
+      "http://www.shanghai-alix.com/about.htm",
+      "http://www.shanghai-alix.com/contact.htm",
+    ]);
+    expect(facts).toEqual(expect.arrayContaining([
+      "Company name: Alix Industrial Co., Ltd.",
+      "Website contact signal: public email or phone is present",
+      "Website address signal: Shanghai address mentioned",
+      "Certificate claim: SGS",
+      "Certificate claim: Sedex",
+      "Certificate claim: BSCI",
+      "Certificate claim: ISO14001",
+      "Certificate claim: ISO9001",
+      "Product category signal: stationery",
+      "Product category signal: art material",
+      "Business model signal: private label",
+    ]));
+    expect(result.riskFlags).toContain("Website public footprint is available, but business registration and certificate authenticity still need manual verification.");
+    expect(result.buyerQuestions).toContain("Ask the supplier which legal entity owns the website domain and whether it matches the business license.");
+  });
+
   it("normalizes an Alibaba store subpage to the supplier storefront before expanding pages", async () => {
     const requestedUrls: string[] = [];
     const fetcher = vi.fn(async (_url: Parameters<typeof fetch>[0], init?: RequestInit) => {

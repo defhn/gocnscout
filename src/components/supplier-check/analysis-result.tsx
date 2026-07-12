@@ -14,13 +14,12 @@ import {
   Layers, 
   Sparkles, 
   Check,
-  Building,
   Info,
-  HelpCircle,
   Clock,
   Briefcase,
   Globe
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { MANUAL_REVIEW_PACKAGES, SINGLE_SUPPLIER_MANUAL_REVIEW_PACKAGES } from "@/config/manual-review";
 import { formatUsd } from "@/lib/utils";
 import type { SupplierAnalysisResult } from "@/server/analysis/contract";
@@ -35,6 +34,7 @@ export function AnalysisResult({
 }) {
   const supplierUrl = encodeURIComponent(result.normalizedUrl);
   const snapshot = buildSnapshot(result);
+  const sourceLabel = getSourceTypeLabel(result.sourceType);
 
   // State to track which accordion source is expanded.
   // By default, the first source is expanded.
@@ -103,7 +103,7 @@ export function AnalysisResult({
             </span>
             <span className="flex items-center gap-1.5">
               <Globe className="h-3.5 w-3.5 text-teal-550" />
-              Source: Public Webpages
+              Source: {sourceLabel}
             </span>
           </div>
         </section>
@@ -118,8 +118,8 @@ export function AnalysisResult({
           <div className="grid gap-4 md:grid-cols-2">
             <SnapshotItem label="Initial confidence" value={snapshot.confidence} tone="teal" />
             <SnapshotItem label="Product fit signals" value={snapshot.productSignals} />
-            <SnapshotItem label="Marketplace reputation" value={snapshot.marketplaceSignals} />
-            <SnapshotItem label="Registration / TrustPass" value={snapshot.registrationSignals} />
+            <SnapshotItem label={result.sourceType === "ALIBABA_STORE" ? "Marketplace reputation" : "Website footprint"} value={snapshot.marketplaceSignals} />
+            <SnapshotItem label={result.sourceType === "ALIBABA_STORE" ? "Registration / TrustPass" : "Identity / certificate clues"} value={snapshot.registrationSignals} />
           </div>
 
           {/* Critical Warnings Alert */}
@@ -342,18 +342,28 @@ function getPackageEyebrow(code: string) {
   return "1 supplier review";
 }
 
+function getSourceTypeLabel(sourceType: SupplierAnalysisResult["sourceType"]) {
+  return sourceType === "ALIBABA_STORE" ? "Alibaba supplier pages" : "Company website pages";
+}
+
 export function buildSnapshot(result: SupplierAnalysisResult) {
   const allFacts = result.sources.flatMap((source) => source.facts);
   const confidence = result.riskFlags.find((item) => item.startsWith("Initial buyer confidence:"))?.replace("Initial buyer confidence: ", "") || "Needs manual verification.";
   const productFacts = allFacts.filter((fact) => fact.startsWith("Product signal:")).slice(0, 3);
   const ratingFacts = allFacts.filter((fact) => /Reviews|Supplier Service|On-time Shipment|Product Quality|Overall Ratings/i.test(fact)).slice(0, 4);
   const registrationFacts = allFacts.filter((fact) => /Registration no|Registered capital|Year Established|Date of issue/i.test(fact)).slice(0, 4);
+  const websiteFootprintFacts = allFacts.filter((fact) => /Website contact signal|Website address signal|Business model signal/i.test(fact)).slice(0, 4);
+  const websiteIdentityFacts = allFacts.filter((fact) => /Company name|Certificate claim/i.test(fact)).slice(0, 4);
 
   return {
     confidence: sanitizeDisplayText(confidence, 180),
     productSignals: productFacts.length ? sanitizeDisplayText(productFacts.map((fact) => fact.replace("Product signal: ", "")).join("; "), 180) : "No clear product signals captured.",
-    marketplaceSignals: ratingFacts.length ? sanitizeDisplayText(ratingFacts.join("; "), 180) : "No rating or review signals captured.",
-    registrationSignals: registrationFacts.length ? sanitizeDisplayText(registrationFacts.join("; "), 180) : "No registration fields captured from public pages.",
+    marketplaceSignals: result.sourceType === "ALIBABA_STORE"
+      ? (ratingFacts.length ? sanitizeDisplayText(ratingFacts.join("; "), 180) : "No rating or review signals captured.")
+      : (websiteFootprintFacts.length ? sanitizeDisplayText(websiteFootprintFacts.join("; "), 180) : "No website footprint signals captured."),
+    registrationSignals: result.sourceType === "ALIBABA_STORE"
+      ? (registrationFacts.length ? sanitizeDisplayText(registrationFacts.join("; "), 180) : "No registration fields captured from public pages.")
+      : (websiteIdentityFacts.length ? sanitizeDisplayText(websiteIdentityFacts.join("; "), 180) : "No company identity or certificate clues captured from public website pages."),
     missingEvidence: [
       "Independent public registry verification of company ownership/status.",
       "Check of official corporate website and Chinese social-media footprint consistency.",
@@ -448,7 +458,7 @@ function SignalPanel({
 }: {
   title: string;
   items: string[];
-  icon: any;
+  icon: LucideIcon;
   panelColor: string;
   iconColor: string;
 }) {

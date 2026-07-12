@@ -173,7 +173,7 @@ export default function PricingPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-150">
-                {MANUAL_REVIEW_COMPARISON_ROWS.map((row, idx) => (
+                {MANUAL_REVIEW_COMPARISON_ROWS.map((row) => (
                   <tr key={row.feature} className="hover:bg-slate-50/50 transition-colors">
                     <td className="bg-slate-50/10 px-6 py-4 font-bold text-slate-900 border-r border-slate-200">{row.feature}</td>
                     <td className="px-6 py-4 leading-relaxed text-slate-600 border-r border-slate-150">{renderManualReviewCell(row.identity)}</td>
