@@ -229,20 +229,12 @@ export default async function ReportPage({ params }: { params: Promise<{ slug: s
               </div>
 
               {/* Action Button */}
-              <div className="p-6 pt-0 border-t border-slate-50 bg-slate-50/50 space-y-2">
+              <div className="p-6 pt-0 border-t border-slate-50 bg-slate-50/50">
                 <a
                   href={btnHref}
                   className="mt-4 inline-flex w-full h-11 items-center justify-center rounded-xl bg-brand !text-white hover:bg-brand-strong text-xs font-bold transition shadow-sm hover:shadow"
                 >
                   {btnText}
-                </a>
-                <a
-                  href={`/reports/samples/${report.slug}-sample-report.pdf`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex w-full h-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:border-teal-400 hover:text-teal-700 text-xs font-semibold transition"
-                >
-                  ↓ Download Free Preview (6 pages)
                 </a>
               </div>
             </Card>
