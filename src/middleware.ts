@@ -7,11 +7,28 @@ const clerkEnabled = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && pr
 
 export default clerkEnabled
   ? clerkMiddleware(async (auth, req) => {
+      const host = req.headers.get("host");
+      if (host && host.startsWith("www.")) {
+        const newHost = host.replace(/^www\./, "");
+        const url = req.nextUrl.clone();
+        url.host = newHost;
+        url.protocol = "https:";
+        return NextResponse.redirect(url, 301);
+      }
+
       if (isProtectedRoute(req)) {
         await auth.protect();
       }
     })
-  : function middleware() {
+  : function middleware(req: any) {
+      const host = req.headers.get("host");
+      if (host && host.startsWith("www.")) {
+        const newHost = host.replace(/^www\./, "");
+        const url = req.nextUrl.clone();
+        url.host = newHost;
+        url.protocol = "https:";
+        return NextResponse.redirect(url, 301);
+      }
       return NextResponse.next();
     };
 
