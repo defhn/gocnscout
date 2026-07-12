@@ -393,6 +393,169 @@ async function run() {
       font-size: 7pt;
       color: #64748b;
     }
+
+    /* Page 53: Comparison Table */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      margin-bottom: 15px;
+    }
+    .comparison-table th {
+      background: #1e293b;
+      color: #ffffff;
+      font-size: 7.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 6px 8px;
+      border: 1px solid #334155;
+      text-align: left;
+    }
+    .comparison-table td {
+      font-size: 7pt;
+      padding: 5px 8px;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+      line-height: 1.35;
+      vertical-align: top;
+    }
+    .comparison-table tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+    .col-recommend {
+      background: #f0fdfa !important;
+      border-left: 2px solid #0d9488 !important;
+      border-right: 2px solid #0d9488 !important;
+    }
+    tr:last-child .col-recommend {
+      border-bottom: 2px solid #0d9488 !important;
+    }
+    th.col-recommend-header {
+      background: #0d9488 !important;
+      border: 1px solid #0d9488 !important;
+    }
+    .cta-row-links {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      margin-top: 5px;
+    }
+    .btn-link {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 7.5pt;
+      font-weight: 700;
+      text-decoration: none;
+      text-align: center;
+    }
+    .btn-slate {
+      background: #475569;
+      color: #ffffff;
+      border: 1px solid #475569;
+    }
+    .btn-teal {
+      background: #0d9488;
+      color: #ffffff;
+      border: 1px solid #0d9488;
+    }
+
+    /* Page 54: Package Cards (2x2 Grid) */
+    .packages-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+      flex-grow: 1;
+    }
+    .package-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+    .package-card.recommended {
+      border: 2px solid #0d9488;
+      box-shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.08);
+    }
+    .pkg-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #f0fdfa;
+      color: #0d9488;
+      font-size: 5.5pt;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      border: 1px solid #ccfbf1;
+    }
+    .pkg-header {
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 6px;
+      margin-bottom: 6px;
+    }
+    .pkg-title {
+      font-size: 8.5pt;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 2px;
+    }
+    .pkg-meta {
+      font-size: 6.5pt;
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .pkg-price-row {
+      display: flex;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+    .pkg-price {
+      font-size: 15pt;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .pkg-desc {
+      font-size: 7pt;
+      color: #475569;
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+    .pkg-features-list {
+      margin: 0;
+      padding-left: 12px;
+      font-size: 6.5pt;
+      color: #475569;
+      line-height: 1.35;
+    }
+    .pkg-features-list li {
+      margin-bottom: 2px;
+    }
+    .pkg-cta-btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background: #0d9488;
+      color: #ffffff;
+      font-size: 7.5pt;
+      font-weight: 700;
+      padding: 6px;
+      border-radius: 4px;
+      text-decoration: none;
+      margin-top: 10px;
+      border: 1px solid #0d9488;
+    }
+    .pkg-cta-btn-secondary {
+      background: #1e293b;
+      border: 1px solid #1e293b;
+    }
   </style>
 </head>
 <body>
@@ -505,8 +668,205 @@ async function run() {
     html += `</div><!-- page-wrapper -->\n\n`;
   }
 
-  // 5. Generate Legal Disclaimer Page (Page 53)
-  html += `  <!-- Disclaimer Page -->
+  // 5. Generate Manual Supplier Verification Pages
+  html += `  <!-- Manual Supplier Verification Comparison Page -->
+  <div class="intro-page">
+    <div class="watermark">https://gocnscout.com/database</div>
+    <div class="page-title">Manual Supplier Verification</div>
+    <div class="intro-body">
+      <p class="intro-text" style="font-size: 8.5pt; margin-bottom: 8px; line-height: 1.4;">
+        Human review by Chinese sourcing analysts who verify corporate databases, business license registrations, court dispute records, and domestic social signals before you transact.
+      </p>
+      
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th style="width: 20%;">Review Area</th>
+            <th style="width: 40%;">Supplier Identity Check ($149)</th>
+            <th class="col-recommend-header" style="width: 40%;">Buyer Decision Review ($249) <span style="font-size: 5.5pt; display:block; color: #ccfbf1; font-weight: bold; margin-top: 1px;">RECOMMENDED</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Best for</strong></td>
+            <td>Basic identity verification and obvious-risk screening before first contact.</td>
+            <td class="col-recommend">Buyer decision support before contact, samples, negotiation, or payment.</td>
+          </tr>
+          <tr>
+            <td><strong>Company identity fields</strong></td>
+            <td>Company name, registration number / unified social credit code, address, legal representative, registered capital, establishment date, status, business scope, import/export fields when available.</td>
+            <td class="col-recommend">Included, plus interpretation against buyer risk and supplier positioning.</td>
+          </tr>
+          <tr>
+            <td><strong>Alibaba / website consistency</strong></td>
+            <td>Store name, company name, address, contact details, product category, and business-scope fit.</td>
+            <td class="col-recommend">Included, plus judgment on entity-mixing, product-line mismatch, and whether the supplier looks like factory, brand owner, group company, or trader.</td>
+          </tr>
+          <tr>
+            <td><strong>Basic risk screen</strong></td>
+            <td>Business abnormality, serious violation, dishonest debtor / enforcement records, administrative penalty, and obvious litigation-risk signals.</td>
+            <td class="col-recommend">Included, with human interpretation of severity and whether the risk affects sampling, prepayment, or long-term cooperation.</td>
+          </tr>
+          <tr>
+            <td><strong>Ownership and control</strong></td>
+            <td>Not included beyond basic public identity fields.</td>
+            <td class="col-recommend">Shareholder structure, group / subsidiary signals, possible entity-mixing risk, and historical shareholder / representative / address changes.</td>
+          </tr>
+          <tr>
+            <td><strong>Legal and operating-risk interpretation</strong></td>
+            <td>Basic obvious-risk screen only.</td>
+            <td class="col-recommend">Litigation types, hearing trends, enforcement / dishonest debtor risk, administrative penalties, equity pledge, and business abnormality signals.</td>
+          </tr>
+          <tr>
+            <td><strong>Operating capability</strong></td>
+            <td>Basic public footprint only.</td>
+            <td class="col-recommend">Certificates, administrative licenses, import/export credit, tender / business activity, insured employee count, and scale signals.</td>
+          </tr>
+          <tr>
+            <td><strong>IP and brand signals</strong></td>
+            <td>Not included as a deep review.</td>
+            <td class="col-recommend">Trademarks, patents, software copyrights, website filings, standards information, and whether IP signals support product claims.</td>
+          </tr>
+          <tr>
+            <td><strong>Social / content platforms</strong></td>
+            <td>Not included.</td>
+            <td class="col-recommend">Xiaohongshu, Douyin, and Zhihu public signals checked manually when available.</td>
+          </tr>
+          <tr>
+            <td><strong>Buyer decision output</strong></td>
+            <td>Initial confidence, main risk points, and documents to request before payment.</td>
+            <td class="col-recommend">Contact / request sample / pause recommendation, RFQ questions, document request list, and payment-before-order notes.</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div class="cta-row-links">
+        <a class="btn-link btn-slate" href="https://gocnscout.com/api/manual-review/checkout?package=IDENTITY_SINGLE" target="_blank">Order Identity Check - $149</a>
+        <a class="btn-link btn-teal" href="https://gocnscout.com/api/manual-review/checkout?package=DECISION_SINGLE" target="_blank">Order Buyer Decision Review - $249</a>
+      </div>
+    </div>
+    <div class="cover-footer" style="color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 10px; margin-top: 5px;">
+      <span>gocnscout Sourcing Intelligence Guide</span>
+      <span>Page 53</span>
+    </div>
+  </div>
+
+  <!-- Premium Sourcing Packages Page -->
+  <div class="intro-page">
+    <div class="watermark">https://gocnscout.com/database</div>
+    <div class="page-title">Premium Supplier Verification Packages</div>
+    <div class="intro-body">
+      <p class="intro-text" style="font-size: 8.5pt; margin-bottom: 5px; line-height: 1.4;">
+        Select a package below to start a manual verification request. Fully delivered within 24-48 hours.
+      </p>
+      
+      <div class="packages-grid">
+        <!-- Card 1 -->
+        <a class="package-card" href="https://gocnscout.com/api/manual-review/checkout?package=IDENTITY_SINGLE" style="text-decoration: none; color: inherit;" target="_blank">
+          <div>
+            <div class="pkg-header">
+              <div class="pkg-meta">Single Supplier Target</div>
+              <div class="pkg-title">Supplier Identity Check</div>
+              <div class="pkg-meta" style="color: #0d9488;">Delivered within 24-48 hours</div>
+            </div>
+            <div class="pkg-price-row">
+              <span class="pkg-price">$149</span>
+            </div>
+            <p class="pkg-desc">Basic identity verification and obvious-risk screening for one supplier before you contact or pay.</p>
+            <ul class="pkg-features-list">
+              <li><strong>Company identity check</strong>: corporate name, registration number, registered address, legal representative, registered capital, status, business scope</li>
+              <li><strong>Alibaba / website consistency check</strong>: storefront credentials vs. legal entity details</li>
+              <li><strong>Basic risk screen</strong>: business abnormality, serious violation, dishonest debtor records, administrative penalty</li>
+              <li><strong>Website footprint check</strong>: site availability, owner details validation, and product line alignment</li>
+              <li><strong>Human conclusion</strong>: initial confidence, main risk points, and documents the buyer should request before payment</li>
+            </ul>
+          </div>
+          <div class="pkg-cta-btn pkg-cta-btn-secondary">Start Free AI Check</div>
+        </a>
+
+        <!-- Card 2 -->
+        <a class="package-card" href="https://gocnscout.com/api/manual-review/checkout?package=IDENTITY_BUNDLE" style="text-decoration: none; color: inherit;" target="_blank">
+          <div>
+            <div class="pkg-header">
+              <div class="pkg-meta">3-Supplier Bundle</div>
+              <div class="pkg-title">Supplier Identity Check - 3 Suppliers</div>
+              <div class="pkg-meta" style="color: #0d9488;">Delivered within 24-48 hours</div>
+            </div>
+            <div class="pkg-price-row">
+              <span class="pkg-price">$399</span>
+            </div>
+            <p class="pkg-desc">Basic identity verification and obvious-risk screening for up to three supplier targets.</p>
+            <ul class="pkg-features-list">
+              <li><strong>Up to three</strong> Alibaba stores or company websites reviewed</li>
+              <li><strong>Company identity check</strong>: corporate details, registration status, registered capital, and import/export license status</li>
+              <li><strong>Alibaba / website consistency check</strong>: storefront details vs. legal entity details</li>
+              <li><strong>Basic risk screen</strong>: business abnormality, serious violation, enforcement records, administrative penalty</li>
+              <li><strong>Website and footprint check</strong>: site availability and owner details check</li>
+              <li><strong>Human conclusion</strong>: initial confidence, main risk points, and recommended documents checklist</li>
+            </ul>
+          </div>
+          <div class="pkg-cta-btn pkg-cta-btn-secondary">Start Free AI Check</div>
+        </a>
+
+        <!-- Card 3 -->
+        <a class="package-card recommended" href="https://gocnscout.com/api/manual-review/checkout?package=DECISION_SINGLE" style="text-decoration: none; color: inherit;" target="_blank">
+          <span class="pkg-badge">Highly Recommended</span>
+          <div>
+            <div class="pkg-header">
+              <div class="pkg-meta">Single Supplier Target</div>
+              <div class="pkg-title">Buyer Decision Review</div>
+              <div class="pkg-meta" style="color: #0d9488;">Delivered within 24-48 hours</div>
+            </div>
+            <div class="pkg-price-row">
+              <span class="pkg-price">$249</span>
+            </div>
+            <p class="pkg-desc">A deeper buyer-decision review for deciding whether to contact, request samples, continue negotiation, or pause.</p>
+            <ul class="pkg-features-list">
+              <li><strong>Everything</strong> in Supplier Identity Check</li>
+              <li><strong>Ownership and control</strong>: shareholder structure, subsidiary signals, and historical Veränderungen</li>
+              <li><strong>Legal & operating-risk interpretation</strong>: litigation types, hearing trends, and administrative penalties</li>
+              <li><strong>Operating capability check</strong>: system certificates, export credit, and insured employee count</li>
+              <li><strong>IP and brand signal check</strong>: trademarks, patents, copyright filings, and standard alignments</li>
+              <li><strong>Social platform audit</strong>: Xiaohongshu, Douyin, and Zhihu public footprints</li>
+              <li><strong>Buyer decision advice</strong>: clear contact/pause recommendation, RFQ questions, and order notes</li>
+            </ul>
+          </div>
+          <div class="pkg-cta-btn">Start Free AI Check</div>
+        </a>
+
+        <!-- Card 4 -->
+        <a class="package-card" href="https://gocnscout.com/api/manual-review/checkout?package=DECISION_BUNDLE" style="text-decoration: none; color: inherit;" target="_blank">
+          <div>
+            <div class="pkg-header">
+              <div class="pkg-meta">3-Supplier Ultimate Pack</div>
+              <div class="pkg-title">3-Supplier Bundle - Buyer Decision Review</div>
+              <div class="pkg-meta" style="color: #0d9488;">Delivered within 24-48 hours</div>
+            </div>
+            <div class="pkg-price-row">
+              <span class="pkg-price">$499</span>
+            </div>
+            <p class="pkg-desc">Deeper buyer-decision support for up to three supplier targets.</p>
+            <ul class="pkg-features-list">
+              <li><strong>Up to three</strong> suppliers reviewed</li>
+              <li><strong>Everything</strong> in Supplier Identity Check</li>
+              <li><strong>Ownership and control</strong>: shareholder breakdown, group networks, and historical registry modifications</li>
+              <li><strong>Legal & operating risk</strong>: administrative punishments, litigations, and abnormity signals</li>
+              <li><strong>Operating capacity audit</strong>: scale signals, employee size, licenses, and certifications</li>
+              <li><strong>IP & brand signals</strong>: trademark and patent check supporting product specifications</li>
+              <li><strong>Social audit & decision guidance</strong>: social signals + negotiation question checklists</li>
+            </ul>
+          </div>
+          <div class="pkg-cta-btn">Start Free AI Check</div>
+        </a>
+      </div>
+    </div>
+    <div class="cover-footer" style="color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 10px; margin-top: 5px;">
+      <span>gocnscout Sourcing Intelligence Guide</span>
+      <span>Page 54</span>
+    </div>
+  </div>
+
+  <!-- Disclaimer Page -->
   <div class="intro-page">
     <div class="watermark">https://gocnscout.com/database</div>
     <div class="page-title">Limitation of Liability & Data Disclaimer</div>
@@ -541,7 +901,7 @@ async function run() {
     </div>
     <div class="cover-footer" style="color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 15px;">
       <span>gocnscout Sourcing Intelligence Guide</span>
-      <span>Page 53</span>
+      <span>Page 55</span>
     </div>
   </div>
 `;
