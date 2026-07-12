@@ -179,6 +179,31 @@ export default async function ReportPage({ params }: { params: Promise<{ slug: s
 
                   <div>
                     <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                      <FileText className="h-3.5 w-3.5 text-slate-400" />
+                      Report Specifications
+                    </h3>
+                    <ul className="mt-1.5 space-y-1.5 text-xs text-slate-600 border-b border-slate-100 pb-3">
+                      <li className="flex justify-between">
+                        <span className="text-slate-500 font-medium">File format:</span>
+                        <span className="font-bold text-slate-800">Vector PDF (Print Ready)</span>
+                      </li>
+                      <li className="flex justify-between">
+                        <span className="text-slate-500 font-medium">Length:</span>
+                        <span className="font-bold text-slate-800">55 Pages</span>
+                      </li>
+                      <li className="flex justify-between">
+                        <span className="text-slate-500 font-medium">Language:</span>
+                        <span className="font-bold text-slate-800">English (Bilingual names)</span>
+                      </li>
+                      <li className="flex justify-between">
+                        <span className="text-slate-500 font-medium">Catalog size:</span>
+                        <span className="font-bold text-slate-800">{isLess ? `${totalExporters}` : "100"} Vetted Exporters</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
                       <ShieldCheck className="h-3.5 w-3.5 text-slate-400" />
                       Guarantees & Trust
                     </h3>
