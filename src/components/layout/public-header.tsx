@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
-import { ChevronDown, ShieldCheck, Sparkles, Layers, FileText, Mail, ShieldAlert } from "lucide-react";
+import { ChevronDown, ShieldCheck, Sparkles, Layers, FileText, Mail, ShieldAlert, Database } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
 
 export async function PublicHeader() {
@@ -22,8 +22,13 @@ export async function PublicHeader() {
         {/* Navigation Controls */}
         <nav className="hidden items-center gap-1.5 lg:flex" aria-label="Main navigation">
           {/* 一级重要链接直接平铺展示 */}
-          <Link href="/database" className="inline-flex items-center rounded-md px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-teal-600 transition-colors">
-            Database
+          <Link href="/database" className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200/60 bg-slate-50/50 px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-teal-600 transition-all">
+            <Database className="h-3.5 w-3.5 text-slate-500" />
+            <span>Database</span>
+          </Link>
+          <Link href="/supplier-check" className="inline-flex items-center gap-1.5 rounded-lg border border-teal-200 bg-teal-50/80 px-2.5 py-1 text-xs font-bold text-teal-800 hover:bg-teal-100 hover:text-teal-900 transition-all">
+            <ShieldCheck className="h-3.5 w-3.5 text-teal-600" />
+            <span>Supplier Check</span>
           </Link>
           <Link href="/industries" className="inline-flex items-center rounded-md px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-teal-600 transition-colors">
             Industries
@@ -36,9 +41,6 @@ export async function PublicHeader() {
           </Link>
           <Link href="/reports" className="inline-flex items-center rounded-md px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-teal-600 transition-colors">
             Reports
-          </Link>
-          <Link href="/supplier-check" className="inline-flex items-center rounded-md px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-teal-600 transition-colors">
-            Supplier Check
           </Link>
           <Link href="/blog" className="inline-flex items-center rounded-md px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-teal-600 transition-colors">
             Blog
