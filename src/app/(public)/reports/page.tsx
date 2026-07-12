@@ -8,6 +8,7 @@ import { STRIPE_CATALOG } from "@/config/pricing";
 import { createMetadata } from "@/config/seo";
 import { formatUsd } from "@/lib/utils";
 import { listPublishedReports } from "@/server/reports";
+import { ReportsList } from "@/components/reports/reports-list";
 
 export const metadata = createMetadata({
   title: "China Supplier Industry Reports and Sourcing Guides",
@@ -76,56 +77,8 @@ export default async function ReportsPage() {
           <p className="text-xs text-slate-500 mt-1">Select a research publication below to inspect contents, page outlines, and unlock downloads.</p>
         </div>
 
-        {/* Reports Cards Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {hasRealData ? (
-            reports.map((report) => (
-              <Card 
-                key={report.id} 
-                className="border border-slate-200 bg-white hover:border-teal-500/20 hover:shadow-md transition-all duration-300 rounded-2xl flex flex-col justify-between overflow-hidden"
-              >
-                <div className="p-6">
-                  <span className="text-[10px] bg-teal-50 text-teal-700 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
-                    Standard Report
-                  </span>
-                  <h3 className="text-base font-bold text-slate-950 mt-4 leading-snug line-clamp-2">
-                    <a href={`/reports/${report.slug}`}>{report.title}</a>
-                  </h3>
-                  <p className="text-xs text-slate-500 mt-2 leading-relaxed line-clamp-3">
-                    {report.description || "Aggregated category overview mapping manufacturing hubs, corporate sizes, website domains, and compliance checklists."}
-                  </p>
-                </div>
-                <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs">
-                  <span className="font-semibold text-slate-700">{formatUsd(report.priceUsdCents)}</span>
-                  <a href={`/reports/${report.slug}`} className="text-teal-600 font-bold hover:text-teal-700 inline-flex items-center">
-                    Review Outline <ArrowRight className="h-3 w-3 ml-1" />
-                  </a>
-                </div>
-              </Card>
-            ))
-          ) : (
-            <div className="col-span-full rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 p-8 text-center max-w-2xl mx-auto my-4">
-              <div className="mx-auto w-12 h-12 bg-teal-100 text-teal-700 flex items-center justify-center rounded-xl mb-4">
-                <FileText className="h-6 w-6" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900">Custom Industry Sourcing Reports</h3>
-              <p className="mt-2 text-xs text-slate-500 leading-relaxed">
-                Currently, there are no pre-compiled digital PDF reports available for instant download. 
-                However, our research department compiles bespoke geographic cluster analyses, exporter registries, 
-                and factory-vetting checklists customized specifically to your procurement targets.
-              </p>
-              <div className="mt-6 flex justify-center">
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-teal-600 px-5 py-3 text-xs font-bold text-white hover:bg-teal-700 transition-colors shadow-sm"
-                >
-                  Request Custom Hub Report &amp; RFP
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            </div>
-          )}
-        </div>
+        {/* Interactive Reports Search, Filter & Categories list */}
+        <ReportsList initialReports={reports} />
 
         {/* Structured Chapters (EEAT layout) */}
         <section className="mt-16 rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm">
