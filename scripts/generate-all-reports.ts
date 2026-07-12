@@ -98,8 +98,8 @@ async function main() {
 
   try {
     for (const target of targets) {
-      const categoryName = target.industryName;
-      const categorySlug = target.industrySlug;
+      const categoryName = target.industryName || "Unknown Industry";
+      const categorySlug = target.industrySlug || "unknown-slug";
       const totalCount = target._count._all;
       const shortCode = getShortReportCode(categoryName);
       const reportId = `GCS-SR-2026-${shortCode}01`;

@@ -2,7 +2,7 @@ import { prisma } from "@/lib/db";
 
 export async function listPublishedReports() {
   return prisma.report.findMany({
-    where: { status: "PUBLISHED" },
+    where: { status: "PUBLISHED", type: "FULL" },
     orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
   });
 }
