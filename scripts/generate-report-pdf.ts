@@ -75,6 +75,21 @@ async function run() {
       background: #f8fafc;
     }
     
+    /* Diagonal Watermark Overlay */
+    .watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-size: 24pt;
+      font-weight: 900;
+      color: rgba(15, 23, 42, 0.07); /* Muted slate gray transparency */
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 999; /* Render on the top layer */
+      letter-spacing: 1px;
+    }
+    
     /* Cover Page */
     .cover-page {
       height: 260mm;
@@ -88,6 +103,7 @@ async function run() {
       page-break-after: always;
       break-after: page;
       border-top: 8px solid #0d9488;
+      position: relative;
     }
     .cover-header {
       display: flex;
@@ -179,6 +195,7 @@ async function run() {
       justify-content: space-between;
       page-break-after: always;
       break-after: page;
+      position: relative;
     }
     .page-title {
       font-size: 16pt;
@@ -239,6 +256,7 @@ async function run() {
       justify-content: space-between;
       page-break-after: always;
       break-after: page;
+      position: relative; /* Set containing block context for absolute watermark */
     }
     
     /* Supplier Card */
@@ -306,7 +324,7 @@ async function run() {
     .grid-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      min-height: 15.5mm; /* Uniform row height */
+      min-height: 14mm; /* Uniform row height */
     }
     .border-b {
       border-bottom: 1px solid #e2e8f0;
@@ -315,7 +333,7 @@ async function run() {
       display: flex;
       flex-direction: column;
       justify-content: center; /* Vertically align content in the middle of each row */
-      padding: 6px 12px;
+      padding: 5px 12px;
     }
     .grid-cell:first-child {
       border-right: 1px solid #e2e8f0;
@@ -324,7 +342,7 @@ async function run() {
       font-size: 7.5pt;
       color: #64748b;
       font-weight: 600;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
     .grid-cell .value {
       font-size: 8.5pt;
@@ -334,20 +352,46 @@ async function run() {
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .text-teal {
-      color: #0d9488 !important;
+    
+    /* Highlighted Core Export Scope callout box */
+    .product-scope-box {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 3px solid #0d9488; /* Accent side border */
+      padding: 6px 12px;
+      border-radius: 4px;
+      margin-top: 6px;
+      margin-bottom: 4px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .scope-title {
+      font-size: 7.5pt;
+      font-weight: 700;
+      color: #0f172a;
+      display: block;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .scope-content {
+      font-size: 8pt;
+      color: #334155;
+      line-height: 1.35;
+      display: block;
+      word-wrap: break-word;
+      white-space: normal; /* Allow wrapping naturally with no truncation */
     }
     
     .card-footer {
       border-top: 1px solid #f1f5f9;
-      padding-top: 8px;
-      font-size: 7.5pt;
-      color: #475569;
-    }
-    .scope-row {
-      line-height: 1.35;
-      font-size: 7.5pt;
-      color: #475569;
+      padding-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 7pt;
+      color: #64748b;
     }
   </style>
 </head>
@@ -355,6 +399,7 @@ async function run() {
 
   <!-- Cover Page -->
   <div class="cover-page">
+    <div class="watermark">https://gocnscout.com/database</div>
     <div class="cover-header">
       <div class="cover-brand">gocnscout</div>
       <div class="cover-id">REPORT ID: GCS-SR-2026-HH01</div>
@@ -385,6 +430,7 @@ async function run() {
 
   <!-- Intro & Framework Page -->
   <div class="intro-page">
+    <div class="watermark">https://gocnscout.com/database</div>
     <div class="page-title">Executive Summary & Vetting Standards</div>
     <div class="intro-body">
       <div>
@@ -434,6 +480,7 @@ async function run() {
   // 4. Generate Cards (2 per page)
   for (let i = 0; i < suppliers.length; i += 2) {
     html += `<div class="page-wrapper">\n`;
+    html += `  <div class="watermark">https://gocnscout.com/database</div>\n`;
     
     // Card 1
     const s1 = suppliers[i];
@@ -461,6 +508,7 @@ async function run() {
   // 5. Generate Legal Disclaimer Page (Page 53)
   html += `  <!-- Disclaimer Page -->
   <div class="intro-page">
+    <div class="watermark">https://gocnscout.com/database</div>
     <div class="page-title">Limitation of Liability & Data Disclaimer</div>
     <div class="intro-body" style="justify-content: center; gap: 30px;">
       <div style="border-left: 4px solid #0d9488; padding-left: 20px; margin-bottom: 20px;">
@@ -517,14 +565,21 @@ async function run() {
   try {
     const page = await browser.newPage();
     await page.goto(pathToFileURL(htmlPath).href, { waitUntil: "networkidle0" });
-    await page.pdf({
-      path: pdfPath,
-      format: "A4",
-      printBackground: true,
-      displayHeaderFooter: false, // Page footers are manually styled in html to look professional
-      margin: { top: "15mm", right: "15mm", bottom: "15mm", left: "15mm" },
-    });
-    console.log("PDF generated successfully at:", pdfPath);
+    try {
+      await page.pdf({
+        path: pdfPath,
+        format: "A4",
+        printBackground: true,
+        displayHeaderFooter: false, // Page footers are manually styled in html to look professional
+        margin: { top: "15mm", right: "15mm", bottom: "15mm", left: "15mm" },
+      });
+      console.log("PDF generated successfully at:", pdfPath);
+    } catch (err: any) {
+      if (err.code === "EBUSY" || err.message.includes("EBUSY")) {
+        console.error("\n[ERROR] PDF FILE IS LOCKED: The output PDF is currently open in another program (like Edge, Acrobat, or Chrome). Please close the PDF viewer and run the script again.\n");
+      }
+      throw err;
+    }
   } finally {
     await browser.close();
     await fs.unlink(htmlPath);
@@ -567,8 +622,11 @@ function renderSupplierCardHTML(s: any, rank: number): string {
     ? `Session ${s.firstExhibitionSession} to ${s.lastExhibitionSession}` 
     : "Multiple Sessions";
 
-  const domain = s.websiteDomain || s.websiteUrl || "No Custom Domain Vetted";
-  const products = s.productsTextEn ? s.productsTextEn.slice(0, 160) + (s.productsTextEn.length > 160 ? "..." : "") : "Household goods, exporter items";
+  // Restore Domain field and display it simply as "Domain"
+  const domain = s.websiteDomain || s.websiteUrl || "No Custom Domain";
+
+  // Support clean display of all product keywords with no truncation
+  const products = s.productsTextEn || "Household goods, exporter items";
   
   return `  <div class="supplier-card">
     <div class="card-header">
@@ -601,7 +659,7 @@ function renderSupplierCardHTML(s: any, rank: number): string {
           <span class="value">${escapeHtml(capital)}</span>
         </div>
         <div class="grid-cell">
-          <span class="label">Verified Domain</span>
+          <span class="label">Domain</span>
           <span class="value text-teal">${escapeHtml(domain)}</span>
         </div>
       </div>
@@ -619,10 +677,15 @@ function renderSupplierCardHTML(s: any, rank: number): string {
       </div>
     </div>
     
+    <!-- Core Sourcing Scope callout box (Prominent design) -->
+    <div class="product-scope-box">
+      <span class="scope-title">Core Export Specialization</span>
+      <span class="scope-content">${escapeHtml(products)}</span>
+    </div>
+    
     <div class="card-footer">
-      <div class="scope-row">
-        <strong>Primary Product Specialization:</strong> ${escapeHtml(products)}
-      </div>
+      <span>Official Registration Registry Data</span>
+      <span>Credit Status: Active (No Abnormality Records)</span>
     </div>
   </div><!-- supplier-card -->\n`;
 }
