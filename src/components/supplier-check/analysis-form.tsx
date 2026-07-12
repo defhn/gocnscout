@@ -36,25 +36,50 @@ export function AnalysisForm({ initialUrl = "" }: { initialUrl?: string }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-3 sm:flex-row" aria-label="Supplier analysis form">
-      <div className="min-w-0 flex-1">
+    <form onSubmit={onSubmit} className="flex flex-col gap-3 sm:flex-row items-stretch" aria-label="Supplier analysis form">
+      <div className="min-w-0 flex-1 relative">
         <label htmlFor="supplier-url" className="sr-only">
           Alibaba store or company website URL
         </label>
-        <input
-          id="supplier-url"
-          value={url}
-          onChange={(event) => setUrl(event.target.value)}
-          placeholder="Paste an Alibaba product page, store page, or company website URL"
-          className="h-12 w-full rounded-md border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20"
-          required
-        />
-        {error ? <p className="mt-2 text-sm text-red-600">{error}</p> : null}
+        <div className="relative rounded-xl shadow-xs">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <Search className="h-5 w-5 text-slate-400" aria-hidden="true" />
+          </div>
+          <input
+            id="supplier-url"
+            type="url"
+            value={url}
+            onChange={(event) => setUrl(event.target.value)}
+            placeholder="Paste an Alibaba product page, store page, or company website..."
+            className="h-12 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 shadow-xs hover:border-slate-300"
+            required
+          />
+        </div>
+        {error ? (
+          <div className="absolute left-0 right-0 mt-2 bg-red-50 border border-red-150 rounded-lg p-2.5 text-xs text-red-600 animate-in fade-in slide-in-from-top-1 duration-200 z-10">
+            {error}
+          </div>
+        ) : null}
       </div>
-      <Button type="submit" variant="teal" className="h-12 shrink-0 px-5 font-bold" disabled={isLoading}>
-        {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-        Analyze
+      <Button 
+        type="submit" 
+        variant="teal" 
+        className="h-12 px-6 rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-75 disabled:pointer-events-none" 
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>Analyzing...</span>
+          </>
+        ) : (
+          <>
+            <Search className="h-4 w-4" />
+            <span>Analyze Free</span>
+          </>
+        )}
       </Button>
     </form>
   );
 }
+

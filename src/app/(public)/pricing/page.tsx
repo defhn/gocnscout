@@ -1,4 +1,4 @@
-import { Check, X, ShieldAlert } from "lucide-react";
+import { Check, X, ShieldAlert, Sparkles } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { FaqSection } from "@/components/marketing/faq-section";
 import { ButtonLink } from "@/components/ui/button";
@@ -144,61 +144,108 @@ export default function PricingPage() {
         </section>
 
         {/* Standalone Offerings Grid */}
-        <section className="mt-16">
-          <div className="mb-8 text-center">
-            <h2 className="text-2xl font-bold tracking-tight text-slate-950">Manual Supplier Verification</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              Human review for overseas buyers who need to know exactly what was checked before contacting, sampling, or paying a China supplier.
+        <section className="mt-20">
+          <div className="mb-10 text-center max-w-2xl mx-auto">
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-teal-50 border border-teal-200/60 text-[10px] font-extrabold uppercase text-teal-800 tracking-wider">
+              <Sparkles className="h-3 w-3 animate-pulse" />
+              Verified Sourcing Intelligence
+            </span>
+            <h2 className="text-3xl font-extrabold tracking-tight text-slate-950 mt-3">Manual Supplier Verification</h2>
+            <p className="mt-3 text-sm leading-relaxed text-slate-600">
+              Human review by Chinese sourcing analysts who verify corporate databases, business license registrations, court dispute records, and domestic social signals before you transact.
             </p>
           </div>
 
-          <div className="mb-8 overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="mb-10 overflow-x-auto rounded-2xl border border-slate-250 bg-white shadow-md relative">
             <table className="min-w-[820px] w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50 text-slate-600 font-bold uppercase tracking-wider">
-                  <th className="w-[28%] px-5 py-4">Review Area</th>
-                  <th className="w-[36%] px-5 py-4">Supplier Identity Check</th>
-                  <th className="w-[36%] px-5 py-4">Buyer Decision Review</th>
+                  <th className="w-[28%] px-6 py-5 border-r border-slate-200">Review Area</th>
+                  <th className="w-[36%] px-6 py-5 text-slate-700 border-r border-slate-200">Supplier Identity Check ($149)</th>
+                  <th className="w-[36%] px-6 py-5 bg-teal-600 text-white font-extrabold relative shadow-sm border-x border-teal-600">
+                    <div className="flex items-center justify-between">
+                      <span className="text-white text-sm font-black">Buyer Decision Review ($249)</span>
+                      <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-[9px] font-extrabold uppercase text-white tracking-wider border border-white/10">
+                        Recommended
+                      </span>
+                    </div>
+                  </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
-                {MANUAL_REVIEW_COMPARISON_ROWS.map((row) => (
+              <tbody className="divide-y divide-slate-150">
+                {MANUAL_REVIEW_COMPARISON_ROWS.map((row, idx) => (
                   <tr key={row.feature} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="bg-slate-50/40 px-5 py-4 font-bold text-slate-950">{row.feature}</td>
-                    <td className="px-5 py-4 leading-5 text-slate-600">{renderManualReviewCell(row.identity)}</td>
-                    <td className="px-5 py-4 leading-5 text-slate-600">{renderManualReviewCell(row.decision, true)}</td>
+                    <td className="bg-slate-50/10 px-6 py-4 font-bold text-slate-900 border-r border-slate-200">{row.feature}</td>
+                    <td className="px-6 py-4 leading-relaxed text-slate-600 border-r border-slate-150">{renderManualReviewCell(row.identity)}</td>
+                    <td className="px-6 py-4 leading-relaxed text-slate-900 bg-teal-50/30 border-x border-teal-500/20 font-medium">
+                      {renderManualReviewCell(row.decision, true)}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-2">
-            {MANUAL_REVIEW_PACKAGES.map((pkg) => (
-              <Card key={pkg.code} className={`flex flex-col border-slate-200 bg-white shadow-sm ${pkg.code.includes("DECISION") ? "ring-1 ring-teal-500/30" : ""}`}>
-                <CardHeader>
-                  <CardTitle className="text-sm font-bold text-slate-950">{pkg.name}</CardTitle>
-                  <p className="mt-1 text-xs text-slate-500">{pkg.delivery}</p>
-                </CardHeader>
-                <CardContent className="flex flex-1 flex-col">
-                  <div className="text-3xl font-extrabold tracking-tight text-slate-950">{formatUsd(pkg.amountUsdCents)}</div>
-                  <p className="mt-3 text-xs leading-5 text-slate-600">{pkg.description}</p>
-                  <ul className="mt-4 flex-1 space-y-2 text-xs leading-5 text-slate-600">
-                    {pkg.features.map((feature) => (
-                      <li key={feature} className="flex gap-2">
-                        <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-teal-600" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <ButtonLink href="/supplier-check" className="mt-5 w-full text-xs font-bold" variant={pkg.code.includes("DECISION") ? "teal" : "outline"}>
-                    Start with Free AI Check
-                  </ButtonLink>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="grid gap-8 md:grid-cols-2">
+            {MANUAL_REVIEW_PACKAGES.map((pkg) => {
+              const isDecision = pkg.code.includes("DECISION");
+              const isBundle = pkg.code.includes("BUNDLE");
+              
+              return (
+                <Card 
+                  key={pkg.code} 
+                  className={`flex flex-col rounded-2xl transition-all duration-300 relative ${
+                    isDecision 
+                      ? "border-2 border-teal-500 bg-gradient-to-b from-teal-50/20 via-white to-white shadow-lg scale-[1.01] hover:scale-[1.02]" 
+                      : "border border-slate-200 bg-white shadow-xs hover:shadow-md"
+                  }`}
+                >
+                  {isDecision && (
+                    <span className="absolute -top-3.5 left-6 inline-flex items-center space-x-1 rounded-full bg-teal-500 px-3 py-1 text-[10px] font-black text-slate-950 uppercase tracking-wider shadow-sm">
+                      <Sparkles className="h-3 w-3 animate-pulse" />
+                      <span>{isBundle ? "3-Supplier Ultimate Pack" : "Highly Recommended"}</span>
+                    </span>
+                  )}
+                  
+                  <CardHeader className="p-6 pb-4">
+                    <div className="flex items-center justify-between gap-2 mt-1">
+                      <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[9px] font-extrabold uppercase text-slate-600 tracking-wider">
+                        {isBundle ? "3-Supplier Bundle" : "Single Supplier Target"}
+                      </span>
+                    </div>
+                    <CardTitle className="text-base font-extrabold text-slate-950 mt-3">{pkg.name}</CardTitle>
+                    <p className="mt-1.5 text-xs text-slate-500 flex items-center gap-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-teal-500" />
+                      {pkg.delivery}
+                    </p>
+                  </CardHeader>
+                  <CardContent className="flex flex-1 flex-col p-6 pt-0">
+                    <div className="text-3xl font-black tracking-tight text-slate-950">{formatUsd(pkg.amountUsdCents)}</div>
+                    <p className="mt-3.5 text-xs leading-relaxed text-slate-600">{pkg.description}</p>
+                    
+                    <ul className="mt-6 pt-5 border-t border-slate-150 space-y-3.5 text-xs text-slate-700 flex-1">
+                      {pkg.features.map((feature) => (
+                        <li key={feature} className="flex gap-2.5 items-start">
+                          <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 bg-teal-50 rounded-full p-0.5" />
+                          <span className="leading-relaxed">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    
+                    <ButtonLink 
+                      href="/supplier-check" 
+                      className="w-full text-xs font-semibold py-3 rounded-xl transition-all duration-200 mt-6 shadow-xs hover:shadow-md" 
+                      variant={isDecision ? "teal" : "outline"}
+                    >
+                      Start Free AI Check
+                    </ButtonLink>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </section>
+
 
         {/* Standalone Offerings Grid */}
         <section className="mt-16 grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
@@ -318,17 +365,17 @@ function renderManualReviewCell(text: string, highlight = false) {
 
   if (unavailable) {
     return (
-      <span className="inline-flex items-start gap-1.5 text-slate-400">
+      <span className="inline-flex items-start gap-2 text-slate-450">
         <X className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-300" />
-        <span>{text}</span>
+        <span className="leading-relaxed">{text}</span>
       </span>
     );
   }
 
   return (
-    <span className={`inline-flex items-start gap-1.5 ${highlight ? "font-medium text-slate-800" : "text-slate-600"}`}>
-      <Check className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${limited ? "text-amber-500" : "text-teal-600"}`} />
-      <span>{text}</span>
+    <span className={`inline-flex items-start gap-2 ${highlight ? "font-bold text-teal-950" : "text-slate-700"}`}>
+      <Check className={`mt-0.5 h-4 w-4 shrink-0 rounded-full p-0.5 ${highlight ? "bg-teal-600 text-white" : limited ? "bg-amber-100 text-amber-600" : "bg-teal-50 text-teal-600"}`} />
+      <span className="leading-relaxed">{text}</span>
     </span>
   );
 }
