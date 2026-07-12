@@ -226,4 +226,39 @@ pnpm search:rebuild
 - Admin 上传 PDF 后，前台和 Dashboard 权限联动正常。
 - Stripe webhook 能改变本地权限。
 - R2 文件下载必须鉴权。
+## Supplier Analysis and Manual Review
 
+Environment variables:
+
+- `FIRECRAWL_API_KEY`: Server-side Firecrawl API key used by the free supplier analysis tool.
+- `FIRECRAWL_BASE_URL`: Defaults to `https://api.firecrawl.dev`.
+- `DEEPSEEK_API_KEY`, `DEEPSEEK_BASE_URL`, `DEEPSEEK_MODEL`: Optional AI summary generation. If DeepSeek is not configured, the supplier tool falls back to a rule-based public-source summary.
+- `BREVO_API_KEY`, `BREVO_FROM_EMAIL`, `SUPPORT_EMAIL`: Required for manual review submission notification emails.
+
+Free AI analysis:
+
+- Public route: `/supplier-check`.
+- API route: `POST /api/supplier-analysis`.
+- Accepts one public HTTP(S) Alibaba store or company website URL.
+- Rejects localhost/private-network URLs and non-HTTP protocols.
+- Stores bounded structured output in `SupplierAnalysis.resultJson`.
+- Does not collect login-only data, unlocked contacts, CAPTCHA-protected pages, cookies, or session links.
+
+Manual review checkout:
+
+- Checkout route: `GET /api/manual-review/checkout?package=...&analysisId=...&supplierUrl=...`.
+- Stripe webhook marks the matching `ManualReviewRequest` as `PAID`.
+- Success page: `/manual-review/[id]`.
+- Submission route: `POST /api/manual-review/[id]/submit`.
+
+Manual review intake fields collected after purchase:
+
+- Buyer name and delivery email.
+- Supplier URL, plus up to two additional supplier URLs for three-supplier bundles.
+- Target product.
+- Destination market.
+- Procurement stage.
+- Estimated order value.
+- Optional notes or concerns.
+
+Public package language should avoid naming proprietary third-party report providers. Use neutral wording such as public business information, marketplace profile, official website, and social signals.

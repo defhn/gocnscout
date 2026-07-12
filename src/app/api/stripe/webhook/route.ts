@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { requireEnv } from "@/lib/env";
 import { prisma } from "@/lib/db";
+import { markManualReviewPaid } from "@/server/manual-review/repository";
 import { stripe } from "@/server/stripe";
 
 export async function POST(request: Request) {
@@ -25,6 +26,7 @@ export async function POST(request: Request) {
     const userId = session.metadata?.userId;
     const planCode = session.metadata?.planCode;
     const reportId = session.metadata?.reportId;
+    const manualReviewId = session.metadata?.manualReviewId;
 
     if (userId && planCode) {
       const interval = session.metadata?.interval;
@@ -47,6 +49,13 @@ export async function POST(request: Request) {
           status: "PAID",
           stripePaymentIntent: typeof session.payment_intent === "string" ? session.payment_intent : undefined,
         },
+      });
+    }
+
+    if (manualReviewId) {
+      await markManualReviewPaid({
+        checkoutSessionId: session.id,
+        paymentIntent: typeof session.payment_intent === "string" ? session.payment_intent : undefined,
       });
     }
   }

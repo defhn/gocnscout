@@ -1,9 +1,10 @@
-import { Check, HelpCircle, X, ShieldAlert, Sparkles } from "lucide-react";
+import { Check, X, ShieldAlert } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { FaqSection } from "@/components/marketing/faq-section";
 import { ButtonLink } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PLAN_DEFINITIONS } from "@/config/plans";
+import { MANUAL_REVIEW_PACKAGES } from "@/config/manual-review";
 import { STRIPE_CATALOG } from "@/config/pricing";
 import { createMetadata, productJsonLd } from "@/config/seo";
 import { formatUsd } from "@/lib/utils";
@@ -143,6 +144,41 @@ export default function PricingPage() {
         </section>
 
         {/* Standalone Offerings Grid */}
+        <section className="mt-16">
+          <div className="mb-8 text-center">
+            <h2 className="text-2xl font-bold tracking-tight text-slate-950">Manual Supplier Verification</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              Human review for overseas buyers who need public-source judgment before contacting, sampling, or paying a China supplier.
+            </p>
+          </div>
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+            {MANUAL_REVIEW_PACKAGES.map((pkg) => (
+              <Card key={pkg.code} className={`flex flex-col border-slate-200 bg-white shadow-sm ${pkg.code.includes("DECISION") ? "ring-1 ring-teal-500/30" : ""}`}>
+                <CardHeader>
+                  <CardTitle className="text-sm font-bold text-slate-950">{pkg.name}</CardTitle>
+                  <p className="mt-1 text-xs text-slate-500">{pkg.delivery}</p>
+                </CardHeader>
+                <CardContent className="flex flex-1 flex-col">
+                  <div className="text-3xl font-extrabold tracking-tight text-slate-950">{formatUsd(pkg.amountUsdCents)}</div>
+                  <p className="mt-3 text-xs leading-5 text-slate-600">{pkg.description}</p>
+                  <ul className="mt-4 flex-1 space-y-2 text-xs leading-5 text-slate-600">
+                    {pkg.features.slice(0, 4).map((feature) => (
+                      <li key={feature} className="flex gap-2">
+                        <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-teal-600" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <ButtonLink href="/supplier-check" className="mt-5 w-full text-xs font-bold" variant={pkg.code.includes("DECISION") ? "teal" : "outline"}>
+                    Start with Free AI Check
+                  </ButtonLink>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* Standalone Offerings Grid */}
         <section className="mt-16 grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
           {/* PDF Reports Card */}
           <Card className="border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl flex flex-col justify-between">
@@ -244,15 +280,6 @@ export default function PricingPage() {
   );
 }
 
-
-function PriceLine({ label, cents }: { label: string; cents: number }) {
-  return (
-    <div className="flex items-center justify-between gap-3 text-slate-600 border-b border-slate-50 py-1 last:border-0">
-      <span>{label}</span>
-      <span className="font-bold text-slate-900">{formatUsd(cents)}</span>
-    </div>
-  );
-}
 
 function PlanFit({ title, text }: { title: string; text: string }) {
   return (

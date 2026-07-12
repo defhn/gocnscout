@@ -165,7 +165,21 @@ export async function getSupplierBySlug(slug: string) {
   });
 }
 
-let cachedFacets: any = null;
+type FacetCount = { _count: { _all: number } };
+type DatabaseFacets = {
+  industries: Array<{ industryName: string } & FacetCount>;
+  provinces: Array<{ province: string | null } & FacetCount>;
+  cities: Array<{ city: string | null } & FacetCount>;
+  companyTypes: Array<{ companyType: string | null } & FacetCount>;
+  companySizes: Array<{ companySize: string | null } & FacetCount>;
+  companyNatures: Array<{ companyNature: string | null } & FacetCount>;
+  foundedYears: Array<{ foundedYear: number | null } & FacetCount>;
+  registeredCapitals: Array<{ registeredCapital: string | null } & FacetCount>;
+  tradeModes: Array<{ label: string; count: number }>;
+  websiteCount: number;
+};
+
+let cachedFacets: DatabaseFacets | null = null;
 let cachedFacetsExpiry = 0;
 
 export async function getDatabaseFacets() {

@@ -37,6 +37,9 @@ export async function PublicHeader() {
           <Link href="/reports" className="inline-flex items-center rounded-md px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-teal-600 transition-colors">
             Reports
           </Link>
+          <Link href="/supplier-check" className="inline-flex items-center rounded-md px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-teal-600 transition-colors">
+            Supplier Check
+          </Link>
           <Link href="/blog" className="inline-flex items-center rounded-md px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-teal-600 transition-colors">
             Blog
           </Link>

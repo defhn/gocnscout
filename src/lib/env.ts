@@ -31,6 +31,8 @@ const envSchema = z.object({
   DEEPSEEK_API_KEY: optionalString,
   DEEPSEEK_BASE_URL: optionalUrl,
   DEEPSEEK_MODEL: z.string().default("deepseek-chat"),
+  FIRECRAWL_API_KEY: optionalString,
+  FIRECRAWL_BASE_URL: optionalUrl.default("https://api.firecrawl.dev"),
   GOOGLE_SEARCH_CONSOLE_SITE_URL: optionalString,
   GOOGLE_SEARCH_CONSOLE_CLIENT_EMAIL: optionalString,
   GOOGLE_SEARCH_CONSOLE_PRIVATE_KEY: optionalString,
