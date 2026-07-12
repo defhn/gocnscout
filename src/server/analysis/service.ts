@@ -23,7 +23,7 @@ const COMPANY_PATTERNS = [
 ];
 
 const RATING_RE = /(Overall Ratings?\s*[0-9.]+\/5|[0-9.]+\s*Reviews?|Supplier Service\s*[0-9.]+|On-time Shipment\s*[0-9.]+|Product Quality\s*[0-9.]+)/gi;
-const BUSINESS_RE = /(Registration No\.?:\s*[A-Z0-9-]+|Registered Capital:\s*[^.]+?|Year Established:\s*\d{4}|Store years?:\s*\d+\s*YR|Response Time\s*[^.]+?|Revenue\s*[^.]+?)(?=\s[A-Z][a-z]|\s*$)/gi;
+const BUSINESS_RE = /(Registration No\.?:\s*[A-Z0-9-]+|Date of Issue:\s*\d{4}-\d{2}-\d{2}|Registered Capital:\s*(?:RMB|USD|CNY)?\s*[\d,.]+|Year Established:\s*\d{4}|Store years?:\s*\d+\s*YR|Response time\s*(?:<=|<|>|>=)?\s*\d+\s*h|Revenue\s*[^.]+?)(?=\s[A-Z][a-z]|\s*$)/gi;
 const PRODUCT_RE = /([A-Z][A-Za-z0-9%+&' -]{3,80}(?:Serum|Lotion|Cream|Mask|Bottle|Box|Bag|Machine|Set|Kit|Powder|Capsule|Toy|Light|Cable|Case|Chair|Table|Shoes|Dress|Shirt|Packaging)[^$]{0,60})/g;
 const MARKDOWN_LINK_RE = /\[([^\]]{1,120})\]\((https?:\/\/[^)\s]+|\/[^)\s]+)\)/g;
 const IMPORTANT_PATH_RE = /(about|company|profile|product|capabilit|factory|manufactur|certificat|quality|service)/i;
@@ -36,7 +36,24 @@ export async function analyzeSupplierUrl(inputUrl: string, options: AnalyzeOptio
   let sourceType = initial.sourceType;
   let scraped: ScrapedPage[];
 
-  if (initial.sourceType === "ALIBABA_STORE") {
+  if (isAlibabaProductContext(initial.normalizedUrl)) {
+    const entryPage = await scrapeAnalysisSource(
+      { label: "Alibaba product page context", url: initial.normalizedUrl },
+      { fetcher: options.fetcher },
+    );
+    const linkedStoreUrl = findAlibabaStoreUrl(entryPage.markdown);
+
+    if (linkedStoreUrl) {
+      normalizedUrl = deriveHomeUrl(linkedStoreUrl, "ALIBABA_STORE");
+      sourceType = "ALIBABA_STORE";
+      scraped = [
+        entryPage,
+        ...(await scrapeSources(buildAnalysisSources(normalizedUrl), options.fetcher)),
+      ];
+    } else {
+      scraped = [entryPage];
+    }
+  } else if (initial.sourceType === "ALIBABA_STORE") {
     const sources = buildAnalysisSources(normalizedUrl);
     scraped = await scrapeSources(sources, options.fetcher);
   } else {
@@ -206,21 +223,21 @@ function isAlibabaProductContext(urlString: string) {
 }
 
 function extractFacts(page: ScrapedPage) {
-  const text = page.markdown;
+  const text = cleanEvidenceText(page.markdown);
   const facts = new Set<string>();
 
-  if (page.title) facts.add(`Page title: ${page.title}`);
+  if (page.title) facts.add(`Page title: ${cleanEvidenceText(page.title)}`);
 
   for (const match of text.matchAll(RATING_RE)) {
-    facts.add(cleanFact(match[0]));
+    addCleanFact(facts, match[0]);
   }
 
   for (const match of text.matchAll(BUSINESS_RE)) {
-    facts.add(cleanFact(match[0]));
+    addCleanFact(facts, normalizeBusinessFact(match[0]));
   }
 
   for (const match of text.matchAll(PRODUCT_RE)) {
-    facts.add(`Product signal: ${cleanFact(match[1] || match[0])}`);
+    addCleanFact(facts, `Product signal: ${match[1] || match[0]}`);
     if (facts.size >= 10) break;
   }
 
@@ -228,7 +245,7 @@ function extractFacts(page: ScrapedPage) {
   if (companyName) facts.add(`Company name: ${companyName}`);
 
   if (facts.size <= 1 && text) {
-    facts.add(`Visible text sample: ${text.slice(0, 220)}`);
+    addCleanFact(facts, `Visible text sample: ${text.slice(0, 220)}`);
   }
 
   return Array.from(facts).slice(0, 12);
@@ -245,23 +262,66 @@ function extractCompanyName(pages: ScrapedPage[]) {
 }
 
 function extractCompanyNameFromText(text: string) {
+  const cleaned = cleanEvidenceText(text).replace(/^Company Overview -\s*/i, "");
   for (const pattern of COMPANY_PATTERNS) {
-    const match = text.match(pattern);
-    const value = match?.[1]?.trim().replace(/\s+/g, " ");
+    const match = cleaned.match(pattern);
+    const value = dedupeRepeatedPhrase(match?.[1]?.trim().replace(/\s+/g, " ") || "");
     if (value && value.length <= 120) return value.replace(/[.,\s]+$/, ".");
   }
   return null;
 }
 
 function cleanFact(input: string) {
-  return input.replace(/\s+/g, " ").trim().replace(/[.,;:\s]+$/, "");
+  return dedupeRepeatedPhrase(cleanEvidenceText(input)).replace(/[.,;:\s]+$/, "");
+}
+
+function addCleanFact(facts: Set<string>, input: string) {
+  const fact = cleanFact(input);
+  if (!fact || fact.length < 3) return;
+  if (/\.(?:jpg|jpeg|png|webp|gif)\b/i.test(fact)) return;
+  if (/^https?:\/\//i.test(fact)) return;
+  facts.add(fact);
+}
+
+function cleanEvidenceText(input: string) {
+  return input
+    .replace(/!\[[^\]]*]\([^)]*\)/g, " ")
+    .replace(/\[([^\]]+)]\([^)]*\)/g, "$1")
+    .replace(/https?:\/\/\S+/g, " ")
+    .replace(/\S+\.(?:jpg|jpeg|png|webp|gif)(?:\?\S*)?/gi, " ")
+    .replace(/鈮\?/g, "<=")
+    .replace(/鈮/g, "<=")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function normalizeBusinessFact(input: string) {
+  const cleaned = input.replace(/^Registration No\./i, "Registration no.").replace(/^Date of Issue/i, "Date of issue").replace(/^Registered Capital/i, "Registered capital");
+  return cleaned;
+}
+
+function dedupeRepeatedPhrase(input: string) {
+  const trimmed = input.trim();
+  if (!trimmed) return "";
+  const words = trimmed.split(/\s+/);
+
+  if (words.length % 2 === 0) {
+    const half = words.length / 2;
+    const left = words.slice(0, half).join(" ");
+    const right = words.slice(half).join(" ");
+    if (left.toLowerCase() === right.toLowerCase()) return left;
+  }
+
+  return trimmed.replace(/\b(.{12,80}?)\s+\1\b/gi, "$1");
 }
 
 function buildRiskFlags(sources: SupplierAnalysisResult["sources"], unavailable: string[]) {
   const flags: string[] = [];
   const hasRatings = sources.some((source) => source.label.includes("ratings") && source.status === "AVAILABLE");
   const hasProducts = sources.some((source) => source.label.includes("product") && source.status === "AVAILABLE");
+  const confidence = buildConfidenceLabel(sources, unavailable);
 
+  flags.push(`Initial buyer confidence: ${confidence}`);
   if (hasRatings) {
     flags.push("Alibaba ratings are available, but they should be checked against recent review text and order context.");
   } else {
@@ -277,6 +337,18 @@ function buildRiskFlags(sources: SupplierAnalysisResult["sources"], unavailable:
   }
 
   return flags;
+}
+
+function buildConfidenceLabel(sources: SupplierAnalysisResult["sources"], unavailable: string[]) {
+  const availableCount = sources.filter((source) => source.status === "AVAILABLE").length;
+  const hasRatings = sources.some((source) => source.label.includes("ratings") && source.status === "AVAILABLE");
+  const hasTrustPass = sources.some((source) => source.label.includes("TrustPass") && source.status === "AVAILABLE");
+  const hasProducts = sources.some((source) => source.label.includes("product") && source.status === "AVAILABLE");
+  const score = availableCount + (hasRatings ? 1 : 0) + (hasTrustPass ? 1 : 0) + (hasProducts ? 1 : 0) - unavailable.length;
+
+  if (score >= 6) return "Medium-high public-source coverage, still needs manual verification before payment.";
+  if (score >= 3) return "Medium public-source coverage, needs manual verification before purchase decisions.";
+  return "Low public-source coverage, manual verification strongly recommended.";
 }
 
 function buildBuyerQuestions(sourceType: SupplierAnalysisResult["sourceType"]) {
@@ -325,7 +397,7 @@ async function generateDeepSeekSummary(input: {
         {
           role: "system",
           content:
-            "You write neutral supplier research summaries. Use only provided evidence. Do not claim compliance, verification, factory audit, or transaction safety.",
+            "You write neutral supplier research summaries. Use only provided evidence. Do not claim compliance, verification, factory audit, or transaction safety. Return plain text only. Do not use Markdown, bullet symbols, tables, URLs, image syntax, or source links.",
         },
         {
           role: "user",
@@ -334,7 +406,7 @@ async function generateDeepSeekSummary(input: {
             sourceType: input.sourceType,
             evidence: input.evidence.slice(0, 40),
             instruction:
-              "Write 2 concise English paragraphs for an overseas buyer. Mention that this is a first-pass public-source analysis.",
+              "Write 2 concise English paragraphs for an overseas buyer. Mention that this is a first-pass public-source analysis. Use plain text sentences only. Do not include raw URLs, Markdown links, image fragments, brackets, bullet points, headings, or code fences.",
           }),
         },
       ],
@@ -346,11 +418,26 @@ async function generateDeepSeekSummary(input: {
   }
 
   const json = (await response.json()) as { choices?: Array<{ message?: { content?: string } }> };
-  return json.choices?.[0]?.message?.content?.trim() || fallbackSummary(input.companyName, input.sourceType, input.evidence.length);
+  return cleanGeneratedPlainText(json.choices?.[0]?.message?.content) || fallbackSummary(input.companyName, input.sourceType, input.evidence.length);
 }
 
 function fallbackSummary(companyName: string | null, sourceType: SupplierAnalysisResult["sourceType"], evidenceCount: number) {
   const name = companyName || "This supplier";
   const sourceLabel = sourceType === "ALIBABA_STORE" ? "Alibaba public storefront" : "public website";
   return `${name} has ${evidenceCount} public signals captured from the ${sourceLabel}. Treat this as a first-pass screening result and confirm legal identity, product fit, and recent operating activity before procurement decisions.`;
+}
+
+export function cleanGeneratedPlainText(input?: string) {
+  if (!input) return "";
+  return input
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/!\[[^\]]*]\([^)]*\)/g, " ")
+    .replace(/\[([^\]]+)]\([^)]*\)/g, "$1")
+    .replace(/https?:\/\/\S+/g, " ")
+    .replace(/^\s{0,3}[-*+]\s+/gm, "")
+    .replace(/^\s{0,3}#{1,6}\s+/gm, "")
+    .replace(/[ \t]+/g, " ")
+    .replace(/^\s+$/gm, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }

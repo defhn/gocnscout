@@ -11,6 +11,30 @@ export type ManualReviewPackage = {
   features: string[];
 };
 
+export type ManualReviewComparisonRow = {
+  feature: string;
+  identity: string;
+  decision: string;
+};
+
+const IDENTITY_CHECK_FEATURES = [
+  "Company identity check: company name / legal entity name, registration number / unified social credit code, registered address, legal representative, registered capital, establishment date / establishment year, registration status / business status, business scope, and import/export-related fields when available",
+  "Alibaba / website consistency check: store name, company name, address, contact details, product category, and whether the business scope broadly matches the target product",
+  "Basic risk screen: business abnormality, serious violation, dishonest judgment debtor / enforcement records, administrative penalty, and obvious litigation-risk signals",
+  "Website and public footprint check: whether the official site is reachable, whether the site owner signals match the company, whether the product line is consistent, and whether contact details look reasonable",
+  "Short human conclusion: initial confidence, main risk points, and documents the buyer should request before payment",
+];
+
+const DECISION_REVIEW_FEATURES = [
+  "Everything in Supplier Identity Check",
+  "Ownership and control judgment: shareholder structure, group / subsidiary signals, possible entity-mixing risk, and historical shareholder / representative / address changes",
+  "Legal and operating-risk interpretation: litigation types, hearing trends, enforcement / dishonest debtor risk, administrative penalties, equity pledge, and business abnormality signals",
+  "Operating capability check: certificates, administrative licenses, import/export credit, tender / business activity, insured employee count, and scale signals",
+  "IP and brand signal check: trademarks, patents, software copyrights, website filings, standards information, and whether IP signals support the supplier's product claims",
+  "Social / content platform judgment: Xiaohongshu, Douyin, and Zhihu public signals checked manually when available",
+  "Buyer decision advice: whether to contact, request samples, or pause, plus RFQ questions, document request list, and payment-before-order notes",
+];
+
 export const MANUAL_REVIEW_PACKAGES: ManualReviewPackage[] = [
   {
     code: "IDENTITY_SINGLE",
@@ -19,13 +43,8 @@ export const MANUAL_REVIEW_PACKAGES: ManualReviewPackage[] = [
     amountUsdCents: 14900,
     supplierSlots: 1,
     delivery: "Delivered within 24-48 hours",
-    description: "A focused human review of one supplier's public identity, marketplace profile, and basic consistency signals.",
-    features: [
-      "One Alibaba store or company website reviewed",
-      "Public business and marketplace consistency check",
-      "Basic website footprint and product-line fit",
-      "Manual risk notes and document request list",
-    ],
+    description: "Basic identity verification and obvious-risk screening for one supplier before you contact or pay.",
+    features: IDENTITY_CHECK_FEATURES,
   },
   {
     code: "IDENTITY_BUNDLE",
@@ -34,12 +53,10 @@ export const MANUAL_REVIEW_PACKAGES: ManualReviewPackage[] = [
     amountUsdCents: 39900,
     supplierSlots: 3,
     delivery: "Delivered within 24-48 hours",
-    description: "The same focused identity review for up to three supplier targets in one request.",
+    description: "Basic identity verification and obvious-risk screening for up to three supplier targets.",
     features: [
       "Up to three Alibaba stores or company websites reviewed",
-      "Public business and marketplace consistency check",
-      "Basic website footprint and product-line fit",
-      "Manual risk notes and document request list",
+      ...IDENTITY_CHECK_FEATURES,
     ],
   },
   {
@@ -49,13 +66,8 @@ export const MANUAL_REVIEW_PACKAGES: ManualReviewPackage[] = [
     amountUsdCents: 24900,
     supplierSlots: 1,
     delivery: "Delivered within 24-48 hours",
-    description: "A deeper human judgment pass for buyers deciding whether to contact, sample, continue, or pause.",
-    features: [
-      "Everything in Supplier Identity Check",
-      "Human deep judgment across marketplace, official site, and social signals",
-      "Target product and destination-market context",
-      "Buyer decision notes, RFQ questions, and next-step recommendation",
-    ],
+    description: "A deeper buyer-decision review for deciding whether to contact, request samples, continue negotiation, or pause.",
+    features: DECISION_REVIEW_FEATURES,
   },
   {
     code: "DECISION_BUNDLE",
@@ -64,13 +76,66 @@ export const MANUAL_REVIEW_PACKAGES: ManualReviewPackage[] = [
     amountUsdCents: 49900,
     supplierSlots: 3,
     delivery: "Delivered within 24-48 hours",
-    description: "Deeper buyer decision support for up to three supplier targets in one request.",
+    description: "Deeper buyer-decision support for up to three supplier targets.",
     features: [
       "Up to three suppliers reviewed",
-      "Human deep judgment across marketplace, official site, and social signals",
-      "Target product and destination-market context",
-      "Buyer decision notes, RFQ questions, and next-step recommendation",
+      ...DECISION_REVIEW_FEATURES,
     ],
+  },
+];
+
+export const SINGLE_SUPPLIER_MANUAL_REVIEW_PACKAGES = MANUAL_REVIEW_PACKAGES.filter((pkg) => pkg.supplierSlots === 1);
+
+export const MANUAL_REVIEW_COMPARISON_ROWS: ManualReviewComparisonRow[] = [
+  {
+    feature: "Best for",
+    identity: "Basic identity verification and obvious-risk screening before first contact.",
+    decision: "Buyer decision support before contact, samples, negotiation, or payment.",
+  },
+  {
+    feature: "Company identity fields",
+    identity: "Company name, registration number / unified social credit code, address, legal representative, registered capital, establishment date, status, business scope, import/export fields when available.",
+    decision: "Included, plus interpretation against buyer risk and supplier positioning.",
+  },
+  {
+    feature: "Alibaba / website consistency",
+    identity: "Store name, company name, address, contact details, product category, and business-scope fit.",
+    decision: "Included, plus judgment on entity-mixing, product-line mismatch, and whether the supplier looks like factory, brand owner, group company, or trader.",
+  },
+  {
+    feature: "Basic risk screen",
+    identity: "Business abnormality, serious violation, dishonest debtor / enforcement records, administrative penalty, and obvious litigation-risk signals.",
+    decision: "Included, with human interpretation of severity and whether the risk affects sampling, prepayment, or long-term cooperation.",
+  },
+  {
+    feature: "Ownership and control",
+    identity: "Not included beyond basic public identity fields.",
+    decision: "Shareholder structure, group / subsidiary signals, possible entity-mixing risk, and historical shareholder / representative / address changes.",
+  },
+  {
+    feature: "Legal and operating-risk interpretation",
+    identity: "Basic obvious-risk screen only.",
+    decision: "Litigation types, hearing trends, enforcement / dishonest debtor risk, administrative penalties, equity pledge, and business abnormality signals.",
+  },
+  {
+    feature: "Operating capability",
+    identity: "Basic public footprint only.",
+    decision: "Certificates, administrative licenses, import/export credit, tender / business activity, insured employee count, and scale signals.",
+  },
+  {
+    feature: "IP and brand signals",
+    identity: "Not included as a deep review.",
+    decision: "Trademarks, patents, software copyrights, website filings, standards information, and whether IP signals support product claims.",
+  },
+  {
+    feature: "Social / content platforms",
+    identity: "Not included.",
+    decision: "Xiaohongshu, Douyin, and Zhihu public signals checked manually when available.",
+  },
+  {
+    feature: "Buyer decision output",
+    identity: "Initial confidence, main risk points, and documents to request before payment.",
+    decision: "Contact / request sample / pause recommendation, RFQ questions, document request list, and payment-before-order notes.",
   },
 ];
 

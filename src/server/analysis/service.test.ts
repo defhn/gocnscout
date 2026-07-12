@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { analyzeSupplierUrl } from "./service";
+import { analyzeSupplierUrl, cleanGeneratedPlainText } from "./service";
+import { MANUAL_REVIEW_PACKAGES } from "@/config/manual-review";
 
 describe("supplier analysis service", () => {
   it("scrapes public Alibaba evidence pages and skips blocked pages", async () => {
@@ -109,6 +110,14 @@ describe("supplier analysis service", () => {
       "Alibaba ratings",
       "Alibaba TrustPass summary",
       "Alibaba product list",
+    ]);
+    expect(requestedUrls).not.toContain("https://www.alibaba.com/");
+    expect(requestedUrls).toEqual([
+      "https://www.alibaba.com/product-detail/vitamin-c-serum_1601382467425.html",
+      "https://newo.m.en.alibaba.com/",
+      "https://newo.en.alibaba.com/company_profile/feedback.html",
+      "https://newo.en.alibaba.com/company_profile/trustpass_profile.html?certification_type=intl_assessment",
+      "https://newo.m.en.alibaba.com/productlist.html",
     ]);
     expect(requestedUrls).toContain("https://newo.en.alibaba.com/company_profile/feedback.html");
   });
@@ -239,5 +248,76 @@ describe("supplier analysis service", () => {
     expect(result.normalizedUrl).toBe("https://newo.m.en.alibaba.com/");
     expect(requestedUrls[0]).toBe("https://newo.m.en.alibaba.com/");
     expect(result.sources[0]?.label).toBe("Alibaba storefront");
+  });
+
+  it("cleans noisy markdown evidence and adds buyer-facing confidence signals", async () => {
+    const fetcher = vi.fn(async (_url: Parameters<typeof fetch>[0], init?: RequestInit) => {
+      const body = JSON.parse(String(init?.body || "{}")) as { url: string };
+      const markdown = body.url.includes("feedback")
+        ? "160 Reviews Supplier Service 4.3 On-time Shipment 4.4 Product Quality 4.1"
+        : body.url.includes("trustpass")
+          ? "Company Name: Guangzhou Biying Cosmetics Co., Ltd. Registration No.: 91440101MA5ABC Date of Issue: 2021-05-10 Registered Capital: RMB 500,000"
+          : body.url.includes("productlist")
+            ? "Product signal: [Salmon-DNA-PDRN-Ampoule-Serum-Booting-Anti.jpg](https://www.alibaba.com/product-detail/Salmon-DNA-PDRN-Ampoule_123.html) Korean Skincare Ampoule Serum"
+            : "Company Overview - Guangzhou Biying Cosmetics Co., Ltd. Guangzhou Biying Cosmetics Co., Ltd. Response time 鈮?h Face Cream & Lotion![](https://s.alicdn.com/@img/imgextra/i4/O1CN01gZ3lTu1XIFHZ.jpg)";
+
+      return Response.json({
+        success: true,
+        data: { markdown, metadata: { title: "Company Overview - Guangzhou Biying Cosmetics Co., Ltd.", sourceURL: body.url } },
+      });
+    });
+
+    const result = await analyzeSupplierUrl("https://biyingskincare.m.en.alibaba.com/", {
+      fetcher,
+      aiGenerator: async () => "Clean buyer-facing summary.",
+    });
+    const serialized = JSON.stringify(result);
+
+    expect(serialized).not.toContain("![](");
+    expect(serialized).not.toContain("https://s.alicdn.com");
+    expect(serialized).not.toContain(".jpg");
+    expect(serialized).not.toContain("鈮");
+    expect(serialized).not.toContain("Guangzhou Biying Cosmetics Co., Ltd. Guangzhou Biying Cosmetics Co., Ltd.");
+    expect(result.riskFlags[0]).toMatch(/^Initial buyer confidence:/);
+    expect(result.sources.find((source) => source.label.includes("TrustPass"))?.facts).toEqual(
+      expect.arrayContaining([
+        "Registration no.: 91440101MA5ABC",
+        "Date of issue: 2021-05-10",
+        "Registered capital: RMB 500,000",
+      ]),
+    );
+  });
+
+  it("removes markdown and raw links from generated AI summary text", () => {
+    const clean = cleanGeneratedPlainText(
+      [
+        "## Supplier Summary",
+        "- Public signals mention [Guangzhou Biying](https://example.com/profile).",
+        "![factory](https://img.example.com/factory.jpg)",
+        "Use this as a first-pass check.",
+      ].join("\n"),
+    );
+
+    expect(clean).toBe("Supplier Summary\nPublic signals mention Guangzhou Biying.\n\nUse this as a first-pass check.");
+    expect(clean).not.toContain("https://");
+    expect(clean).not.toContain("![");
+    expect(clean).not.toContain("##");
+    expect(clean).not.toContain("- Public");
+  });
+
+  it("lists concrete manual-review identity fields and Chinese social platforms", () => {
+    const copy = MANUAL_REVIEW_PACKAGES.flatMap((pkg) => pkg.features).join(" ");
+
+    expect(copy).toContain("company name");
+    expect(copy).toContain("registration number");
+    expect(copy).toContain("registered address");
+    expect(copy).toContain("legal representative");
+    expect(copy).toContain("registered capital");
+    expect(copy).toContain("establishment year");
+    expect(copy).toContain("business status");
+    expect(copy).toContain("business scope");
+    expect(copy).toContain("Xiaohongshu");
+    expect(copy).toContain("Douyin");
+    expect(copy).toContain("Zhihu");
   });
 });

@@ -1,0 +1,21 @@
+{
+  "targetUrl": "https://dgypsw.m.en.alibaba.com/?spm=a2700.details.0.0.507b5885RUrMKS&wx_navbar_transparent=true&wx_screen_direc=portrait&productId=1601782138774&from=detail_company_card",
+  "testedAt": "2026-07-12T00:27:46.443Z",
+  "singlePage": {
+    "elapsedMs": 8255,
+    "statusCode": 200,
+    "markdownCharacters": 38884,
+    "linkCount": 85,
+    "signals": {
+      "pageTitle": "Company Overview - Dongguan Yapai Biotechnology Co., Ltd.",
+      "companyName": true,
+      "products": true,
+      "location": true,
+      "contact": true,
+      "certifications": true
+    },
+    "usefulSignalCount": 5,
+    "preview": "What are you looking for? ![Search icon](https://s.alicdn.com/@img/imgextra/i3/O1CN01XCI6FB1FJTbwfS3Ru_!!6000000000466-55-tps-20-20.svg)Search Deliver to: ![country flag](https://s.alicdn.com/@icon/flag/assets/gb.png) GB English-USD [cart](https://carp.alibaba.com/purchaseList) Sign in Create account ![](https://s.alicdn.com/@sc02/kf/H946bacb9e375468db5575e091c476afcx.jpg)![](https://s.alicdn.com/@sc02/kf/H0e74f91d2fc54b8eb47a07b05c6aefc7A.jpg)![](https://s.alicdn.com/@sc02/kf/H48dbc3b3e81346c4b6f794a6360c1bcc1.jpg) [1YR](https://www.alibaba.com/help/gold_supplier.html \"What is Gold Supplier?\""
+  },
+  "recommendedMode": "single-page"
+}

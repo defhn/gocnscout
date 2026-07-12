@@ -4,7 +4,7 @@ import { FaqSection } from "@/components/marketing/faq-section";
 import { ButtonLink } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PLAN_DEFINITIONS } from "@/config/plans";
-import { MANUAL_REVIEW_PACKAGES } from "@/config/manual-review";
+import { MANUAL_REVIEW_COMPARISON_ROWS, MANUAL_REVIEW_PACKAGES } from "@/config/manual-review";
 import { STRIPE_CATALOG } from "@/config/pricing";
 import { createMetadata, productJsonLd } from "@/config/seo";
 import { formatUsd } from "@/lib/utils";
@@ -148,10 +148,32 @@ export default function PricingPage() {
           <div className="mb-8 text-center">
             <h2 className="text-2xl font-bold tracking-tight text-slate-950">Manual Supplier Verification</h2>
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              Human review for overseas buyers who need public-source judgment before contacting, sampling, or paying a China supplier.
+              Human review for overseas buyers who need to know exactly what was checked before contacting, sampling, or paying a China supplier.
             </p>
           </div>
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+
+          <div className="mb-8 overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <table className="min-w-[820px] w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-slate-200 bg-slate-50 text-slate-600 font-bold uppercase tracking-wider">
+                  <th className="w-[28%] px-5 py-4">Review Area</th>
+                  <th className="w-[36%] px-5 py-4">Supplier Identity Check</th>
+                  <th className="w-[36%] px-5 py-4">Buyer Decision Review</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {MANUAL_REVIEW_COMPARISON_ROWS.map((row) => (
+                  <tr key={row.feature} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="bg-slate-50/40 px-5 py-4 font-bold text-slate-950">{row.feature}</td>
+                    <td className="px-5 py-4 leading-5 text-slate-600">{renderManualReviewCell(row.identity)}</td>
+                    <td className="px-5 py-4 leading-5 text-slate-600">{renderManualReviewCell(row.decision, true)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2">
             {MANUAL_REVIEW_PACKAGES.map((pkg) => (
               <Card key={pkg.code} className={`flex flex-col border-slate-200 bg-white shadow-sm ${pkg.code.includes("DECISION") ? "ring-1 ring-teal-500/30" : ""}`}>
                 <CardHeader>
@@ -162,7 +184,7 @@ export default function PricingPage() {
                   <div className="text-3xl font-extrabold tracking-tight text-slate-950">{formatUsd(pkg.amountUsdCents)}</div>
                   <p className="mt-3 text-xs leading-5 text-slate-600">{pkg.description}</p>
                   <ul className="mt-4 flex-1 space-y-2 text-xs leading-5 text-slate-600">
-                    {pkg.features.slice(0, 4).map((feature) => (
+                    {pkg.features.map((feature) => (
                       <li key={feature} className="flex gap-2">
                         <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-teal-600" />
                         <span>{feature}</span>
@@ -287,5 +309,26 @@ function PlanFit({ title, text }: { title: string; text: string }) {
       <h3 className="text-sm font-bold text-slate-900">{title}</h3>
       <p className="mt-2 text-xs leading-relaxed text-slate-600">{text}</p>
     </div>
+  );
+}
+
+function renderManualReviewCell(text: string, highlight = false) {
+  const unavailable = text.startsWith("Not included");
+  const limited = text.includes("Basic") || text.includes("basic");
+
+  if (unavailable) {
+    return (
+      <span className="inline-flex items-start gap-1.5 text-slate-400">
+        <X className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-300" />
+        <span>{text}</span>
+      </span>
+    );
+  }
+
+  return (
+    <span className={`inline-flex items-start gap-1.5 ${highlight ? "font-medium text-slate-800" : "text-slate-600"}`}>
+      <Check className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${limited ? "text-amber-500" : "text-teal-600"}`} />
+      <span>{text}</span>
+    </span>
   );
 }
