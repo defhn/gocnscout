@@ -86,7 +86,7 @@ export default async function ReportsPage() {
               >
                 <div className="p-6">
                   <span className="text-[10px] bg-teal-50 text-teal-700 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
-                    {report.type.replaceAll("_", " ")}
+                    Standard Report
                   </span>
                   <h3 className="text-base font-bold text-slate-950 mt-4 leading-snug line-clamp-2">
                     <a href={`/reports/${report.slug}`}>{report.title}</a>

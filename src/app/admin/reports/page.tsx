@@ -19,8 +19,8 @@ export default async function AdminReportsPage() {
           <form action="/api/admin/reports" method="post" encType="multipart/form-data" className="mt-4 grid gap-3 md:grid-cols-2">
             <Input name="title" placeholder="报告标题" required />
             <Input name="slug" placeholder="URL slug" required />
-            <Input name="type" placeholder="BASIC / FULL / PREMIUM / CANTON_FAIR_INTELLIGENCE" required />
-            <Input name="priceUsdCents" placeholder="价格 cents" required />
+            <Input name="type" placeholder="报告类型 (默认为 FULL)" defaultValue="FULL" required />
+            <Input name="priceUsdCents" placeholder="价格 cents (例如 9900 表示 $99)" required />
             <Input name="industryName" placeholder="行业名称，可空" />
             <Textarea name="description" placeholder="报告说明，不要夸大内容" className="md:col-span-2" />
             <Input name="file" type="file" accept="application/pdf" required className="md:col-span-2" />
