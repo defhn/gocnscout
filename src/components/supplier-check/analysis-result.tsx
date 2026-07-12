@@ -28,9 +28,13 @@ import { ButtonLink } from "@/components/ui/button";
 export function AnalysisResult({
   analysisId,
   result,
+  isSaved = false,
+  isAuthenticated = false,
 }: {
   analysisId: string;
   result: SupplierAnalysisResult;
+  isSaved?: boolean;
+  isAuthenticated?: boolean;
 }) {
   const supplierUrl = encodeURIComponent(result.normalizedUrl);
   const snapshot = buildSnapshot(result);
@@ -69,8 +73,38 @@ export function AnalysisResult({
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-      <main className="space-y-8">
+    <>
+      {/* Save Status Banner */}
+      {isSaved && isAuthenticated && (
+        <div className="mb-6 p-3.5 rounded-xl border border-teal-100 bg-teal-50/20 flex items-center gap-2.5 shadow-2xs animate-in fade-in duration-300">
+          <Check className="h-4 w-4 text-emerald-600 bg-emerald-100 rounded-full p-0.5" />
+          <span className="text-xs font-semibold text-teal-950">Successfully saved to Sourcing Dashboard screenings history.</span>
+        </div>
+      )}
+
+      {!isSaved && (
+        <div className="mb-6 p-4 rounded-xl border border-teal-200 bg-teal-50/50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm animate-in fade-in duration-300">
+          <div className="space-y-1">
+            <h3 className="text-sm font-bold text-teal-950 flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-teal-600" />
+              This audit report is temporarily cached
+            </h3>
+            <p className="text-xs text-teal-800 leading-normal">
+              Register a free account or sign in to permanently save this check to your screenings history dashboard.
+            </p>
+          </div>
+          <ButtonLink 
+            href={`/sign-in?redirect_url=${encodeURIComponent(`/supplier-check/${analysisId}`)}`}
+            variant="teal"
+            className="text-xs font-bold py-2 px-4 shadow-sm self-start sm:self-auto shrink-0"
+          >
+            Save to Dashboard
+          </ButtonLink>
+        </div>
+      )}
+
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <main className="space-y-8">
         {/* Header Hero Section */}
         <section className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 p-6 md:p-8 text-white shadow-lg">
           <div className="absolute -right-20 -top-20 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -279,6 +313,7 @@ export function AnalysisResult({
         ))}
       </aside>
     </div>
+    </>
   );
 }
 

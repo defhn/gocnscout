@@ -3,6 +3,7 @@ import { z } from "zod";
 import { normalizeAnalysisUrl } from "@/server/analysis/contract";
 import { createAnalysisRecord } from "@/server/analysis/repository";
 import { analyzeSupplierUrl } from "@/server/analysis/service";
+import { getCurrentAppUser } from "@/server/auth";
 
 const requestSchema = z.object({
   url: z.string().trim().min(4).max(2000),
@@ -28,8 +29,9 @@ export async function POST(request: Request) {
   }
 
   try {
+    const user = await getCurrentAppUser();
     const result = await analyzeSupplierUrl(parsed.data.url);
-    const record = await createAnalysisRecord(result);
+    const record = await createAnalysisRecord(result, user?.id);
 
     return NextResponse.json({
       analysisId: record.id,

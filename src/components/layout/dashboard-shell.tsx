@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
-import { BarChart3, CreditCard, Download, FileText, GitCompare, Home, ListChecks, Search } from "lucide-react";
+import { BarChart3, CreditCard, Download, FileText, GitCompare, Home, ListChecks, Search, ShieldCheck } from "lucide-react";
 
 const nav = [
   { href: "/app", label: "Overview", icon: Home },
@@ -9,6 +9,7 @@ const nav = [
   { href: "/app/compare", label: "Compare", icon: GitCompare },
   { href: "/app/exports", label: "Exports", icon: Download },
   { href: "/app/reports", label: "Reports", icon: FileText },
+  { href: "/app/screenings", label: "Screenings", icon: ShieldCheck },
   { href: "/app/billing", label: "Billing", icon: CreditCard },
 ];
 

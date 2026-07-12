@@ -2,8 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AnalysisResult } from "@/components/supplier-check/analysis-result";
 import { ButtonLink } from "@/components/ui/button";
-import { getAnalysisRecord } from "@/server/analysis/repository";
+import { getAnalysisRecord, assignAnalysisToUser } from "@/server/analysis/repository";
 import type { SupplierAnalysisResult } from "@/server/analysis/contract";
+import { getCurrentAppUser } from "@/server/auth";
 
 export default async function SupplierCheckResultPage({
   params,
@@ -33,6 +34,17 @@ export default async function SupplierCheckResultPage({
     );
   }
 
+  const user = await getCurrentAppUser();
+  let isSaved = false;
+
+  if (user) {
+    if (!record.userId) {
+      await assignAnalysisToUser(id, user.id);
+      record.userId = user.id;
+    }
+    isSaved = record.userId === user.id;
+  }
+
   return (
     <section className="container-page py-10">
       <div className="mb-6 text-sm text-slate-500">
@@ -41,7 +53,12 @@ export default async function SupplierCheckResultPage({
         </Link>{" "}
         / Result
       </div>
-      <AnalysisResult analysisId={id} result={record.resultJson as SupplierAnalysisResult} />
+      <AnalysisResult 
+        analysisId={id} 
+        result={record.resultJson as SupplierAnalysisResult} 
+        isSaved={isSaved}
+        isAuthenticated={!!user}
+      />
     </section>
   );
 }

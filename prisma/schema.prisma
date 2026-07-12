@@ -129,6 +129,7 @@ model User {
   teamMemberships       TeamMember[]
   ownedTeams            Team[]               @relation("TeamOwner")
   auditLogs             AuditLog[]
+  supplierAnalyses      SupplierAnalysis[]
 }
 
 model AdminProfile {
@@ -525,6 +526,7 @@ model Inquiry {
 
 model SupplierAnalysis {
   id            String             @id @default(cuid())
+  userId        String?
   sourceUrl     String             @db.Text
   normalizedUrl String             @db.Text
   sourceType    AnalysisSourceType
@@ -535,6 +537,7 @@ model SupplierAnalysis {
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
   manualReviews ManualReviewRequest[]
+  user          User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([sourceType])
   @@index([status])
