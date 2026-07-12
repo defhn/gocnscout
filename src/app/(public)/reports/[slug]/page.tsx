@@ -188,10 +188,6 @@ export default async function ReportPage({ params }: { params: Promise<{ slug: s
                         <span className="font-bold text-slate-800">Vector PDF (Print Ready)</span>
                       </li>
                       <li className="flex justify-between">
-                        <span className="text-slate-500 font-medium">Length:</span>
-                        <span className="font-bold text-slate-800">55 Pages</span>
-                      </li>
-                      <li className="flex justify-between">
                         <span className="text-slate-500 font-medium">Language:</span>
                         <span className="font-bold text-slate-800">English (Bilingual names)</span>
                       </li>
