@@ -26,14 +26,14 @@ export function PublicBlogList({ posts }: { posts: Post[] }) {
           ))}
         </div>
       </div>
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
         {filtered.map((post) => (
           <article key={post.slug} className="group overflow-hidden rounded-md border border-slate-200 bg-white transition-shadow hover:shadow-md">
             <Link href={`/blog/${post.slug}`} className="block">
               {post.coverImage ? (
-                <img src={post.coverImage} alt={post.title} className="h-44 w-full object-cover" />
+                <img src={post.coverImage} alt={post.title} className="aspect-video w-full object-cover" />
               ) : (
-                <div className="flex h-44 items-end bg-slate-900 p-5 text-white">
+                <div className="flex aspect-video w-full items-end bg-slate-900 p-5 text-white">
                   <span className="text-sm font-semibold text-teal-300">GoCNScout Research</span>
                 </div>
               )}
