@@ -20,6 +20,7 @@ const envSchema = z.object({
   R2_SECRET_ACCESS_KEY: optionalString,
   R2_BUCKET_NAME: optionalString,
   R2_PUBLIC_BASE_URL: optionalUrl,
+  R2_PUBLIC_URL: optionalUrl,
   BREVO_API_KEY: optionalString,
   BREVO_FROM_EMAIL: optionalEmail,
   BREVO_FROM_NAME: z.string().default("gocnscout"),
@@ -40,6 +41,10 @@ const envSchema = z.object({
 });
 
 export const env = envSchema.parse(process.env);
+
+export function getR2PublicBaseUrl() {
+  return env.R2_PUBLIC_BASE_URL ?? env.R2_PUBLIC_URL;
+}
 
 export function requireEnv(name: keyof typeof env) {
   const value = env[name];
