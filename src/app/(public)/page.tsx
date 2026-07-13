@@ -1,18 +1,30 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Database, FileText, ListChecks, Search, ShieldCheck, CheckCircle2, ChevronRight } from "lucide-react";
+import { ArrowRight, Database, FileText, ListChecks, Search, ShieldCheck, CheckCircle2, ChevronRight, Sparkles, Check, X, ShieldAlert } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaqSection } from "@/components/marketing/faq-section";
 import { createMetadata, organizationJsonLd, websiteSearchJsonLd } from "@/config/seo";
 import { mediaAssets } from "@/config/media";
 import { getHomeStats, listCityPages, listIndustryPages } from "@/server/suppliers";
+import { AnalysisForm } from "@/components/supplier-check/analysis-form";
+import { PricingGrid } from "@/components/pricing/pricing-grid";
+import { PLAN_DEFINITIONS } from "@/config/plans";
+import { MANUAL_REVIEW_PACKAGES } from "@/config/manual-review";
+import { formatUsd } from "@/lib/utils";
 
 export const metadata = createMetadata({
   title: "China Supplier Database for Export Manufacturers",
   description:
     "Search structured public China supplier records by industry, city, products, company type, trade mode, and exhibition history.",
 });
+
+const plans = [
+  PLAN_DEFINITIONS.FREE,
+  PLAN_DEFINITIONS.STARTER,
+  PLAN_DEFINITIONS.PRO,
+  PLAN_DEFINITIONS.TEAM,
+];
 
 export default async function HomePage() {
   const [stats, industries, cities] = await Promise.all([
@@ -118,6 +130,36 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Free AI Supplier Checker Input Box */}
+      <section className="bg-slate-100 border-b border-slate-200 py-16">
+        <div className="container-page max-w-4xl mx-auto text-center space-y-6">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-teal-500/10 border border-teal-500/30 px-3.5 py-1 text-xs font-bold text-teal-800 tracking-wide uppercase">
+            <Sparkles className="h-3.5 w-3.5 text-teal-650 animate-pulse" />
+            <span>Free AI Supplier Checker</span>
+          </div>
+          <h2 className="text-3xl font-extrabold tracking-tight text-slate-950">
+            Verify a Chinese Supplier Before You Pay
+          </h2>
+          <p className="text-slate-600 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
+            Paste an Alibaba product link, store page, or company website. Get an instant, first-pass public-source screening report detailing registration signals and potential red flags.
+          </p>
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-md max-w-3xl mx-auto text-left relative z-20">
+            <AnalysisForm />
+            <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1.5 text-xs text-slate-500 justify-center">
+              <span className="flex items-center gap-1">
+                <Check className="h-3.5 w-3.5 text-teal-600" /> No credit card required
+              </span>
+              <span className="flex items-center gap-1">
+                <Check className="h-3.5 w-3.5 text-teal-650" /> Instant report generation
+              </span>
+              <span className="flex items-center gap-1">
+                <Check className="h-3.5 w-3.5 text-teal-650" /> Alibaba & standalone websites
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Feature Bento Grid Section */}
       <section className="container-page py-16 lg:py-24">
         <div className="text-center max-w-3xl mx-auto mb-12">
@@ -173,7 +215,7 @@ export default async function HomePage() {
             <p className="mt-2 text-sm leading-relaxed text-slate-600">
               Need niche criteria? Submit specifications to receive custom shortlists with curated manufacturer profiles matching your criteria.
             </p>
-            <Link href="/custom-shortlist" className="inline-flex items-center text-xs font-bold text-purple-600 mt-4 group-hover:text-purple-700">
+            <Link href="/custom-shortlist" className="inline-flex items-center text-xs font-bold text-purple-650 mt-4 group-hover:text-purple-700">
               Request shortlist <ChevronRight className="ml-0.5 h-3.5 w-3.5" />
             </Link>
             </div>
@@ -198,6 +240,170 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Custom Module A: Common Supplier Scams We Expose */}
+      <section className="bg-white border-b border-slate-200 py-16 lg:py-20">
+        <div className="container-page">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <span className="text-xs font-bold uppercase tracking-wider text-teal-650">B2B Trade Safeguards</span>
+            <h2 className="text-3xl font-bold tracking-tight text-slate-955 mt-2">Common Sourcing Scams We Expose</h2>
+            <p className="mt-2 text-slate-600 text-sm md:text-base leading-relaxed">
+              Understand the loopholes bad-faith suppliers exploit, and how our screening signals flag them.
+            </p>
+          </div>
+          <div className="grid gap-8 md:grid-cols-3">
+            <Card className="border border-slate-200 bg-slate-50 transition-all duration-300 hover:shadow-md hover:border-red-200">
+              <CardContent className="p-6 space-y-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50 text-red-600">
+                  <ShieldAlert className="h-5 w-5" />
+                </div>
+                <h3 className="text-base font-bold text-slate-950">The &quot;Canceled Dispute&quot; Trap</h3>
+                <p className="text-xs leading-relaxed text-slate-600">
+                  Sellers send fake production photos and beg you to cancel your Alibaba Trade Assurance refund request. Once canceled, Alibaba rules prohibit reopening it.
+                </p>
+                <div className="pt-2 border-t border-slate-200 text-xs font-bold text-teal-650">
+                  GoCNScout Action: Flags historical disputes and warns against dispute cancellation.
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border border-slate-200 bg-slate-50 transition-all duration-300 hover:shadow-md hover:border-red-200">
+              <CardContent className="p-6 space-y-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50 text-red-600">
+                  <ShieldAlert className="h-5 w-5" />
+                </div>
+                <h3 className="text-base font-bold text-slate-950">The &quot;Manufacturer&quot; Illusion</h3>
+                <p className="text-xs leading-relaxed text-slate-600">
+                  Trading agents register empty offices and use stock factory photos to masquerade as direct manufacturers, inflating your unit costs by 20% to 50%.
+                </p>
+                <div className="pt-2 border-t border-slate-200 text-xs font-bold text-teal-650">
+                  GoCNScout Action: Cross-checks employee counts, business scope, and IP assets.
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border border-slate-200 bg-slate-50 transition-all duration-300 hover:shadow-md hover:border-red-200">
+              <CardContent className="p-6 space-y-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50 text-red-600">
+                  <ShieldAlert className="h-5 w-5" />
+                </div>
+                <h3 className="text-base font-bold text-slate-950">Payment Destination Fraud</h3>
+                <p className="text-xs leading-relaxed text-slate-600">
+                  Scammers hack email threads or use similar domains to redirect your TT payments to unrelated offshore or personal bank accounts.
+                </p>
+                <div className="pt-2 border-t border-slate-200 text-xs font-bold text-teal-650">
+                  GoCNScout Action: Verifies official ICP websites and beneficiary registration records.
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Custom Module B: Interactive Screening Report Preview */}
+      <section className="container-page py-16 lg:py-20">
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+          <div className="space-y-4">
+            <span className="text-xs font-bold uppercase tracking-wider text-teal-650">Report Preview</span>
+            <h2 className="text-3xl font-bold tracking-tight text-slate-950">What Does a Screening Report Look Like?</h2>
+            <p className="text-slate-650 leading-relaxed text-sm">
+              Every free scan and manual audit structures raw records into an intuitive dashboard. Know exactly what to inspect before signing any purchase order.
+            </p>
+            <div className="space-y-4 pt-2">
+              <div className="flex gap-3">
+                <CheckCircle2 className="h-5 w-5 text-teal-650 shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="text-sm font-bold text-slate-955">Clean Signal Coding</h4>
+                  <p className="text-xs text-slate-500 mt-1">Green for verified active parameters, orange for caution points, and red for abnormalities.</p>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <CheckCircle2 className="h-5 w-5 text-teal-650 shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="text-sm font-bold text-slate-955">Missing Evidence Alerts</h4>
+                  <p className="text-xs text-slate-500 mt-1">Instantly alerts you if the company has zero insured employees, unverified website domains, or missing registration records.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Mock Interactive Card */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+              <div>
+                <span className="text-[10px] font-mono font-semibold text-slate-400 tracking-wider">REPORT #CS-90281</span>
+                <h3 className="text-base font-bold text-slate-955 mt-0.5">Ningbo Precision Tools Factory</h3>
+              </div>
+              <span className="rounded-full bg-teal-50 border border-teal-200 px-3 py-1 text-xs font-bold text-teal-700">Verified Active</span>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-xs py-2 border-b border-slate-50">
+                <span className="font-medium text-slate-500">Unified Social Credit Code</span>
+                <span className="font-mono text-slate-900 font-semibold">91330206M... (Matched)</span>
+              </div>
+              <div className="flex items-center justify-between text-xs py-2 border-b border-slate-50">
+                <span className="font-medium text-slate-500">Registered Capital</span>
+                <span className="font-semibold text-slate-900">RMB 10,000,000 (Fully Paid)</span>
+              </div>
+              <div className="flex items-center justify-between text-xs py-2 border-b border-slate-50">
+                <span className="font-medium text-slate-500">Operating Status</span>
+                <span className="text-teal-600 font-bold flex items-center gap-1">
+                  <Check className="h-3.5 w-3.5" /> In Operation / Active
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-xs py-2 border-b border-slate-50">
+                <span className="font-medium text-slate-500">Alibaba Consistency Score</span>
+                <span className="text-teal-600 font-bold">96% High Match</span>
+              </div>
+              <div className="flex items-center justify-between text-xs py-2 border-b border-slate-50">
+                <span className="font-medium text-slate-500">Risk Incidents</span>
+                <span className="text-emerald-600 font-semibold">0 Abnormalities, 0 Lawsuits</span>
+              </div>
+              <div className="rounded-lg bg-teal-50 border border-teal-100 p-3 mt-2 text-[11px] leading-relaxed text-teal-850">
+                <strong>Analyst Recommendation</strong>: Supplier matches all physical coordinates. Safe to request samples. Ensure bank details beneficiary name matches the company legal Pinyin name.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Custom Module C: Real-time Verification Activity Feed */}
+      <section className="bg-slate-950 text-white py-12 relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="container-page relative z-10 grid gap-8 lg:grid-cols-[1fr_2fr] lg:items-center">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-wider text-teal-400">Live Coverage</span>
+            <h2 className="text-2xl font-bold tracking-tight text-white mt-1">Real-time Sourcing Vetting Activity</h2>
+            <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+              Importers worldwide use GoCNScout to vet suppliers hourly. Here are the latest public screening summaries (anonymized for compliance).
+            </p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3 text-xs">
+            <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 space-y-2">
+              <div className="flex items-center justify-between text-slate-400">
+                <span className="font-semibold text-teal-400">Ningbo, Zhejiang</span>
+                <span>12m ago</span>
+              </div>
+              <p className="font-bold text-white">Power Tools Manufacturer</p>
+              <p className="text-slate-300 leading-normal">Free AI Scan completed. Status: Active (Matched with USCC).</p>
+            </div>
+            <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 space-y-2">
+              <div className="flex items-center justify-between text-slate-400">
+                <span className="font-semibold text-amber-400">Quanzhou, Fujian</span>
+                <span>35m ago</span>
+              </div>
+              <p className="font-bold text-white">Gifts & Premiums Exporter</p>
+              <p className="text-slate-300 leading-normal">Alert: Business Abnormality found. Operating address discrepancy.</p>
+            </div>
+            <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 space-y-2">
+              <div className="flex items-center justify-between text-slate-400">
+                <span className="font-semibold text-teal-400">Shenzhen, Guangdong</span>
+                <span>1h ago</span>
+              </div>
+              <p className="font-bold text-white">Home Appliances Factory</p>
+              <p className="text-slate-300 leading-normal">Manual ID Check delivered. Insured employee size: 45 (Verified).</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Interactive Directory Browser */}
       <section className="container-page py-16">
         <div className="max-w-2xl mb-10">
@@ -208,6 +414,94 @@ export default async function HomePage() {
         <div className="grid gap-6 lg:grid-cols-2">
           <DirectoryBlock title="Browse by Industry Category" href="/industries" image={mediaAssets.directoryIndustryMatrix} items={industries.map((item) => ({ label: item.industryName, count: item.supplierCount, href: `/industries/${item.slug}` }))} />
           <DirectoryBlock title="Browse by Sourcing City" href="/cities" image={mediaAssets.directoryCityHeatmap} items={cities.map((item) => ({ label: [item.city, item.province].filter(Boolean).join(", "), count: item.supplierCount, href: `/cities/${item.slug}` }))} />
+        </div>
+      </section>
+
+      {/* Subscription Pricing Grid */}
+      <section className="bg-slate-50 border-t border-slate-200 py-16 lg:py-20">
+        <div className="container-page">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <span className="text-xs font-bold uppercase tracking-wider text-teal-650">Database Access Plans</span>
+            <h2 className="text-3xl font-extrabold tracking-tight text-slate-955 mt-2">Simple, Transparent Subscription Tiers</h2>
+            <p className="mt-2 text-slate-600 text-sm md:text-base leading-relaxed">
+              Unlock advanced search page filtering, bulk CSV downloads, and pre-compiled industry intelligence reports.
+            </p>
+          </div>
+          <PricingGrid plans={plans} />
+        </div>
+      </section>
+
+      {/* Manual Supplier Verification Packages */}
+      <section className="bg-white border-t border-slate-200 py-16 lg:py-20">
+        <div className="container-page">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-teal-50 border border-teal-200/60 text-[10px] font-extrabold uppercase text-teal-800 tracking-wider">
+              <Sparkles className="h-3 w-3 animate-pulse" />
+              Verified Sourcing Intelligence
+            </span>
+            <h2 className="text-3xl font-extrabold tracking-tight text-slate-950 mt-3">Manual Supplier Due Diligence</h2>
+            <p className="mt-2 text-slate-600 text-sm leading-relaxed">
+              Chinese sourcing analysts verify corporate databases, litigation registries, court enforcement records, and social footings before you send funds.
+            </p>
+          </div>
+
+          {/* Manual Review Cards */}
+          <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto">
+            {MANUAL_REVIEW_PACKAGES.filter(pkg => pkg.supplierSlots === 1).map((pkg) => {
+              const isDecision = pkg.code.includes("DECISION");
+              return (
+                <Card 
+                  key={pkg.code} 
+                  className={`flex flex-col rounded-2xl transition-all duration-300 relative ${
+                    isDecision 
+                      ? "border-2 border-teal-500 bg-gradient-to-b from-teal-50/20 via-white to-white shadow-lg scale-[1.01] hover:scale-[1.02]" 
+                      : "border border-slate-200 bg-white shadow-xs hover:shadow-md"
+                  }`}
+                >
+                  {isDecision && (
+                    <span className="absolute -top-3.5 left-6 inline-flex items-center space-x-1 rounded-full bg-teal-500 px-3 py-1 text-[10px] font-black text-slate-955 uppercase tracking-wider shadow-sm">
+                      <Sparkles className="h-3 w-3 animate-pulse" />
+                      <span>Highly Recommended</span>
+                    </span>
+                  )}
+                  
+                  <CardHeader className="p-6 pb-4">
+                    <div className="flex items-center justify-between gap-2 mt-1">
+                      <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[9px] font-extrabold uppercase text-slate-600 tracking-wider">
+                        Single Supplier Target
+                      </span>
+                    </div>
+                    <CardTitle className="text-base font-extrabold text-slate-950 mt-3">{pkg.name}</CardTitle>
+                    <p className="mt-1.5 text-xs text-slate-500 flex items-center gap-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-teal-500" />
+                      {pkg.delivery}
+                    </p>
+                  </CardHeader>
+                  <CardContent className="flex flex-1 flex-col p-6 pt-0">
+                    <div className="text-3xl font-black tracking-tight text-slate-955">{formatUsd(pkg.amountUsdCents)}</div>
+                    <p className="mt-3.5 text-xs leading-relaxed text-slate-600">{pkg.description}</p>
+                    
+                    <ul className="mt-6 pt-5 border-t border-slate-150 space-y-3.5 text-xs text-slate-700 flex-1">
+                      {pkg.features.map((feature) => (
+                        <li key={feature} className="flex gap-2.5 items-start">
+                          <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-650 bg-teal-50 rounded-full p-0.5" />
+                          <span className="leading-relaxed">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    
+                    <ButtonLink 
+                      href={`/api/manual-review/checkout?package=${pkg.code}`} 
+                      className="w-full text-xs font-semibold py-3 rounded-xl transition-all duration-200 mt-6 shadow-xs hover:shadow-md" 
+                      variant={isDecision ? "teal" : "outline"}
+                    >
+                      Order Verification
+                    </ButtonLink>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
         </div>
       </section>
 
