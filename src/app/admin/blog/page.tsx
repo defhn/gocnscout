@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { FileText, Globe, Image as ImageIcon, Plus, Save, TrendingUp } from "lucide-react";
+import { Image as ImageIcon, Plus } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { BlogPostActions } from "@/components/blog/blog-post-actions";
 import { AdminBulkActions } from "@/components/blog/admin-bulk-actions";
 import { CopyTextButton } from "@/components/blog/copy-text-button";
 import { GscRowAction } from "@/components/blog/gsc-row-action";
 import { getBlogImageStats } from "@/lib/blog/seo";
+import { blogPostUrl } from "@/lib/blog/url";
 
 export const dynamic = "force-dynamic";
 
@@ -183,7 +184,7 @@ export default async function AdminBlogPage({ searchParams }: Props) {
                       </div>
                       <div className="mt-1 flex items-center gap-2 text-xs text-slate-400">
                         <span className="font-mono">{post.slug}</span>
-                        <CopyTextButton text={`${process.env.APP_URL ?? "https://gocnscout.com"}/blog/${post.slug}`} label="复制链接" />
+                        <CopyTextButton text={blogPostUrl(post.slug)} label="复制链接" />
                       </div>
                       <div className="mt-2 flex flex-wrap items-center gap-1">
                         {seoBadge(Boolean(post.metaTitle && post.metaTitle.length >= 40), "T", "Meta Title 达标")}
