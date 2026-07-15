@@ -115,7 +115,7 @@ async function main() {
     }
     usedCitySlugs.add(slug);
 
-    const isIndexable = count >= 100; // >=100个供应商的城市为可索引，30-99的页面加上 noindex
+    const isIndexable = true;
 
     if (isIndexable) indexableCitiesCount++;
     else nonIndexableCitiesCount++;
