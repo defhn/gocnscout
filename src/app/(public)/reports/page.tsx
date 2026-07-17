@@ -11,8 +11,8 @@ import { listPublishedReports } from "@/server/reports";
 import { ReportsList } from "@/components/reports/reports-list";
 
 export const metadata = createMetadata({
-  title: "China Supplier Industry Reports and Sourcing Guides",
-  description: "Download industry PDF reports built from non-sensitive supplier data, covering supplier counts, city clusters, product keywords, and vetting checklists.",
+  title: "China Sourcing Reports and Supplier Due Diligence PDFs",
+  description: "Download China sourcing reports with supplier counts, city clusters, product keywords, exporter profiles, and due diligence checklists for import teams.",
   path: "/reports",
 });
 
@@ -29,11 +29,11 @@ export default async function ReportsPage() {
         <div className="max-w-4xl py-6 mb-10">
           <span className="text-xs font-bold uppercase tracking-wider text-teal-600">Sourcing Intelligence</span>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-950 mt-2">
-            Industry PDF Reports
+            China Sourcing Reports
           </h1>
           <p className="mt-4 text-base md:text-lg leading-relaxed text-slate-600">
-            Download data-driven macro reports analyzing geographic densities, product category distribution ratios, 
-            and verified corporate scales of major Chinese exporter clusters.
+            Download industry PDF reports for China supplier due diligence, regional factory clusters, product keywords,
+            exporter profiles, and buyer vetting checklists.
           </p>
         </div>
 
@@ -46,9 +46,9 @@ export default async function ReportsPage() {
                 <Sparkles className="h-3.5 w-3.5 text-teal-600 animate-pulse" />
                 <span>Instant Sourcing Guides</span>
               </div>
-              <h2 className="text-2xl font-bold tracking-tight text-slate-950">Standalone Industry Intelligence Reports</h2>
+              <h2 className="text-2xl font-bold tracking-tight text-slate-950">Standalone China Supplier Sourcing Reports</h2>
               <p className="text-sm leading-relaxed text-slate-650 max-w-2xl">
-                Gain immediate access to full market intelligence PDF guides mapping regional supplier densities, capital sizes, and export mode ratios. Every report is available as a standalone PDF download.
+                Gain immediate access to sourcing reports that map regional supplier densities, capital sizes, export mode ratios, and practical due diligence checks. Every report is available as a standalone PDF download.
               </p>
             </div>
             
