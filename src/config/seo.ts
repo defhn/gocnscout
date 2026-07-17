@@ -16,8 +16,12 @@ type SeoInput = {
   noindex?: boolean;
 };
 
+function cleanTitle(title: string): string {
+  return title.replace(/\s*\|\s*gocnscout$/i, "");
+}
+
 export function createMetadata({ title, description, path = "/", noindex = false }: SeoInput): Metadata {
-  const fullTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
+  const fullTitle = cleanTitle(title);
   return {
     title: {
       absolute: fullTitle,
@@ -61,7 +65,7 @@ export function organizationJsonLd() {
     "@type": "Organization",
     "name": SITE.name,
     "url": absoluteUrl("/"),
-    "logo": absoluteUrl("/favicon.ico"),
+    "logo": absoluteUrl("/logo.png"),
     "sameAs": [
       "https://twitter.com/gocnscout",
       "https://github.com/gocnscout"
@@ -185,7 +189,7 @@ export function blogPostingJsonLd({
       "name": SITE.name,
       "logo": {
         "@type": "ImageObject",
-        "url": absoluteUrl("/favicon.ico"),
+        "url": absoluteUrl("/logo.png"),
       },
     },
     "mainEntityOfPage": {

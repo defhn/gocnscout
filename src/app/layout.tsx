@@ -15,12 +15,17 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.APP_URL || "http://localhost:3000"),
-  title: {
-    default: "China Supplier Database for Export Research | gocnscout",
-    template: "%s | gocnscout",
-  },
+  title: "China Supplier Database for Export Research",
   description:
     "Search public China supplier records, industry reports, sourcing shortlists, and data license options for compliant B2B supplier research.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" },
+      { url: "/favicon-96.png", sizes: "96x96", type: "image/png" },
+      { url: "/favicon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
 };
 
 export default function RootLayout({

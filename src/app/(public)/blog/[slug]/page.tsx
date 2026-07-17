@@ -60,7 +60,7 @@ export default async function BlogPostPage({ params }: Props) {
   const published = post.publishedAt?.toISOString() ?? new Date().toISOString();
   const modified = post.updatedAt?.toISOString() ?? published;
   const author = post.authorName ?? "GoCNScout Editorial Team";
-  const image = post.coverImage ?? "/favicon.ico";
+  const image = post.coverImage ?? "/logo.png";
   const category = post.category;
   const tags = post.tags;
   const jsonLd = blogPostingJsonLd({ title: post.title, description, slug, datePublished: published, dateModified: modified, authorName: author, imageName: image });
