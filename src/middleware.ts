@@ -7,7 +7,7 @@ const isProtectedRoute = createRouteMatcher(["/app(.*)", "/admin(.*)", "/api/adm
 const clerkEnabled = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && process.env.CLERK_SECRET_KEY);
 
 function redirectToCanonicalHost(req: NextRequest) {
-  const host = req.headers.get("host");
+  const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
   if (!host || !host.startsWith("www.")) return null;
 
   const url = new URL(req.nextUrl.pathname + req.nextUrl.search, "https://gocnscout.com");

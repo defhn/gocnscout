@@ -6,7 +6,16 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function absoluteUrl(path = "") {
-  const base = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  let base = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+  if (process.env.NODE_ENV === "production") {
+    if (!process.env.APP_URL && !process.env.NEXT_PUBLIC_APP_URL) {
+      base = "https://gocnscout.com";
+    } else {
+      base = base.replace("://www.gocnscout.com", "://gocnscout.com");
+    }
+  }
+
   return `${base.replace(/\/$/, "")}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
