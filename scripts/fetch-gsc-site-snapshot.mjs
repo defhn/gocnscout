@@ -47,9 +47,19 @@ function normalizePrivateKey(key) {
 }
 
 function getServiceAccountCredentials() {
-  const json = process.env.GOOGLE_SEARCH_CONSOLE_SERVICE_ACCOUNT_JSON;
+  let json = process.env.GOOGLE_SEARCH_CONSOLE_SERVICE_ACCOUNT_JSON;
   if (json) {
-    const parsed = JSON.parse(json);
+    let parsed;
+    try {
+      parsed = JSON.parse(json);
+    } catch {
+      try {
+        const decoded = Buffer.from(json, "base64").toString("utf-8");
+        parsed = JSON.parse(decoded);
+      } catch (err) {
+        throw new Error("Failed to parse GOOGLE_SEARCH_CONSOLE_SERVICE_ACCOUNT_JSON as JSON or base64 JSON");
+      }
+    }
     if (!parsed.client_email || !parsed.private_key) {
       throw new Error("GOOGLE_SEARCH_CONSOLE_SERVICE_ACCOUNT_JSON must include client_email and private_key");
     }
@@ -88,8 +98,26 @@ function getOauthClient() {
 }
 
 function getAuthClient() {
+  const preferSa = process.argv.includes("--sa") || process.env.PREFER_SERVICE_ACCOUNT === "true";
+  
+  if (preferSa) {
+    const credentials = getServiceAccountCredentials();
+    if (credentials) {
+      return {
+        auth: new google.auth.JWT({
+          email: credentials.client_email,
+          key: credentials.private_key,
+          scopes: [SEARCH_CONSOLE_SCOPE],
+        }),
+        mode: "service_account",
+      };
+    }
+  }
+
   const oauth = getOauthClient();
-  if (oauth) return { auth: oauth, mode: "oauth" };
+  if (oauth && !preferSa) {
+    return { auth: oauth, mode: "oauth" };
+  }
 
   const credentials = getServiceAccountCredentials();
   if (!credentials) {
