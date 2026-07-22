@@ -25,8 +25,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ rep
   
   try {
     await uploadPrivateFile(r2Key, buffer, "application/pdf");
-  } catch (err: any) {
-    return NextResponse.json({ error: `R2 Upload failed: ${err.message}` }, { status: 500 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown upload error";
+    return NextResponse.json({ error: `R2 Upload failed: ${message}` }, { status: 500 });
   }
 
   await prisma.report.update({

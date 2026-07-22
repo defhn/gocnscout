@@ -372,7 +372,7 @@ export function ReportsList({ initialReports }: ReportsListProps) {
           </div>
           <h3 className="text-lg font-bold text-slate-900">No matching reports found</h3>
           <p className="mt-2 text-xs text-slate-500 leading-relaxed">
-            We couldn't find any report matching "{searchTerm}". Try checking your spelling or selecting another category filter.
+            We couldn&apos;t find any report matching &quot;{searchTerm}&quot;. Try checking your spelling or selecting another category filter.
           </p>
         </div>
       )}
