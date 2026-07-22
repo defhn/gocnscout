@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { POST } from "./route";
 
-const { createAnalysis } = vi.hoisted(() => ({
+const { createAnalysis, getCurrentAppUser } = vi.hoisted(() => ({
   createAnalysis: vi.fn(),
+  getCurrentAppUser: vi.fn(),
 }));
 
 vi.mock("@/server/analysis/repository", () => ({
@@ -26,6 +27,10 @@ vi.mock("@/server/analysis/service", () => ({
   })),
 }));
 
+vi.mock("@/server/auth", () => ({
+  getCurrentAppUser,
+}));
+
 describe("supplier analysis API", () => {
   beforeEach(() => {
     createAnalysis.mockReset();
@@ -33,6 +38,7 @@ describe("supplier analysis API", () => {
       id: "analysis_123",
       resultJson: { summary: "Public-source first pass." },
     });
+    getCurrentAppUser.mockResolvedValue(null);
   });
 
   it("rejects unsafe urls", async () => {
@@ -65,6 +71,9 @@ describe("supplier analysis API", () => {
       analysisId: "analysis_123",
       redirectTo: "/supplier-check/analysis_123",
     });
-    expect(createAnalysis).toHaveBeenCalledWith(expect.objectContaining({ companyName: "Example Co., Ltd." }));
+    expect(createAnalysis).toHaveBeenCalledWith(
+      expect.objectContaining({ companyName: "Example Co., Ltd." }),
+      undefined,
+    );
   });
 });
