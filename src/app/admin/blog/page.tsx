@@ -144,7 +144,11 @@ export default async function AdminBlogPage({ searchParams }: Props) {
         <Link href="/admin/blog" className="inline-flex h-9 items-center rounded-md border border-slate-300 px-3 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors">清除</Link>
       </form>
 
-      <AdminBlogTable posts={posts} createQuery={createQuery} sortOrder={sortOrder} />
+      <AdminBlogTable
+        posts={posts}
+        viewCountSortHref={`?${createQuery({ sortField: "viewCount", sortOrder: sortOrder === "desc" ? "asc" : "desc" })}`}
+        updatedAtSortHref={`?${createQuery({ sortField: "updatedAt", sortOrder: sortOrder === "desc" ? "asc" : "desc" })}`}
+      />
 
       {totalPages > 1 && (
         <div className="flex justify-center gap-2">

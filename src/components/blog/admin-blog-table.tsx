@@ -15,7 +15,7 @@ type Post = {
   slug: string;
   title: string;
   excerpt: string | null;
-  content: any;
+  content: unknown;
   coverImage: string | null;
   status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
   category: string | null;
@@ -34,8 +34,8 @@ type Post = {
 
 type Props = {
   posts: Post[];
-  createQuery: (updates: Record<string, string>) => string;
-  sortOrder: "asc" | "desc";
+  viewCountSortHref: string;
+  updatedAtSortHref: string;
 };
 
 const statusLabel = {
@@ -57,7 +57,7 @@ function seoBadge(ok: boolean, label: string, title: string) {
   );
 }
 
-export function AdminBlogTable({ posts, createQuery, sortOrder }: Props) {
+export function AdminBlogTable({ posts, viewCountSortHref, updatedAtSortHref }: Props) {
   const router = useRouter();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [busy, setBusy] = useState(false);
@@ -167,14 +167,14 @@ export function AdminBlogTable({ posts, createQuery, sortOrder }: Props) {
                 <th className="px-4 py-3">文章信息 & SEO 质检</th>
                 <th className="px-4 py-3">分类</th>
                 <th className="px-4 py-3">
-                  <Link href={`?${createQuery({ sortField: "viewCount", sortOrder: sortOrder === "desc" ? "asc" : "desc" })}`}>
+                  <Link href={viewCountSortHref}>
                     阅读统计
                   </Link>
                 </th>
                 <th className="px-4 py-3">主攻渠道</th>
                 <th className="px-4 py-3">状态</th>
                 <th className="px-4 py-3">
-                  <Link href={`?${createQuery({ sortField: "updatedAt", sortOrder: sortOrder === "desc" ? "asc" : "desc" })}`}>
+                  <Link href={updatedAtSortHref}>
                     最后更新
                   </Link>
                 </th>
