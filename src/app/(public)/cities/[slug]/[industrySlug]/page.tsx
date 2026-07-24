@@ -229,10 +229,10 @@ export default async function CityIndustryPage({ params }: { params: Promise<Par
                     </div>
                   </div>
                   <Link
-                    href={`/database/${supplier.slug}`}
+                    href={`/suppliers/${supplier.slug}`}
                     className="shrink-0 text-xs font-bold text-teal-600 hover:text-teal-700 flex items-center gap-0.5 whitespace-nowrap mt-1"
                   >
-                    View Exporter <ArrowRight className="h-3 w-3" />
+                    View Supplier <ArrowRight className="h-3 w-3" />
                   </Link>
                 </article>
               ))}

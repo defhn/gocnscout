@@ -165,6 +165,54 @@ export async function getSupplierBySlug(slug: string) {
   });
 }
 
+export async function getSimilarSuppliers(supplier: {
+  id: string;
+  industryName: string;
+  province?: string | null;
+  city?: string | null;
+}, limit = 6) {
+  const locationWhere = supplier.city && supplier.province
+    ? { province: supplier.province, city: supplier.city }
+    : {};
+
+  const suppliers = await prisma.supplier.findMany({
+    where: {
+      isPublished: true,
+      id: { not: supplier.id },
+      industryName: supplier.industryName,
+      ...locationWhere,
+    },
+    select: supplierPublicSelect(),
+    orderBy: [
+      { websiteUrl: { sort: "desc", nulls: "last" } },
+      { exhibitionSessionCount: { sort: "desc", nulls: "last" } },
+      { exhibitorName: "asc" },
+    ],
+    take: limit,
+  });
+
+  if (suppliers.length >= Math.min(3, limit) || !supplier.city || !supplier.province) {
+    return suppliers;
+  }
+
+  const fallback = await prisma.supplier.findMany({
+    where: {
+      isPublished: true,
+      id: { notIn: [supplier.id, ...suppliers.map((item) => item.id)] },
+      industryName: supplier.industryName,
+    },
+    select: supplierPublicSelect(),
+    orderBy: [
+      { websiteUrl: { sort: "desc", nulls: "last" } },
+      { exhibitionSessionCount: { sort: "desc", nulls: "last" } },
+      { exhibitorName: "asc" },
+    ],
+    take: limit - suppliers.length,
+  });
+
+  return [...suppliers, ...fallback];
+}
+
 type FacetCount = { _count: { _all: number } };
 type DatabaseFacets = {
   industries: Array<{ industryName: string } & FacetCount>;

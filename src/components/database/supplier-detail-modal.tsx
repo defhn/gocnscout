@@ -672,7 +672,7 @@ function SupplierDetailModal({
             ) : !canStarter ? (
               <ModalLockedBadge text="Website locked" plan="STARTER" />
             ) : (
-              <p className="text-sm text-slate-400">No website published</p>
+              <p className="text-sm text-slate-400">No official website listed</p>
             )}
           </section>
         </div>

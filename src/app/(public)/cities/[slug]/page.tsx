@@ -400,7 +400,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                   Verified Supplier Records Directory ({cityEn})
                 </h2>
                 <p className="mt-1 text-xs text-slate-500">
-                  Preview list of the first 30 exporter profiles. Log in to unlock contact info, factory sizes, and digital footprints.
+                  Preview list of exporter profiles. Log in to unlock public company fields, website signals, trade modes, and export-ready filters.
                 </p>
               </div>
               <span className="text-xs font-semibold text-slate-400">
@@ -446,10 +446,10 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                     </div>
                   </div>
                   <Link
-                    href={`/database/${supplier.slug}`}
+                    href={`/suppliers/${supplier.slug}`}
                     className="shrink-0 text-xs font-bold text-teal-600 hover:text-teal-700 flex items-center gap-0.5 whitespace-nowrap mt-1"
                   >
-                    View Exporter <ArrowRight className="h-3 w-3" />
+                    View Supplier <ArrowRight className="h-3 w-3" />
                   </Link>
                 </article>
               ))}
