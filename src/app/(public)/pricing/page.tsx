@@ -97,6 +97,7 @@ export default function PricingPage() {
                   <th className="px-5 py-4">Feature Capacity</th>
                   <th className="px-5 py-4">Free</th>
                   <th className="px-5 py-4">Starter</th>
+                  <th className="px-5 py-4">Growth</th>
                   <th className="px-5 py-4">Pro</th>
                   <th className="px-5 py-4">Team</th>
                 </tr>
@@ -141,11 +142,12 @@ export default function PricingPage() {
         {/* Feature Descriptions Grid */}
         <section className="mt-16 rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm">
           <h2 className="text-xl font-bold text-slate-950 mb-6 text-center">Which sourcing tier aligns with your targets?</h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            <PlanFit title="Free" text="Excellent for inspecting the database structure, verifying specific categories, and reviewing SEO guidelines." />
-            <PlanFit title="Starter" text="Tailored for individual buyers and niche importers conducting low-volume research and direct contacts." />
-            <PlanFit title="Pro" text="Designed for professional sourcing consultants and agencies needing recurring datasets and multiple industry PDFs." />
-            <PlanFit title="Team" text="Built for wholesale sourcing offices requiring multi-user logins, shared lists, internal remarks, and higher CSV export limits." />
+          <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-5">
+            <PlanFit title="Free" text="Excellent for inspecting database structure and SEO pages (soft-masked preview data)." />
+            <PlanFit title="Starter" text="Tailored for individual buyers and niche importers conducting low-volume research ($39/mo, 500 CSVs)." />
+            <PlanFit title="Growth" text="Designed for growing e-commerce brands and active agents needing 1,500 CSVs/mo and 2 team seats ($89/mo)." />
+            <PlanFit title="Pro" text="Built for professional consultants needing 4,000 CSVs/mo, 3 seats, and deep risk signals ($199/mo)." />
+            <PlanFit title="Team" text="Built for wholesale sourcing offices requiring 15,000 CSVs/mo, 5 seats, and API-lite exports ($499/mo)." />
           </div>
         </section>
 
