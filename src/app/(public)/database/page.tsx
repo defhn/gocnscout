@@ -87,11 +87,13 @@ export default async function DatabasePage({
   const currentQuery = queryString(params);
 
   const planLabel = planCode === "FREE"
-    ? "Free: 2 pages, 10 results/page, 5 profiles/month"
+    ? "Free: 2 pages, 10 results/page, 10 profiles/month (Soft-masked)"
     : planCode === "STARTER"
     ? "Starter: unlimited search, 25 results/page"
+    : planCode === "GROWTH"
+    ? "Growth: unlimited search, 50 results/page"
     : planCode === "PRO"
-    ? "Pro: unlimited search, 50 results/page"
+    ? "Pro: unlimited search, 100 results/page"
     : "Team: unlimited search, 100 results/page";
 
   return (

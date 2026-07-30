@@ -33,7 +33,7 @@ export async function POST(request: Request) {
       await prisma.user.update({
         where: { id: userId },
         data: {
-          planCode: planCode as "STARTER" | "PRO" | "TEAM",
+          planCode: planCode as "STARTER" | "GROWTH" | "PRO" | "TEAM",
           subscriptionStatus: "ACTIVE",
           billingInterval: interval === "YEAR" ? "YEAR" : "MONTH",
           stripeCustomerId: typeof session.customer === "string" ? session.customer : undefined,

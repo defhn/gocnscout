@@ -22,6 +22,7 @@ export const metadata = createMetadata({
 const plans = [
   PLAN_DEFINITIONS.FREE,
   PLAN_DEFINITIONS.STARTER,
+  PLAN_DEFINITIONS.GROWTH,
   PLAN_DEFINITIONS.PRO,
   PLAN_DEFINITIONS.TEAM,
 ];

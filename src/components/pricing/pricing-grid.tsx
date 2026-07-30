@@ -49,7 +49,7 @@ export function PricingGrid({ plans }: PricingGridProps) {
       </div>
 
       {/* Pricing Cards Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 items-stretch">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 items-stretch">
         {plans.map((plan) => {
           const isPro = plan.code === "PRO";
           const btnVariant = isPro ? "teal" : plan.code === "FREE" ? "outline" : "dark";
@@ -67,9 +67,7 @@ export function PricingGrid({ plans }: PricingGridProps) {
               subNote = "/mo";
               annualBilledNote = `Billed annually (${formatUsd(plan.yearlyUsdCents)}/yr)`;
               
-              if (plan.code === "STARTER") savingBadge = "Save 20%";
-              if (plan.code === "PRO") savingBadge = "Save 30%";
-              if (plan.code === "TEAM") savingBadge = "Save 40%";
+              savingBadge = "Save 20%";
             } else {
               annualBilledNote = `${formatUsd(plan.yearlyUsdCents)}/year billed annually`;
             }
@@ -82,7 +80,7 @@ export function PricingGrid({ plans }: PricingGridProps) {
               key={plan.code}
               className={`flex flex-col h-full rounded-2xl transition-all duration-300 ${
                 isPro
-                  ? "border-teal-500 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 text-white shadow-xl scale-[1.03] relative border-2 hover:shadow-teal-500/10"
+                  ? "border-teal-500 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 text-white shadow-xl scale-[1.02] relative border-2 hover:shadow-teal-500/10"
                   : "border-slate-200 bg-white hover:-translate-y-1 hover:shadow-md"
               }`}
             >
@@ -122,16 +120,19 @@ export function PricingGrid({ plans }: PricingGridProps) {
 
                   <ul className="mt-5 space-y-3.5 text-xs">
                     <FeatureItem isPro={isPro}>
-                      {plan.searchPages === "unlimited" ? "Unlimited search queries" : `${plan.searchPages} search pages`}
+                      {plan.searchPages === "unlimited" ? "Unlimited search queries" : `${plan.searchPages} search pages max`}
                     </FeatureItem>
                     <FeatureItem isPro={isPro}>
-                      {plan.profileViewsPerMonth === "unlimited" ? "Unlimited profile views" : `${plan.profileViewsPerMonth} profile details/mo`}
+                      {plan.profileViewsPerMonth === "unlimited" ? "Unlimited profile views" : `${plan.profileViewsPerMonth} profile views/mo`}
                     </FeatureItem>
                     <FeatureItem isPro={isPro}>
                       {plan.exportRowsPerMonth > 0 ? `${plan.exportRowsPerMonth.toLocaleString("en-US")} CSV rows/mo` : "No CSV data exports"}
                     </FeatureItem>
                     <FeatureItem isPro={isPro}>
                       {plan.includedReportsPerMonth > 0 ? `${plan.includedReportsPerMonth} industry report${plan.includedReportsPerMonth > 1 ? "s" : ""}/mo` : "Standalone report purchases only"}
+                    </FeatureItem>
+                    <FeatureItem isPro={isPro}>
+                      {plan.teamSeats > 1 ? `${plan.teamSeats} team seats included` : "1 user seat"}
                     </FeatureItem>
                   </ul>
                 </div>
@@ -153,10 +154,11 @@ export function PricingGrid({ plans }: PricingGridProps) {
 }
 
 function bestFor(code: string) {
-  if (code === "FREE") return "Browsing structure and SEO pages.";
-  if (code === "STARTER") return "Sole importers, Amazon and Shopify e-commerce retailers, and individual buyers.";
-  if (code === "PRO") return "Sourcing professionals, trade advisors, wholesale procurement teams, and category managers.";
-  return "Procurement companies, import corporations, custom sourcing bureaus, and research departments.";
+  if (code === "FREE") return "Browsing structure and SEO pages (soft-masked data).";
+  if (code === "STARTER") return "Sole importers, Amazon and Shopify sellers, and individual buyers.";
+  if (code === "GROWTH") return "Growing e-commerce brands, active sourcing agents, and 2-person teams.";
+  if (code === "PRO") return "Sourcing professionals, trade advisors, and category managers.";
+  return "Procurement companies, import corporations, custom sourcing bureaus, and research teams.";
 }
 
 function FeatureItem({ children, isPro }: { children: React.ReactNode; isPro: boolean }) {

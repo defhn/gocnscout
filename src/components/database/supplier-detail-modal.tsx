@@ -725,17 +725,30 @@ function LockedField({
   compact?: boolean;
 }) {
   const isPro = plan === "PRO" || plan.startsWith("PRO");
-  const bgClass = isPro ? "bg-indigo-600 hover:bg-indigo-700" : "bg-teal-600 hover:bg-teal-700";
+  
+  let maskedText = "••••••••";
+  if (label.toLowerCase().includes("website")) maskedText = "www.zh***.com";
+  else if (label.toLowerCase().includes("trade")) maskedText = "Factory / Exporter";
+  else if (label.toLowerCase().includes("exhibition")) maskedText = "Exhibitor";
+  else if (label.toLowerCase().includes("signal") || label.toLowerCase().includes("count")) maskedText = "Verified Data";
+
   return (
     <Link
       href="/pricing"
       onClick={(e) => e.stopPropagation()}
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${bgClass} !text-white hover:!text-white transition-all shadow-sm group`}
-      title={`Upgrade to ${plan} to unlock ${label}`}
+      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded border transition-all duration-150 group ${
+        isPro
+          ? "bg-purple-50/80 border-purple-200/70 text-purple-900 hover:bg-purple-100"
+          : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-teal-50 hover:border-teal-200 hover:text-teal-900"
+      }`}
+      title={`Click to upgrade to ${plan} and unlock full ${label}`}
     >
-      <Lock className="h-3 w-3 !text-white group-hover:scale-110 transition-transform" />
+      <Lock className="h-3 w-3 shrink-0 text-slate-400 group-hover:text-teal-600 transition-colors" />
+      <span className="text-xs font-mono select-none blur-[1.2px] opacity-75 group-hover:blur-none transition-all">
+        {maskedText}
+      </span>
       {!compact && (
-        <span className="text-[9px] font-extrabold uppercase tracking-wider !text-white">
+        <span className="ml-0.5 rounded bg-slate-200/80 px-1 py-0.2 text-[9px] font-bold text-slate-600 uppercase">
           {plan}
         </span>
       )}
@@ -840,22 +853,27 @@ function getClientPageNumbers(currentPage: number, totalPages: number): Array<nu
 
 // ─── Paywall modal ────────────────────────────────────────────────────────────
 
-function PaywallModal({ plan, onClose }: { plan: "STARTER" | "PRO" | "TEAM"; onClose: () => void }) {
+function PaywallModal({ plan, onClose }: { plan: "STARTER" | "GROWTH" | "PRO" | "TEAM"; onClose: () => void }) {
   const planInfo = {
     STARTER: {
       title: "Starter Plan Required",
-      desc: "Unlock up to 25 rows per page and unlimited searches. Gain immediate access to core sourcing data like Trade Mode and Websites.",
-      btnText: "Upgrade to Starter",
+      desc: "Unlock up to 25 rows per page, unlimited searches, full official website URLs, and trade mode classification.",
+      btnText: "Upgrade to Starter ($39)",
+    },
+    GROWTH: {
+      title: "Growth Plan Required",
+      desc: "Unlock up to 50 rows per page, 1,500 CSV exports per month, 2 team seats, and complete exhibition history counts.",
+      btnText: "Upgrade to Growth ($89)",
     },
     PRO: {
       title: "Pro Plan Required",
-      desc: "Unlock up to 50 rows per page. Access advanced sourcing signals, historical exhibition counts, and export up to 1,600 rows per month.",
-      btnText: "Upgrade to Pro",
+      desc: "Unlock up to 100 rows per page, 4,000 CSV exports per month, 3 team seats, and deep sourcing risk signals & awards.",
+      btnText: "Upgrade to Pro ($199)",
     },
     TEAM: {
       title: "Team Plan Required",
-      desc: "Unlock up to 100 rows per page. Add custom team annotations, custom fields, and collaborate with up to 5 seats on premium sourcing.",
-      btnText: "Upgrade to Team",
+      desc: "Unlock 15,000 CSV exports per month, 5 team seats, API-lite export access, and priority custom shortlist matching.",
+      btnText: "Upgrade to Team ($499)",
     },
   }[plan];
 

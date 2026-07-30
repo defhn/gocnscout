@@ -1,6 +1,6 @@
 import type { PlanCode } from "@/generated/prisma/enums";
 
-export type AppPlanCode = "FREE" | "STARTER" | "PRO" | "TEAM" | "DATA_LICENSE";
+export type AppPlanCode = "FREE" | "STARTER" | "GROWTH" | "PRO" | "TEAM" | "DATA_LICENSE";
 
 export type PlanDefinition = {
   code: AppPlanCode;
@@ -26,7 +26,7 @@ export const PLAN_DEFINITIONS: Record<AppPlanCode, PlanDefinition> = {
     yearlyUsdCents: null,
     searchPages: 2,
     resultsPerPage: 10,
-    profileViewsPerMonth: 5,
+    profileViewsPerMonth: 10,
     exportRowsPerMonth: 0,
     savedLists: 0,
     savedSuppliers: 0,
@@ -37,42 +37,57 @@ export const PLAN_DEFINITIONS: Record<AppPlanCode, PlanDefinition> = {
   STARTER: {
     code: "STARTER",
     name: "Starter",
-    monthlyUsdCents: 4900,
-    yearlyUsdCents: 47000,
+    monthlyUsdCents: 3900,
+    yearlyUsdCents: 37000,
     searchPages: "unlimited",
     resultsPerPage: 25,
     profileViewsPerMonth: "unlimited",
-    exportRowsPerMonth: 200,
+    exportRowsPerMonth: 500,
     savedLists: 5,
-    savedSuppliers: 200,
+    savedSuppliers: 500,
     compareSuppliers: 5,
     includedReportsPerMonth: 1,
     teamSeats: 1,
+  },
+  GROWTH: {
+    code: "GROWTH",
+    name: "Growth",
+    monthlyUsdCents: 8900,
+    yearlyUsdCents: 85000,
+    searchPages: "unlimited",
+    resultsPerPage: 50,
+    profileViewsPerMonth: "unlimited",
+    exportRowsPerMonth: 1500,
+    savedLists: 20,
+    savedSuppliers: 1500,
+    compareSuppliers: 10,
+    includedReportsPerMonth: 1,
+    teamSeats: 2,
   },
   PRO: {
     code: "PRO",
     name: "Pro",
     monthlyUsdCents: 19900,
-    yearlyUsdCents: 167000,
+    yearlyUsdCents: 189000,
     searchPages: "unlimited",
-    resultsPerPage: 50,
+    resultsPerPage: 100,
     profileViewsPerMonth: "unlimited",
-    exportRowsPerMonth: 1600,
+    exportRowsPerMonth: 4000,
     savedLists: "unlimited",
-    savedSuppliers: 3000,
-    compareSuppliers: 10,
+    savedSuppliers: 5000,
+    compareSuppliers: 20,
     includedReportsPerMonth: 3,
-    teamSeats: 1,
+    teamSeats: 3,
   },
   TEAM: {
     code: "TEAM",
     name: "Team",
     monthlyUsdCents: 49900,
-    yearlyUsdCents: 359000,
+    yearlyUsdCents: 479000,
     searchPages: "unlimited",
     resultsPerPage: 100,
     profileViewsPerMonth: "unlimited",
-    exportRowsPerMonth: 8000,
+    exportRowsPerMonth: 15000,
     savedLists: "unlimited",
     savedSuppliers: "unlimited",
     compareSuppliers: 20,
@@ -96,7 +111,7 @@ export const PLAN_DEFINITIONS: Record<AppPlanCode, PlanDefinition> = {
   },
 };
 
-export const PAID_PLAN_CODES = ["STARTER", "PRO", "TEAM"] as const;
+export const PAID_PLAN_CODES = ["STARTER", "GROWTH", "PRO", "TEAM"] as const;
 
 export function getPlan(code?: PlanCode | AppPlanCode | null) {
   return PLAN_DEFINITIONS[(code || "FREE") as AppPlanCode] || PLAN_DEFINITIONS.FREE;
@@ -109,10 +124,16 @@ export function canExport(code?: PlanCode | AppPlanCode | null) {
 /** STARTER 及以上可见字段：贸易方式、官网、参展等级标签 */
 export function canViewStarterFields(code?: PlanCode | AppPlanCode | null): boolean {
   const plan = code as AppPlanCode;
-  return plan === "STARTER" || plan === "PRO" || plan === "TEAM" || plan === "DATA_LICENSE";
+  return plan === "STARTER" || plan === "GROWTH" || plan === "PRO" || plan === "TEAM" || plan === "DATA_LICENSE";
 }
 
-/** PRO 及以上可见字段：参展具体次数、供应商信号（获奖/认证） */
+/** GROWTH 及以上可见字段：参展具体次数、行业认证明细 */
+export function canViewGrowthFields(code?: PlanCode | AppPlanCode | null): boolean {
+  const plan = code as AppPlanCode;
+  return plan === "GROWTH" || plan === "PRO" || plan === "TEAM" || plan === "DATA_LICENSE";
+}
+
+/** PRO 及以上可见字段：供应商硬核信号、诉讼与风控评级 */
 export function canViewProFields(code?: PlanCode | AppPlanCode | null): boolean {
   const plan = code as AppPlanCode;
   return plan === "PRO" || plan === "TEAM" || plan === "DATA_LICENSE";

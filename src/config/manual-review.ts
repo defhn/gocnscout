@@ -43,7 +43,7 @@ export const MANUAL_REVIEW_PACKAGES: ManualReviewPackage[] = [
     amountUsdCents: 14900,
     supplierSlots: 1,
     delivery: "Delivered within 24-48 hours",
-    description: "Basic identity verification and obvious-risk screening for one supplier before you contact or pay.",
+    description: "Pure online desk research & public record verification for one supplier. (No offline visits or phone calls).",
     features: IDENTITY_CHECK_FEATURES,
   },
   {
@@ -53,9 +53,9 @@ export const MANUAL_REVIEW_PACKAGES: ManualReviewPackage[] = [
     amountUsdCents: 39900,
     supplierSlots: 3,
     delivery: "Delivered within 24-48 hours",
-    description: "Basic identity verification and obvious-risk screening for up to three supplier targets.",
+    description: "Pure online desk research & public record verification for up to three supplier targets.",
     features: [
-      "Up to three Alibaba stores or company websites reviewed",
+      "Up to three company websites or B2B store profiles reviewed",
       ...IDENTITY_CHECK_FEATURES,
     ],
   },
@@ -66,7 +66,7 @@ export const MANUAL_REVIEW_PACKAGES: ManualReviewPackage[] = [
     amountUsdCents: 24900,
     supplierSlots: 1,
     delivery: "Delivered within 24-48 hours",
-    description: "A deeper buyer-decision review for deciding whether to contact, request samples, continue negotiation, or pause.",
+    description: "Deep online desk research, legal risk interpretation, and IP/corporate cross-matching before payment. (No phone calls or MOQ negotiations).",
     features: DECISION_REVIEW_FEATURES,
   },
   {
@@ -76,9 +76,9 @@ export const MANUAL_REVIEW_PACKAGES: ManualReviewPackage[] = [
     amountUsdCents: 49900,
     supplierSlots: 3,
     delivery: "Delivered within 24-48 hours",
-    description: "Deeper buyer-decision support for up to three supplier targets.",
+    description: "Deep online desk research & risk interpretation for up to three supplier targets.",
     features: [
-      "Up to three suppliers reviewed",
+      "Up to three suppliers reviewed via multi-source public data",
       ...DECISION_REVIEW_FEATURES,
     ],
   },

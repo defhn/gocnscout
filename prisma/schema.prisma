@@ -10,6 +10,7 @@ datasource db {
 enum PlanCode {
   FREE
   STARTER
+  GROWTH
   PRO
   TEAM
   DATA_LICENSE

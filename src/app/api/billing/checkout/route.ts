@@ -10,7 +10,7 @@ export async function GET(request: Request) {
   const plan = url.searchParams.get("plan");
   const interval = url.searchParams.get("interval") === "YEAR" ? "YEAR" : "MONTH";
 
-  if (plan !== "STARTER" && plan !== "PRO" && plan !== "TEAM") {
+  if (plan !== "STARTER" && plan !== "GROWTH" && plan !== "PRO" && plan !== "TEAM") {
     return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
   }
 
