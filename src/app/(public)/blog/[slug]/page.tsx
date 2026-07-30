@@ -167,65 +167,84 @@ export default async function BlogPostPage({ params }: Props) {
                 Unlock full access to the China Exporter Database and trade intelligence data feeds:
               </p>
               
-              <div className="mt-6 grid gap-6 sm:grid-cols-3">
+              <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {/* Starter Plan */}
-                <div className="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
+                <div className="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
                   <div>
                     <h4 className="text-xs font-bold text-slate-950">Starter</h4>
                     <p className="mt-1 text-[10px] text-slate-500 leading-normal">Vet individual exporter entities.</p>
-                    <div className="mt-3.5 flex items-baseline text-slate-950">
-                      <span className="text-2xl font-extrabold tracking-tight">$49</span>
+                    <div className="mt-3 flex items-baseline text-slate-950">
+                      <span className="text-xl font-extrabold tracking-tight">$39</span>
                       <span className="ml-1 text-[10px] text-slate-500">/ mo</span>
                     </div>
-                    <ul className="mt-4 space-y-2.5 text-[10px] text-slate-600">
-                      <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />Daily supplier search limits</li>
+                    <ul className="mt-3 space-y-2 text-[10px] text-slate-600">
+                      <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />500 CSV exports / mo</li>
                       <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />Verify official registry status</li>
-                      <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />Basic risk factor flags</li>
+                      <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />Soft-masked data preview</li>
                     </ul>
                   </div>
-                  <Link href="/pricing" className="mt-5 inline-flex w-full justify-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold !text-slate-700 hover:bg-slate-50 transition-colors">
+                  <Link href="/pricing" className="mt-4 inline-flex w-full justify-center rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold !text-slate-700 hover:bg-slate-50 transition-colors">
+                    Subscribe
+                  </Link>
+                </div>
+
+                {/* Growth Plan */}
+                <div className="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-950">Growth</h4>
+                    <p className="mt-1 text-[10px] text-slate-500 leading-normal">Growing importers & agents.</p>
+                    <div className="mt-3 flex items-baseline text-slate-950">
+                      <span className="text-xl font-extrabold tracking-tight">$89</span>
+                      <span className="ml-1 text-[10px] text-slate-500">/ mo</span>
+                    </div>
+                    <ul className="mt-3 space-y-2 text-[10px] text-slate-600">
+                      <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />1,500 CSV exports / mo</li>
+                      <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />2 Team seats</li>
+                      <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />Full website & customs data</li>
+                    </ul>
+                  </div>
+                  <Link href="/pricing" className="mt-4 inline-flex w-full justify-center rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold !text-slate-700 hover:bg-slate-50 transition-colors">
                     Subscribe
                   </Link>
                 </div>
 
                 {/* Pro Plan */}
-                <div className="flex flex-col justify-between rounded-xl border-2 border-teal-600 bg-white p-5 shadow-sm relative">
-                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-teal-600 px-2.5 py-0.5 text-[8px] font-bold text-white uppercase tracking-wider">Most Popular</div>
+                <div className="flex flex-col justify-between rounded-xl border-2 border-teal-600 bg-white p-4 shadow-sm relative">
+                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-teal-600 px-2 py-0.5 text-[8px] font-bold text-white uppercase tracking-wider">Most Popular</div>
                   <div>
                     <h4 className="text-xs font-bold text-slate-950">Pro</h4>
-                    <p className="mt-1 text-[10px] text-slate-500 leading-normal">Best for professional B2B importers.</p>
-                    <div className="mt-3.5 flex items-baseline text-slate-950">
-                      <span className="text-2xl font-extrabold tracking-tight">$199</span>
+                    <p className="mt-1 text-[10px] text-slate-500 leading-normal">Professional B2B importers.</p>
+                    <div className="mt-3 flex items-baseline text-slate-950">
+                      <span className="text-xl font-extrabold tracking-tight">$199</span>
                       <span className="ml-1 text-[10px] text-slate-500">/ mo</span>
                     </div>
-                    <ul className="mt-4 space-y-2.5 text-[10px] text-slate-600">
-                      <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />Unlimited supplier searches</li>
-                      <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />Complete customs export records</li>
-                      <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />Detailed legal dispute records</li>
+                    <ul className="mt-3 space-y-2 text-[10px] text-slate-600">
+                      <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />4,000 CSV exports / mo</li>
+                      <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />3 Team seats</li>
                       <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />Advanced sourcing signals</li>
                     </ul>
                   </div>
-                  <Link href="/pricing" className="mt-5 inline-flex w-full justify-center rounded-lg bg-teal-600 px-3 py-2 text-xs font-semibold !text-white hover:bg-teal-700 transition-colors shadow-2xs">
+                  <Link href="/pricing" className="mt-4 inline-flex w-full justify-center rounded-lg bg-teal-600 px-2.5 py-1.5 text-xs font-semibold !text-white hover:bg-teal-700 transition-colors shadow-2xs">
                     Start Pro
                   </Link>
                 </div>
 
                 {/* Team Plan */}
-                <div className="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
+                <div className="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
                   <div>
                     <h4 className="text-xs font-bold text-slate-950">Team</h4>
-                    <p className="mt-1 text-[10px] text-slate-500 leading-normal">For sourcing teams and organizations.</p>
-                    <div className="mt-3.5 flex items-baseline text-slate-950">
-                      <span className="text-2xl font-extrabold tracking-tight">$499</span>
+                    <p className="mt-1 text-[10px] text-slate-500 leading-normal">For sourcing organizations.</p>
+                    <div className="mt-3 flex items-baseline text-slate-950">
+                      <span className="text-xl font-extrabold tracking-tight">$499</span>
                       <span className="ml-1 text-[10px] text-slate-500">/ mo</span>
                     </div>
-                    <ul className="mt-4 space-y-2.5 text-[10px] text-slate-600">
-                      <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />Includes 5 team seats</li>
-                      <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />Bulk customs data export (CSV)</li>
-                      <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />API raw data access integrations</li>
+                    <ul className="mt-3 space-y-2 text-[10px] text-slate-600">
+                      <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />15,000 CSV exports / mo</li>
+                      <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />5 Team seats</li>
+                      <li className="flex items-center gap-1.5"><Check size={12} className="text-teal-600 shrink-0" />API raw data access</li>
                     </ul>
                   </div>
-                  <Link href="/pricing" className="mt-5 inline-flex w-full justify-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold !text-slate-700 hover:bg-slate-50 transition-colors">
+                  <Link href="/pricing" className="mt-4 inline-flex w-full justify-center rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold !text-slate-700 hover:bg-slate-50 transition-colors">
                     Upgrade
                   </Link>
                 </div>

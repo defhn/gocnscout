@@ -8,8 +8,8 @@ import { createMetadata, faqJsonLd } from "@/config/seo";
 import { formatUsd } from "@/lib/utils";
 
 export const metadata = createMetadata({
-  title: "Canton Fair Exhibitor Intelligence Report",
-  description: "Download a Canton Fair supplier intelligence report covering industry distribution, city clusters, exporter profiles, and buyer vetting checklists.",
+  title: "Premium Sourcing Exhibition Intelligence Report",
+  description: "Download a China Exporter Database supplier intelligence report covering industry distribution, city clusters, exporter profiles, and buyer vetting checklists.",
   path: "/exhibitor-intelligence-report",
 });
 
