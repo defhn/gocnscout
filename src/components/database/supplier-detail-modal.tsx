@@ -17,6 +17,8 @@ import {
   ArrowUpRight,
   ExternalLink,
   ShieldAlert,
+  ShieldCheck,
+  Bookmark,
   Sparkles,
 } from "lucide-react";
 import { getExhibitionTierLabel } from "@/config/field-policy";
@@ -93,6 +95,34 @@ export function SupplierTable({
   const [selected, setSelected] = useState<SupplierRow | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [paywallTargetPlan, setPaywallTargetPlan] = useState<"STARTER" | "PRO" | "TEAM">("STARTER");
+  const [savedIds, setSavedIds] = useState<Set<string>>(() => {
+    if (typeof window === "undefined") return new Set();
+    try {
+      const raw = localStorage.getItem("gocnscout_shortlist_ids");
+      return raw ? new Set(JSON.parse(raw)) : new Set();
+    } catch {
+      return new Set();
+    }
+  });
+
+  const toggleSave = (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setSavedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("gocnscout_shortlist_ids", JSON.stringify(Array.from(next)));
+        } catch {}
+      }
+      return next;
+    });
+  };
+
   const router = useRouter();
   const canStarter = canViewStarterFields(planCode);
   const canPro = canViewProFields(planCode);
@@ -179,7 +209,7 @@ export function SupplierTable({
   return (
     <>
       <div className="overflow-x-auto bg-white">
-        <table className="min-w-[1380px] w-full table-fixed border-collapse text-left text-sm">
+        <table className="min-w-[1480px] w-full table-fixed border-collapse text-left text-sm">
           <thead className="border-b border-[#d8e0ea] bg-[#fbfcfe] text-xs font-semibold uppercase tracking-wide text-slate-500">
             <tr>
               <th className="w-[210px] px-4 py-3">Supplier</th>
@@ -194,6 +224,7 @@ export function SupplierTable({
               <th className="w-[160px] px-4 py-3">Exhibition</th>
               <th className="w-[140px] px-4 py-3">Signals</th>
               <th className="w-[100px] px-4 py-3">Website</th>
+              <th className="w-[100px] px-3 py-3 text-center">Shortlist</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#e5ebf2]">
@@ -202,6 +233,7 @@ export function SupplierTable({
                 const { label: tierLabel, tier } = getExhibitionTierLabel(
                   supplier.exhibitionSessionCount
                 );
+                const isSaved = savedIds.has(supplier.id);
                 return (
                   <tr
                     key={supplier.id}
@@ -332,12 +364,29 @@ export function SupplierTable({
                         <span className="text-xs text-slate-400">—</span>
                       )}
                     </td>
+
+                    {/* Shortlist button */}
+                    <td className="h-[105px] px-3 py-2 align-middle text-center" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        onClick={(e) => toggleSave(supplier.id, e)}
+                        className={`inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all ${
+                          isSaved
+                            ? "bg-amber-50 text-amber-800 border border-amber-300 shadow-2xs"
+                            : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:border-teal-400 hover:text-teal-700"
+                        }`}
+                        title={isSaved ? "Remove from shortlist" : "Save to shortlist"}
+                      >
+                        <Bookmark className={`h-3.5 w-3.5 ${isSaved ? "fill-amber-500 text-amber-500" : ""}`} />
+                        <span>{isSaved ? "Saved" : "Save"}</span>
+                      </button>
+                    </td>
                   </tr>
                 );
               })
             ) : (
               <tr>
-                <td colSpan={12} className="px-4 py-12 text-center">
+                <td colSpan={13} className="px-4 py-12 text-center">
                   <p className="text-base font-semibold text-slate-950">
                     No results found
                   </p>
@@ -439,6 +488,8 @@ export function SupplierTable({
         <SupplierDetailModal
           supplier={selected}
           planCode={planCode}
+          isSaved={savedIds.has(selected.id)}
+          onToggleSave={() => toggleSave(selected.id)}
           onClose={() => setSelected(null)}
         />
       )}
@@ -459,10 +510,14 @@ export function SupplierTable({
 function SupplierDetailModal({
   supplier,
   planCode,
+  isSaved,
+  onToggleSave,
   onClose,
 }: {
   supplier: SupplierRow;
   planCode: AppPlanCode;
+  isSaved: boolean;
+  onToggleSave: () => void;
   onClose: () => void;
 }) {
   const canStarter = canViewStarterFields(planCode);
@@ -496,13 +551,27 @@ function SupplierDetailModal({
               </p>
             )}
           </div>
-          <button
-            onClick={onClose}
-            className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full hover:bg-slate-100"
-            aria-label="Close"
-          >
-            <X className="h-4 w-4 text-slate-500" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onToggleSave}
+              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all ${
+                isSaved
+                  ? "border-amber-300 bg-amber-50 text-amber-800 shadow-2xs"
+                  : "border-slate-200 bg-white text-slate-700 hover:border-teal-300 hover:bg-slate-50"
+              }`}
+            >
+              <Bookmark className={`h-3.5 w-3.5 ${isSaved ? "fill-amber-500 text-amber-500" : ""}`} />
+              {isSaved ? "Saved" : "Save"}
+            </button>
+            <button
+              onClick={onClose}
+              className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full hover:bg-slate-100"
+              aria-label="Close"
+            >
+              <X className="h-4 w-4 text-slate-500" />
+            </button>
+          </div>
         </div>
 
         <div className="space-y-6 p-6">
@@ -674,6 +743,35 @@ function SupplierDetailModal({
             ) : (
               <p className="text-sm text-slate-400">No official website listed</p>
             )}
+          </section>
+
+          {/* Identity Check ($149 Audit) CTA Card */}
+          <section className="rounded-xl border border-teal-200 bg-gradient-to-br from-teal-50/90 to-slate-50 p-4 shadow-2xs">
+            <div className="flex items-start gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-teal-700 text-white shadow-xs">
+                <ShieldCheck className="h-5 w-5" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold text-slate-950">
+                    Supplier Identity Check ($149)
+                  </h4>
+                  <span className="rounded bg-teal-100 px-1.5 py-0.5 text-[9px] font-bold text-teal-800 uppercase tracking-wider">
+                    Online Audit
+                  </span>
+                </div>
+                <p className="mt-1 text-[11px] leading-relaxed text-slate-600">
+                  Need 100% verified desk research? Our analysts verify official business license, tax registration, and corporate records online.
+                </p>
+                <Link
+                  href="/manual-review"
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-teal-700 px-3 py-1.5 text-xs font-semibold !text-white hover:bg-teal-800 transition-colors shadow-2xs"
+                >
+                  Order Identity Check ($149)
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            </div>
           </section>
         </div>
 
