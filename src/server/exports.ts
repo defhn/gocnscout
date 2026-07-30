@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { monthKey } from "@/lib/utils";
 import { canExportRows, incrementUsage } from "@/server/quota";
 import { buildSupplierWhere, supplierPublicSelect, type SupplierSearchParams } from "@/server/suppliers";
+import { uploadPrivateFile } from "@/server/storage";
 import type { AppPlanCode } from "@/config/plans";
 
 export async function createSupplierExport(userId: string, planCode: AppPlanCode, params: SupplierSearchParams, requestedCount: number) {
