@@ -4,9 +4,9 @@ import { prisma } from "@/lib/db";
 import { monthKey } from "@/lib/utils";
 import { canExportRows, incrementUsage } from "@/server/quota";
 import { buildSupplierWhere, supplierPublicSelect, type SupplierSearchParams } from "@/server/suppliers";
-import { uploadPrivateFile } from "@/server/storage";
+import type { AppPlanCode } from "@/config/plans";
 
-export async function createSupplierExport(userId: string, planCode: "FREE" | "STARTER" | "PRO" | "TEAM" | "DATA_LICENSE", params: SupplierSearchParams, requestedCount: number) {
+export async function createSupplierExport(userId: string, planCode: AppPlanCode, params: SupplierSearchParams, requestedCount: number) {
   const allowed = await canExportRows(userId, planCode, requestedCount);
   if (!allowed) {
     throw new Error("Export quota exceeded or unavailable for this plan.");
