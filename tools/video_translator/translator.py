@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from typing import Any
 
 from openai import OpenAI
@@ -21,16 +22,23 @@ class DeepSeekTranslator:
         for offset in range(0, len(segments), 50):
             batch = segments[offset : offset + 50]
             payload = [{"id": offset + i, "text": s["zh"]} for i, s in enumerate(batch)]
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": "You translate Chinese subtitles into natural English voiceover for overseas TikTok. Preserve meaning, names, numbers, and professional terminology. Keep each id and output concise spoken English. Return JSON: {\"items\":[{\"id\":0,\"en\":\"...\"}]}. Output JSON only."},
-                    {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
-                ],
-                response_format={"type": "json_object"},
-                thinking={"type": "disabled"},
-                temperature=0.2,
-            )
+            for attempt in range(3):
+                try:
+                    response = self.client.chat.completions.create(
+                        model=self.model,
+                        messages=[
+                            {"role": "system", "content": "You translate Chinese subtitles into natural English voiceover for overseas TikTok. Preserve meaning, names, numbers, and professional terminology. Keep each id and output concise spoken English. Return JSON: {\"items\":[{\"id\":0,\"en\":\"...\"}]}. Output JSON only."},
+                            {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
+                        ],
+                        response_format={"type": "json_object"},
+                        thinking={"type": "disabled"},
+                        temperature=0.2,
+                    )
+                    break
+                except Exception:
+                    if attempt == 2:
+                        raise
+                    time.sleep(2 ** attempt)
             content = response.choices[0].message.content or "{}"
             items: list[dict[str, Any]] = json.loads(content).get("items", [])
             translated.update({int(item["id"]): str(item["en"]).strip() for item in items if "id" in item and item.get("en")})

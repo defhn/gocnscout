@@ -43,7 +43,7 @@ WAV2LIP_DIR=C:\\models\\Wav2Lip
 WAV2LIP_CHECKPOINT=C:\\models\\Wav2Lip\\checkpoints\\wav2lip_gan.pth
 ```
 
-CosyVoice 服务应接受 JSON：`{"text":"...", "voice_id":"..."}`，并返回音频二进制或 JSON 中的 `audio_base64` / `audio_url`。如果你的 API 字段不同，可修改 `tts.py` 中的 `CosyVoiceClient`，流水线无需改动。
+CosyVoice 服务默认接受 JSON：`{"text":"...", "voice_id":"..."}`，并返回音频二进制或 JSON 中的 `audio_base64` / `audio_url`。如果字段名不同，设置 `COSYVOICE_TEXT_FIELD` 和 `COSYVOICE_VOICE_FIELD` 即可。
 
 ## 使用
 
@@ -65,7 +65,7 @@ python video_translator.py input.mp4 --output-dir output --lipsync
 python video_translator.py .\inputs --output-dir .\output --lipsync
 ```
 
-音频输入只生成 `english_audio.mp3`、`english_subtitle.srt` 和 `english_script.txt`；视频输入还会生成 `english_video.mp4`。
+单文件输出为 `output/english_audio.mp3`、`output/english_subtitle.srt`、`output/english_script.txt`；视频输入还会生成 `output/english_video.mp4`。批量处理时每个文件使用 `output/<文件名>/` 子目录。
 
 ## 说明
 

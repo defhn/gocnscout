@@ -12,9 +12,11 @@ from translator import DeepSeekTranslator
 from tts import synthesize_timeline
 
 
-def process(source: Path, output_root: Path, args) -> None:
+def process(source: Path, output_root: Path, args, is_batch: bool) -> None:
     kind = media_kind(source)
-    destination = output_root / source.stem
+    # Keep the requested output/english_* layout for one file. Batch jobs get
+    # an isolated directory per input to avoid overwriting results.
+    destination = output_root / source.stem if is_batch else output_root
     destination.mkdir(parents=True, exist_ok=True)
     work = destination / "work"
     work.mkdir(exist_ok=True)
@@ -39,13 +41,19 @@ def process(source: Path, output_root: Path, args) -> None:
             burn_subtitles(lipsynced, destination / "english_subtitle.srt", destination / "english_video.mp4")
         else:
             burn_subtitles(video_with_audio, destination / "english_subtitle.srt", destination / "english_video.mp4")
+    if not args.keep_work:
+        for item in work.iterdir():
+            if item.is_file():
+                item.unlink()
+        work.rmdir()
     print(f"完成: {source} -> {destination}")
 
 
 def run(sources: list[Path], output_root: Path, args) -> None:
     load_dotenv()
+    is_batch = len(sources) > 1
     for source in sources:
         try:
-            process(source, output_root, args)
+            process(source, output_root, args, is_batch)
         except Exception as exc:  # noqa: BLE001
             print(f"[失败] {source}: {exc}")

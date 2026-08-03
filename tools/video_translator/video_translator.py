@@ -24,6 +24,7 @@ def main() -> None:
     parser.add_argument("--compute-type", default="float16", help="RTX 6GB 建议 float16；CPU 使用 int8")
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--lipsync", action="store_true", help="使用本地 Wav2Lip 生成嘴型同步视频")
+    parser.add_argument("--keep-work", action="store_true", help="保留中间 WAV、TTS 分段和中间视频")
     args = parser.parse_args()
     sources = collect_sources(args.input)
     if not sources:

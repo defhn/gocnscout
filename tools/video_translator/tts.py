@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import os
+import time
 from io import BytesIO
 from pathlib import Path
 
@@ -21,8 +22,19 @@ class CosyVoiceClient:
         headers = {"Content-Type": "application/json"}
         if self.api_key:
             headers["Authorization"] = f"Bearer {self.api_key}"
-        response = requests.post(self.url, headers=headers, json={"text": text, "voice_id": self.clone_id}, timeout=180)
-        response.raise_for_status()
+        payload = {
+            os.getenv("COSYVOICE_TEXT_FIELD", "text"): text,
+            os.getenv("COSYVOICE_VOICE_FIELD", "voice_id"): self.clone_id,
+        }
+        for attempt in range(3):
+            try:
+                response = requests.post(self.url, headers=headers, json=payload, timeout=180)
+                response.raise_for_status()
+                break
+            except requests.RequestException:
+                if attempt == 2:
+                    raise
+                time.sleep(2 ** attempt)
         content_type = response.headers.get("content-type", "")
         if "audio" in content_type or response.content[:4] in {b"RIFF", b"ID3", b"\xff\xfb"}:
             destination.write_bytes(response.content)
