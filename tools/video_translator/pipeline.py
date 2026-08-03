@@ -50,7 +50,9 @@ def process(source: Path, output_root: Path, args, is_batch: bool) -> None:
 
 
 def run(sources: list[Path], output_root: Path, args) -> None:
-    load_dotenv()
+    # Resolve configuration next to this module so launching from any working
+    # directory still loads tools/video_translator/.env.
+    load_dotenv(Path(__file__).with_name(".env"))
     is_batch = len(sources) > 1
     for source in sources:
         try:
