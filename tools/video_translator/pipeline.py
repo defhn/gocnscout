@@ -50,9 +50,11 @@ def process(source: Path, output_root: Path, args, is_batch: bool) -> None:
 
 
 def run(sources: list[Path], output_root: Path, args) -> None:
-    # Resolve configuration next to this module so launching from any working
-    # directory still loads tools/video_translator/.env.
-    load_dotenv(Path(__file__).with_name(".env"))
+    # Load project credentials first, then allow tool-local values to override
+    # them. Secrets stay in the existing untracked project .env.local file.
+    project_env = Path(__file__).resolve().parents[2] / ".env.local"
+    load_dotenv(project_env)
+    load_dotenv(Path(__file__).with_name(".env"), override=True)
     is_batch = len(sources) > 1
     for source in sources:
         try:
