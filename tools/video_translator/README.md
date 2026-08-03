@@ -45,16 +45,16 @@ WAV2LIP_CHECKPOINT=C:\\models\\Wav2Lip\\checkpoints\\wav2lip_gan.pth
 
 ## 使用
 
-单个视频（默认只生成英文音频，不跑 Wav2Lip）：
+单个视频（默认执行 Wav2Lip 嘴型同步）：
 
 ```powershell
-python video_translator.py input.mp4 --output-dir output --asr-model large-v3 --device cuda
+python video_translator.py input.mp4 --output-dir output --asr-model small --device cuda
 ```
 
-生成嘴型同步视频：
+如需临时跳过嘴型同步：
 
 ```powershell
-python video_translator.py input.mp4 --output-dir output --lipsync
+python video_translator.py input.mp4 --output-dir output --no-lipsync
 ```
 
 批量处理文件夹：
