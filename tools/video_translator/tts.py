@@ -12,20 +12,36 @@ from pydub import AudioSegment
 
 class CosyVoiceClient:
     def __init__(self) -> None:
+        self.provider = os.getenv("COSYVOICE_PROVIDER", "generic").lower()
         self.url = os.getenv("COSYVOICE_API_URL")
-        self.api_key = os.getenv("COSYVOICE_API_KEY")
+        self.api_key = os.getenv("COSYVOICE_API_KEY") or os.getenv("DASHSCOPE_API_KEY")
         self.clone_id = os.getenv("COSYVOICE_CLONE_ID")
-        if not self.url or not self.clone_id:
-            raise RuntimeError("需要设置 COSYVOICE_API_URL 和 COSYVOICE_CLONE_ID")
+        self.model = os.getenv("COSYVOICE_MODEL", "cosyvoice-v3-flash")
+        if self.provider == "dashscope":
+            self.url = self.url or "https://dashscope.aliyuncs.com/api/v1/services/audio/tts/SpeechSynthesizer"
+        if not self.url or not self.api_key or not self.clone_id:
+            raise RuntimeError("需要设置 CosyVoice API 地址、API Key 和 COSYVOICE_CLONE_ID")
 
     def synthesize(self, text: str, destination: Path) -> None:
         headers = {"Content-Type": "application/json"}
         if self.api_key:
             headers["Authorization"] = f"Bearer {self.api_key}"
-        payload = {
-            os.getenv("COSYVOICE_TEXT_FIELD", "text"): text,
-            os.getenv("COSYVOICE_VOICE_FIELD", "voice_id"): self.clone_id,
-        }
+        if self.provider == "dashscope":
+            payload = {
+                "model": self.model,
+                "input": {
+                    "text": text,
+                    "voice": self.clone_id,
+                    "format": "wav",
+                    "sample_rate": 24000,
+                    "language_hints": ["en"],
+                },
+            }
+        else:
+            payload = {
+                os.getenv("COSYVOICE_TEXT_FIELD", "text"): text,
+                os.getenv("COSYVOICE_VOICE_FIELD", "voice_id"): self.clone_id,
+            }
         for attempt in range(3):
             try:
                 response = requests.post(self.url, headers=headers, json=payload, timeout=180)
@@ -40,6 +56,12 @@ class CosyVoiceClient:
             destination.write_bytes(response.content)
             return
         data = response.json()
+        nested_audio_url = data.get("output", {}).get("audio", {}).get("url")
+        if nested_audio_url:
+            audio = requests.get(nested_audio_url, timeout=180)
+            audio.raise_for_status()
+            destination.write_bytes(audio.content)
+            return
         if data.get("audio_base64"):
             destination.write_bytes(base64.b64decode(data["audio_base64"]))
             return

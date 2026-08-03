@@ -41,7 +41,7 @@ WAV2LIP_DIR=C:\\models\\Wav2Lip
 WAV2LIP_CHECKPOINT=C:\\models\\Wav2Lip\\checkpoints\\wav2lip_gan.pth
 ```
 
-CosyVoice 服务默认接受 JSON：`{"text":"...", "voice_id":"..."}`，并返回音频二进制或 JSON 中的 `audio_base64` / `audio_url`。如果字段名不同，设置 `COSYVOICE_TEXT_FIELD` 和 `COSYVOICE_VOICE_FIELD` 即可。
+如果使用阿里云百炼，在 `.env` 设置 `COSYVOICE_PROVIDER=dashscope`，把百炼 API Key 填入 `COSYVOICE_API_KEY`（也可使用 `DASHSCOPE_API_KEY`），并设置 `COSYVOICE_CLONE_ID`；程序会调用 CosyVoice HTTP 接口并读取返回的音频 URL。其他 CosyVoice 服务使用 `generic`，默认发送 `{"text":"...", "voice_id":"..."}`。
 
 ## 使用
 
