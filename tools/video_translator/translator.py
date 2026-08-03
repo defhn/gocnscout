@@ -31,7 +31,7 @@ class DeepSeekTranslator:
                             {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
                         ],
                         response_format={"type": "json_object"},
-                        thinking={"type": "disabled"},
+                        extra_body={"thinking": {"type": "disabled"}},
                         temperature=0.2,
                     )
                     break
