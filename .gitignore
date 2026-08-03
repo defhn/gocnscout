@@ -48,6 +48,8 @@ prisma/dev.db-journal
 # Python tooling
 __pycache__/
 *.py[cod]
+.venv/
+tools/video_translator/.venv/
 
 # system
 .DS_Store

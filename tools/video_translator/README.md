@@ -18,16 +18,14 @@ Windows 命令行工具，支持单文件和批量目录：
 
 ```powershell
 cd tools/video_translator
-py -3.11 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
+# 推荐使用短路径，避免 PyTorch 在 Windows 上触发 WinError 206
+powershell -ExecutionPolicy Bypass -File .\install_windows.ps1
+& C:\vtvenv\Scripts\Activate.ps1
 # 先安装与你驱动匹配的 CUDA 版 PyTorch，示例：
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
-pip install -r requirements.txt
 copy .env.example .env
 ```
 
-WhisperX 首次运行会下载模型。CosyVoice 和 Wav2Lip 需要你提供自己的服务地址/模型文件；脚本不会把声音克隆 ID 或 API Key 写入代码。
+`install_windows.ps1` 会安装 CUDA PyTorch、WhisperX small 模型、Wav2Lip 仓库和 GAN checkpoint。CosyVoice 仍使用你提供的远程服务地址/声音克隆 ID；脚本不会把声音克隆 ID 或 API Key 写入代码。
 
 ## 配置
 
