@@ -82,12 +82,12 @@ export default async function HtmlSitemapPage() {
     {
       question: "Does this HTML sitemap list every supplier profile?",
       answer:
-        "No. The HTML sitemap focuses on human-readable discovery paths. The XML sitemap lists indexable supplier, industry, city, and report URLs for search engines.",
+        "No. Supplier detail pages remain available through the on-site database, while the XML sitemap focuses on industry, product, city, report, and editorial discovery pages.",
     },
     {
       question: "Can search engines crawl gocnscout pages?",
       answer:
-        "Yes. Public pages, industry pages, city pages, supplier profiles, reports, policy pages, llms.txt, and pricing.md are crawlable. Private app, admin, API, and filtered database query URLs are restricted.",
+        "Yes. Public directory, industry, city, report, editorial, and policy pages are crawlable. Supplier detail pages and private app, admin, API, and filtered database query URLs are restricted.",
     },
   ];
 

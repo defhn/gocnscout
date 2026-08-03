@@ -43,6 +43,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: `${supplier.exhibitorName} Supplier Profile and Verification Notes`,
     description: `${supplier.exhibitorName} public supplier profile: industry, location, product keywords, company type, website status, verification checklist, and similar China suppliers.`,
     path: `/suppliers/${slug}`,
+    noindex: true,
   });
 }
 

@@ -5,11 +5,10 @@ import { absoluteUrl } from "@/lib/utils";
 export const revalidate = 604800;
 
 async function getSitemapData() {
-  const [industries, products, cities, suppliers, reports, blogPosts] = await Promise.all([
+  const [industries, products, cities, reports, blogPosts] = await Promise.all([
     prisma.industryPage.findMany({ where: { isIndexable: true }, select: { slug: true, updatedAt: true } }).catch(() => []),
     prisma.productKeywordPage.findMany({ where: { isIndexable: true }, select: { slug: true, updatedAt: true } }).catch(() => []),
     prisma.cityPage.findMany({ where: { isIndexable: true }, select: { slug: true, city: true, updatedAt: true } }).catch(() => []),
-    prisma.supplier.findMany({ where: { isPublished: true }, select: { slug: true, updatedAt: true }, take: 50000 }).catch(() => []),
     prisma.report.findMany({ where: { status: "PUBLISHED" }, select: { slug: true, updatedAt: true } }).catch(() => []),
     prisma.blogPost.findMany({ where: { status: "PUBLISHED" }, select: { slug: true, updatedAt: true } }).catch(() => []),
   ]);
@@ -23,7 +22,7 @@ async function getSitemapData() {
     },
   }).catch(() => []) : [];
 
-  return { industries, products, cities, suppliers, reports, blogPosts, cityIndustryGroups };
+  return { industries, products, cities, reports, blogPosts, cityIndustryGroups };
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -49,7 +48,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/legal/refund-policy",
     "/legal/acceptable-use",
   ];
-  const { industries, products, cities, suppliers, reports, blogPosts, cityIndustryGroups } = await getSitemapData();
+  const { industries, products, cities, reports, blogPosts, cityIndustryGroups } = await getSitemapData();
 
   const cityIndustryRoutes: { url: string; lastModified?: Date }[] = [];
   for (const item of cityIndustryGroups) {
@@ -68,7 +67,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...products.map((item) => ({ url: absoluteUrl(`/products/${item.slug}`), lastModified: item.updatedAt })),
     ...cities.map((item) => ({ url: absoluteUrl(`/cities/${item.slug}`), lastModified: item.updatedAt })),
     ...cityIndustryRoutes,
-    ...suppliers.map((item) => ({ url: absoluteUrl(`/suppliers/${item.slug}`), lastModified: item.updatedAt })),
     ...reports.map((item) => ({ url: absoluteUrl(`/reports/${item.slug}`), lastModified: item.updatedAt })),
     ...blogPosts.map((item) => ({ url: absoluteUrl(`/blog/${item.slug}`), lastModified: item.updatedAt })),
   ];
