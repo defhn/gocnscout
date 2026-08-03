@@ -4,7 +4,9 @@ import { FaqSection } from "@/components/marketing/faq-section";
 import { ButtonLink } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { createMetadata, faqJsonLd } from "@/config/seo";
-import { getHomeStats } from "@/server/suppliers";
+import { getHomeStatsCached } from "@/server/suppliers";
+
+export const revalidate = 604800;
 
 export const metadata = createMetadata({
   title: "China Exporter Database for Manufacturer Research",
@@ -13,7 +15,7 @@ export const metadata = createMetadata({
 });
 
 export default async function ChinaExporterDatabasePage() {
-  const stats = await getHomeStats().catch(() => ({ supplierCount: 0, industryCount: 0, provinceCount: 0, reportsCount: 0 }));
+  const stats = await getHomeStatsCached().catch(() => ({ supplierCount: 0, industryCount: 0, provinceCount: 0, reportsCount: 0 }));
 
   const faqs = [
     {

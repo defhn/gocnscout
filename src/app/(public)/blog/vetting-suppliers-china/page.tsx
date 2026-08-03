@@ -3,9 +3,9 @@ import { ArrowRight, BookOpen, CheckCircle, Clock, ShieldCheck } from "lucide-re
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { createMetadata } from "@/config/seo";
 import { absoluteUrl } from "@/lib/utils";
-import { prisma } from "@/lib/db";
+import { listVettingSeriesPostsCached } from "@/server/public-blog";
 
-export const revalidate = 3600;
+export const revalidate = 604800;
 
 export const metadata = createMetadata({
   title: "Vetting Suppliers from China: The Complete Step-by-Step Guide",
@@ -107,13 +107,7 @@ const PLANNED_SERIES = [
 
 export default async function VettingSuppliersChinaPage() {
   // Pull published articles from this series by tag
-  const publishedPosts = await prisma.blogPost
-    .findMany({
-      where: { status: "PUBLISHED", tags: { hasSome: ["vetting-series", "supplier-vetting"] } },
-      orderBy: { publishedAt: "asc" },
-      select: { slug: true, title: true, excerpt: true, publishedAt: true },
-    })
-    .catch(() => []);
+  const publishedPosts = await listVettingSeriesPostsCached().catch(() => []);
 
   // Merge: use DB data for published posts, fall back to planned list
   const publishedSlugs = new Set(publishedPosts.map((p) => p.slug));

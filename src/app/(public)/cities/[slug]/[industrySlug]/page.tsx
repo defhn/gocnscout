@@ -1,17 +1,20 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { unstable_cache } from "next/cache";
 import { MapPin, ArrowRight, Globe, Users, HelpCircle, CheckCircle2, Calendar } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { createMetadata } from "@/config/seo";
-import { searchSuppliers } from "@/server/suppliers";
+import { searchSuppliersCached } from "@/server/suppliers";
 import { prisma } from "@/lib/db";
+
+export const revalidate = 604800;
 
 interface Params {
   slug: string;
   industrySlug: string;
 }
 
-async function getCityIndustryData(citySlug: string, industrySlug: string) {
+const getCityIndustryData = unstable_cache(async (citySlug: string, industrySlug: string) => {
   const city = await prisma.cityPage.findUnique({ where: { slug: citySlug } });
   if (!city) return null;
 
@@ -32,7 +35,7 @@ async function getCityIndustryData(citySlug: string, industrySlug: string) {
     industryNameCn = sampleSupplier.industryNameCn || "";
   }
 
-  const suppliers = await searchSuppliers({
+  const suppliers = await searchSuppliersCached({
     province: city.province,
     city: city.city,
     industry: industryName,
@@ -40,7 +43,10 @@ async function getCityIndustryData(citySlug: string, industrySlug: string) {
   });
 
   return { city, industryName, industryNameCn, suppliers, industrySlug };
-}
+}, ["public-city-industry-page-v1"], {
+  revalidate: 604800,
+  tags: ["public-suppliers", "public-directories"],
+});
 
 export async function generateMetadata({ params }: { params: Promise<Params> }) {
   const { slug, industrySlug } = await params;

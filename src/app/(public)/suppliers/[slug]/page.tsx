@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { unstable_cache } from "next/cache";
 import Link from "next/link";
 import {
   AlertTriangle,
@@ -22,7 +23,7 @@ import { getExhibitionTierLabel } from "@/config/field-policy";
 import { canViewStarterFields, canViewProFields, getPlan, type AppPlanCode } from "@/config/plans";
 import { getManualReviewPackage } from "@/config/manual-review";
 import { getCurrentAppUser } from "@/server/auth";
-import { getSimilarSuppliers, getSupplierBySlug } from "@/server/suppliers";
+import { getSimilarSuppliersCached, getSupplierBySlugCached } from "@/server/suppliers";
 import { prisma } from "@/lib/db";
 import { formatUsd, monthKey, truncate } from "@/lib/utils";
 import { canViewSupplierProfile } from "@/server/quota";
@@ -30,7 +31,7 @@ import { PlanCode } from "@/generated/prisma/enums";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const supplier = await getSupplierBySlug(slug).catch(() => null);
+  const supplier = await getSupplierBySlugCached(slug).catch(() => null);
   if (!supplier) {
     return createMetadata({
       title: "Supplier Profile Not Found",
@@ -63,11 +64,20 @@ const TIER_ICONS: Record<string, string> = {
 const identityPackage = getManualReviewPackage("IDENTITY_SINGLE");
 const decisionPackage = getManualReviewPackage("DECISION_SINGLE");
 
+const getCityPageSlugCached = unstable_cache(
+  async (province: string, city: string) => prisma.cityPage.findUnique({
+    where: { province_city: { province, city } },
+    select: { slug: true },
+  }),
+  ["public-city-slug-by-location-v1"],
+  { revalidate: 604800, tags: ["public-directories"] },
+);
+
 export default async function SupplierPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
   const [supplier, appUser] = await Promise.all([
-    getSupplierBySlug(slug).catch(() => null),
+    getSupplierBySlugCached(slug).catch(() => null),
     getCurrentAppUser().catch(() => null),
   ]);
 
@@ -75,12 +85,9 @@ export default async function SupplierPage({ params }: { params: Promise<{ slug:
 
   const [cityPage, similarSuppliers] = await Promise.all([
     supplier.city && supplier.province
-      ? prisma.cityPage.findUnique({
-          where: { province_city: { province: supplier.province, city: supplier.city } },
-          select: { slug: true },
-        })
+      ? getCityPageSlugCached(supplier.province, supplier.city)
       : Promise.resolve(null),
-    getSimilarSuppliers(supplier, 6),
+    getSimilarSuppliersCached(supplier, 6),
   ]);
   const cityPageSlug = cityPage?.slug || "";
 

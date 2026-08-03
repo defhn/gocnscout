@@ -12,7 +12,15 @@ function createPrismaClient() {
   // to prevent 'DATABASE_URL is required' crash during Next.js static compile scanning.
   const activeString = connectionString || "postgresql://dummy_user:dummy_pass@localhost:5432/dummy_db?sslmode=require";
 
-  const adapter = new PrismaPg({ connectionString: activeString });
+  const adapter = new PrismaPg({
+    connectionString: activeString,
+    // Keep each serverless instance small and release idle clients quickly so
+    // pooled connections do not linger after a burst of public traffic.
+    max: 2,
+    idleTimeoutMillis: 10_000,
+    connectionTimeoutMillis: 10_000,
+    allowExitOnIdle: true,
+  });
   return new PrismaClient({ adapter });
 }
 

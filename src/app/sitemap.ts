@@ -2,6 +2,30 @@ import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/db";
 import { absoluteUrl } from "@/lib/utils";
 
+export const revalidate = 604800;
+
+async function getSitemapData() {
+  const [industries, products, cities, suppliers, reports, blogPosts] = await Promise.all([
+    prisma.industryPage.findMany({ where: { isIndexable: true }, select: { slug: true, updatedAt: true } }).catch(() => []),
+    prisma.productKeywordPage.findMany({ where: { isIndexable: true }, select: { slug: true, updatedAt: true } }).catch(() => []),
+    prisma.cityPage.findMany({ where: { isIndexable: true }, select: { slug: true, city: true, updatedAt: true } }).catch(() => []),
+    prisma.supplier.findMany({ where: { isPublished: true }, select: { slug: true, updatedAt: true }, take: 50000 }).catch(() => []),
+    prisma.report.findMany({ where: { status: "PUBLISHED" }, select: { slug: true, updatedAt: true } }).catch(() => []),
+    prisma.blogPost.findMany({ where: { status: "PUBLISHED" }, select: { slug: true, updatedAt: true } }).catch(() => []),
+  ]);
+
+  const cityIndustryGroups = cities.length > 0 ? await prisma.supplier.groupBy({
+    by: ["city", "industrySlug"],
+    where: {
+      isPublished: true,
+      city: { in: cities.map((city) => city.city) },
+      industrySlug: { not: null },
+    },
+  }).catch(() => []) : [];
+
+  return { industries, products, cities, suppliers, reports, blogPosts, cityIndustryGroups };
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     "",
@@ -25,38 +49,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/legal/refund-policy",
     "/legal/acceptable-use",
   ];
-  const [industries, products, cities, suppliers, reports, blogPosts] = await Promise.all([
-    prisma.industryPage.findMany({ where: { isIndexable: true }, select: { slug: true, updatedAt: true } }).catch(() => []),
-    prisma.productKeywordPage.findMany({ where: { isIndexable: true }, select: { slug: true, updatedAt: true } }).catch(() => []),
-    prisma.cityPage.findMany({ where: { isIndexable: true }, select: { slug: true, city: true, updatedAt: true } }).catch(() => []),
-    prisma.supplier.findMany({ where: { isPublished: true }, select: { slug: true, updatedAt: true }, take: 50000 }).catch(() => []),
-    prisma.report.findMany({ where: { status: "PUBLISHED" }, select: { slug: true, updatedAt: true } }).catch(() => []),
-    prisma.blogPost.findMany({ where: { status: "PUBLISHED" }, select: { slug: true, updatedAt: true } }).catch(() => []),
-  ]);
-
-  // 查询这 56 个可索引城市拥有的二级行业分类，进行 sitemap 关联生成
-  const cityIndustryGroups = cities.length > 0 ? await prisma.supplier.groupBy({
-    by: ["city", "industrySlug"],
-    where: {
-      isPublished: true,
-      city: { in: cities.map(c => c.city) },
-      industrySlug: { not: null }
-    }
-  }).catch(() => []) : [];
+  const { industries, products, cities, suppliers, reports, blogPosts, cityIndustryGroups } = await getSitemapData();
 
   const cityIndustryRoutes: { url: string; lastModified?: Date }[] = [];
   for (const item of cityIndustryGroups) {
-    const matchedCity = cities.find(c => c.city === item.city);
+    const matchedCity = cities.find((city) => city.city === item.city);
     if (matchedCity && item.industrySlug) {
       cityIndustryRoutes.push({
         url: absoluteUrl(`/cities/${matchedCity.slug}/${item.industrySlug}`),
-        lastModified: matchedCity.updatedAt || undefined
+        lastModified: matchedCity.updatedAt || undefined,
       });
     }
   }
 
   return [
-    ...staticRoutes.map((route) => ({ url: absoluteUrl(route || "/"), lastModified: new Date() })),
+    ...staticRoutes.map((route) => ({ url: absoluteUrl(route || "/") })),
     ...industries.map((item) => ({ url: absoluteUrl(`/industries/${item.slug}`), lastModified: item.updatedAt })),
     ...products.map((item) => ({ url: absoluteUrl(`/products/${item.slug}`), lastModified: item.updatedAt })),
     ...cities.map((item) => ({ url: absoluteUrl(`/cities/${item.slug}`), lastModified: item.updatedAt })),

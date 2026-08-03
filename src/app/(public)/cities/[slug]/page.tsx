@@ -6,11 +6,13 @@ import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { Card, CardContent } from "@/components/ui/card";
 import { mediaAssets } from "@/config/media";
 import { createMetadata } from "@/config/seo";
-import { getCityPage } from "@/server/suppliers";
+import { getCityPageCached } from "@/server/suppliers";
+
+export const revalidate = 604800;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const data = await getCityPage(slug).catch(() => null);
+  const data = await getCityPageCached(slug).catch(() => null);
   if (!data) {
     return createMetadata({
       title: "China Manufacturing City Database",
@@ -31,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CityPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const data = await getCityPage(slug).catch(() => null);
+  const data = await getCityPageCached(slug).catch(() => null);
   if (!data) notFound();
 
   const {

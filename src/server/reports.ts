@@ -1,4 +1,7 @@
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/db";
+
+const PUBLIC_CONTENT_CACHE_SECONDS = 60 * 60 * 24 * 7;
 
 export async function listPublishedReports() {
   return prisma.report.findMany({
@@ -19,3 +22,15 @@ export async function userOwnsReport(userId: string, reportId: string) {
   });
   return Boolean(purchase);
 }
+
+export const listPublishedReportsCached = unstable_cache(
+  listPublishedReports,
+  ["public-report-list-v1"],
+  { revalidate: PUBLIC_CONTENT_CACHE_SECONDS, tags: ["public-reports"] },
+);
+
+export const getPublishedReportCached = unstable_cache(
+  getPublishedReport,
+  ["public-report-by-slug-v1"],
+  { revalidate: PUBLIC_CONTENT_CACHE_SECONDS, tags: ["public-reports"] },
+);

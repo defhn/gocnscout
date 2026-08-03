@@ -7,8 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { STRIPE_CATALOG } from "@/config/pricing";
 import { createMetadata } from "@/config/seo";
 import { formatUsd } from "@/lib/utils";
-import { listPublishedReports } from "@/server/reports";
+import { listPublishedReportsCached } from "@/server/reports";
 import { ReportsList } from "@/components/reports/reports-list";
+
+export const revalidate = 604800;
 
 export const metadata = createMetadata({
   title: "China Sourcing Reports and Supplier Due Diligence PDFs",
@@ -17,7 +19,7 @@ export const metadata = createMetadata({
 });
 
 export default async function ReportsPage() {
-  const reports = await listPublishedReports().catch(() => []);
+  const reports = await listPublishedReportsCached().catch(() => []);
   const hasRealData = reports.length > 0;
 
   return (

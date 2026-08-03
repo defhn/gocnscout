@@ -3,14 +3,14 @@ import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createMetadata } from "@/config/seo";
 import { formatUsd } from "@/lib/utils";
-import { getPublishedReport, userOwnsReport } from "@/server/reports";
+import { getPublishedReportCached, userOwnsReport } from "@/server/reports";
 import { getCurrentAppUser } from "@/server/auth";
 import { CheckCircle2, ShieldCheck, Lock, Clock, FileText, Check, AlertCircle, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const report = await getPublishedReport(slug).catch(() => null);
+  const report = await getPublishedReportCached(slug).catch(() => null);
   if (!report) {
     return createMetadata({
       title: "China Supplier Industry Report",
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ReportPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const report = await getPublishedReport(slug).catch(() => null);
+  const report = await getPublishedReportCached(slug).catch(() => null);
   if (!report) notFound();
 
   const user = await getCurrentAppUser();

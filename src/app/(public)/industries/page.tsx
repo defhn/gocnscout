@@ -4,7 +4,9 @@ import { FaqSection } from "@/components/marketing/faq-section";
 import { Card, CardContent } from "@/components/ui/card";
 import { getIndustryVisualAsset } from "@/config/media";
 import { createMetadata } from "@/config/seo";
-import { listIndustryPages } from "@/server/suppliers";
+import { listIndustryPagesCached } from "@/server/suppliers";
+
+export const revalidate = 604800;
 import { ButtonLink } from "@/components/ui/button";
 
 export const metadata = createMetadata({
@@ -126,7 +128,7 @@ const STANDARDIZED_INDUSTRIES = [
 ];
 
 export default async function IndustriesPage() {
-  const industries = await listIndustryPages().catch(() => []);
+  const industries = await listIndustryPagesCached().catch(() => []);
 
   // Format real db industries into standard items if they exist
   const hasRealData = industries.length > 0;

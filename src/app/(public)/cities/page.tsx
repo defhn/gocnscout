@@ -6,7 +6,9 @@ import { FaqSection } from "@/components/marketing/faq-section";
 import { Card } from "@/components/ui/card";
 import { getIndustryVisualAsset, mediaAssets } from "@/config/media";
 import { createMetadata } from "@/config/seo";
-import { listCityPages } from "@/server/suppliers";
+import { listCityPagesCached } from "@/server/suppliers";
+
+export const revalidate = 604800;
 import { ButtonLink } from "@/components/ui/button";
 
 export const metadata = createMetadata({
@@ -82,7 +84,7 @@ interface CityPageItem {
 }
 
 export default async function CitiesPage() {
-  const cities = await listCityPages().catch(() => []);
+  const cities = await listCityPagesCached().catch(() => []);
   const hasRealData = cities.length > 0;
 
   return (

@@ -18,9 +18,6 @@ export function BlogInteractions({ slug, title }: { slug: string; title: string 
     });
     const frame = window.requestAnimationFrame(() => { setHeadings(items); update(); });
     window.addEventListener("scroll", update, { passive: true });
-    const source = (new URLSearchParams(window.location.search).get("utm_source") ?? "").toLowerCase();
-    const channel = source.includes("google") || source.includes("bing") ? "search" : source.includes("linkedin") ? "linkedin" : source === "x" || source.includes("twitter") ? "x" : source.includes("youtube") ? "youtube" : "other";
-    void fetch(`/api/blog/${slug}/view`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ source: channel }) }).catch(() => undefined);
     return () => { window.cancelAnimationFrame(frame); window.removeEventListener("scroll", update); };
   }, [slug]);
 

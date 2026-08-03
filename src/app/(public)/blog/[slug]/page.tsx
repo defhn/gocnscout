@@ -5,38 +5,22 @@ import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { BlogContent } from "@/components/blog/blog-content";
 import { BlogInteractions } from "@/components/blog/blog-interactions";
 import { createMetadata, blogPostingJsonLd } from "@/config/seo";
-import { prisma } from "@/lib/db";
 import { isBlogDocument, readingMinutes } from "@/lib/blog/content";
-import { listCityPages, listIndustryPages } from "@/server/suppliers";
+import { listCityPagesCached, listIndustryPagesCached } from "@/server/suppliers";
+import { getPublishedBlogPostCached, getRelatedBlogPostsCached } from "@/server/public-blog";
 
-export const revalidate = 60;
+export const revalidate = 604800;
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
 async function getPost(slug: string) {
-  return prisma.blogPost.findFirst({ where: { slug, status: "PUBLISHED" } }).catch(() => null);
+  return getPublishedBlogPostCached(slug).catch(() => null);
 }
 
 async function getRelatedPosts(slug: string, category?: string | null, tags: string[] = []) {
-  const signals = [
-    ...(category ? [{ category }] : []),
-    ...(tags.length ? [{ tags: { hasSome: tags } }] : []),
-  ];
-
-  return prisma.blogPost
-    .findMany({
-      where: {
-        slug: { not: slug },
-        status: "PUBLISHED",
-        ...(signals.length ? { OR: signals } : {}),
-      },
-      orderBy: { publishedAt: "desc" },
-      take: 3,
-      select: { slug: true, title: true, excerpt: true, category: true },
-    })
-    .catch(() => []);
+  return getRelatedBlogPostsCached(slug, category, tags).catch(() => []);
 }
 
 export async function generateMetadata({ params }: Props) {
@@ -67,8 +51,8 @@ export default async function BlogPostPage({ params }: Props) {
   const dbDocument = isBlogDocument(post.content) ? post.content : null;
   const [related, cities, industries] = await Promise.all([
     getRelatedPosts(slug, category, tags),
-    listCityPages(8).catch(() => []),
-    listIndustryPages(8).catch(() => []),
+    listCityPagesCached(8).catch(() => []),
+    listIndustryPagesCached(8).catch(() => []),
   ]);
 
   return (

@@ -1,6 +1,11 @@
 import type { Prisma } from "@/generated/prisma/client";
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/db";
 import { slugify } from "@/lib/utils";
+
+// Supplier data changes in batches, not on every request. Keeping public reads in
+// Next's shared data cache prevents crawlers from waking Neon on every page view.
+const PUBLIC_DATA_CACHE_SECONDS = 60 * 60 * 24 * 30;
 
 export type SupplierSearchParams = {
   q?: string;
@@ -549,3 +554,75 @@ export async function getProductPage(slug: string) {
 export function createSupplierSlug(name: string, city?: string | null) {
   return slugify([name, city].filter(Boolean).join(" "));
 }
+
+export const searchSuppliersCached = unstable_cache(
+  searchSuppliers,
+  ["public-supplier-search-v1"],
+  { revalidate: PUBLIC_DATA_CACHE_SECONDS, tags: ["public-suppliers"] },
+);
+
+export const searchSuppliersForDatabaseCached = unstable_cache(
+  searchSuppliersForDatabase,
+  ["public-database-search-v1"],
+  { revalidate: PUBLIC_DATA_CACHE_SECONDS, tags: ["public-suppliers"] },
+);
+
+export const getSupplierBySlugCached = unstable_cache(
+  getSupplierBySlug,
+  ["public-supplier-by-slug-v1"],
+  { revalidate: PUBLIC_DATA_CACHE_SECONDS, tags: ["public-suppliers"] },
+);
+
+export const getSimilarSuppliersCached = unstable_cache(
+  getSimilarSuppliers,
+  ["public-similar-suppliers-v1"],
+  { revalidate: PUBLIC_DATA_CACHE_SECONDS, tags: ["public-suppliers"] },
+);
+
+export const getDatabaseFacetsCached = unstable_cache(
+  getDatabaseFacets,
+  ["public-database-facets-v1"],
+  { revalidate: PUBLIC_DATA_CACHE_SECONDS, tags: ["public-suppliers"] },
+);
+
+export const getHomeStatsCached = unstable_cache(
+  getHomeStats,
+  ["public-home-stats-v1"],
+  { revalidate: PUBLIC_DATA_CACHE_SECONDS, tags: ["public-suppliers"] },
+);
+
+export const listIndustryPagesCached = unstable_cache(
+  listIndustryPages,
+  ["public-industry-list-v1"],
+  { revalidate: PUBLIC_DATA_CACHE_SECONDS, tags: ["public-directories"] },
+);
+
+export const listProductPagesCached = unstable_cache(
+  listProductPages,
+  ["public-product-list-v1"],
+  { revalidate: PUBLIC_DATA_CACHE_SECONDS, tags: ["public-directories"] },
+);
+
+export const listCityPagesCached = unstable_cache(
+  listCityPages,
+  ["public-city-list-v1"],
+  { revalidate: PUBLIC_DATA_CACHE_SECONDS, tags: ["public-directories"] },
+);
+
+export const getIndustryPageCached = unstable_cache(
+  getIndustryPage,
+  ["public-industry-page-v1"],
+  { revalidate: PUBLIC_DATA_CACHE_SECONDS, tags: ["public-suppliers", "public-directories"] },
+);
+
+export const getCityPageCached = unstable_cache(
+  getCityPage,
+  ["public-city-page-v1"],
+  { revalidate: PUBLIC_DATA_CACHE_SECONDS, tags: ["public-suppliers", "public-directories"] },
+);
+
+export const getProductPageCached = unstable_cache(
+  getProductPage,
+  ["public-product-page-v1"],
+  { revalidate: PUBLIC_DATA_CACHE_SECONDS, tags: ["public-suppliers", "public-directories"] },
+);

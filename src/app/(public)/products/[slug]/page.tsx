@@ -2,11 +2,13 @@ import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { Card, CardContent } from "@/components/ui/card";
 import { createMetadata } from "@/config/seo";
-import { getProductPage } from "@/server/suppliers";
+import { getProductPageCached } from "@/server/suppliers";
+
+export const revalidate = 604800;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const data = await getProductPage(slug).catch(() => null);
+  const data = await getProductPageCached(slug).catch(() => null);
   if (!data) {
     return createMetadata({
       title: "China Product Supplier Database",
@@ -27,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const data = await getProductPage(slug).catch(() => null);
+  const data = await getProductPageCached(slug).catch(() => null);
   if (!data) notFound();
 
   return (

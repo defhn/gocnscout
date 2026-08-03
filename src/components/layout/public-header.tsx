@@ -1,15 +1,9 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
-import { UserButton } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs/server";
 import { ChevronDown, ShieldCheck, Sparkles, Layers, FileText, Mail, ShieldAlert, Database } from "lucide-react";
-import { ButtonLink } from "@/components/ui/button";
+import { PublicAuthActions } from "@/components/layout/public-auth-actions";
 
-export async function PublicHeader() {
-  const clerkEnabled = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
-  const userId = clerkEnabled ? (await auth()).userId : null;
-  const isSignedIn = Boolean(userId);
-
+export function PublicHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-md">
       <div className="mx-auto flex h-16 w-full max-w-[1440px] items-center justify-between gap-4 px-4 lg:px-6">
@@ -71,29 +65,7 @@ export async function PublicHeader() {
         </nav>
 
         {/* Right side CTA Button Panel */}
-        <div className="flex shrink-0 items-center gap-2">
-          {!isSignedIn ? (
-            <>
-              <ButtonLink href="/sign-in" variant="ghost" className="font-semibold">
-                Sign In
-              </ButtonLink>
-              <ButtonLink href="/sign-up" variant="teal" className="font-semibold">
-                Register
-              </ButtonLink>
-            </>
-          ) : (
-            <>
-              <ButtonLink
-                href="/app"
-                variant="outline"
-                className="border-teal-200 bg-teal-50 !text-teal-800 hover:border-teal-300 hover:bg-teal-100 font-semibold"
-              >
-                Dashboard
-              </ButtonLink>
-              <UserButton />
-            </>
-          )}
-        </div>
+        <PublicAuthActions />
       </div>
     </header>
   );

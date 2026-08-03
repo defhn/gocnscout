@@ -4,7 +4,9 @@ import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { FaqSection } from "@/components/marketing/faq-section";
 import { Card, CardContent } from "@/components/ui/card";
 import { createMetadata } from "@/config/seo";
-import { listProductPages } from "@/server/suppliers";
+import { listProductPagesCached } from "@/server/suppliers";
+
+export const revalidate = 604800;
 import { ButtonLink } from "@/components/ui/button";
 
 export const metadata = createMetadata({
@@ -60,7 +62,7 @@ const HOT_KEYWORDS = [
 ];
 
 export default async function ProductsPage() {
-  const products = await listProductPages().catch(() => []);
+  const products = await listProductPagesCached().catch(() => []);
   const hasRealData = products.length > 0;
 
   return (

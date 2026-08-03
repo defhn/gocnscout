@@ -1,9 +1,12 @@
 import Link from "next/link";
+import { unstable_cache } from "next/cache";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { Card, CardContent } from "@/components/ui/card";
 import { createMetadata, datasetJsonLd, faqJsonLd } from "@/config/seo";
 import { absoluteUrl } from "@/lib/utils";
 import { prisma } from "@/lib/db";
+
+export const revalidate = 604800;
 
 export const metadata = createMetadata({
   title: "HTML Sitemap for gocnscout",
@@ -47,33 +50,33 @@ const machineReadablePages = [
   { href: "/pricing.md", label: "Machine-readable pricing" },
 ];
 
+const getHtmlSitemapDataCached = unstable_cache(
+  async () => Promise.all([
+    prisma.industryPage.findMany({
+      where: { isIndexable: true },
+      orderBy: [{ supplierCount: "desc" }, { industryName: "asc" }],
+      select: { slug: true, industryName: true, supplierCount: true },
+      take: 80,
+    }).catch(() => []),
+    prisma.cityPage.findMany({
+      where: { isIndexable: true },
+      orderBy: [{ supplierCount: "desc" }, { city: "asc" }],
+      select: { slug: true, city: true, province: true, supplierCount: true },
+      take: 80,
+    }).catch(() => []),
+    prisma.report.findMany({
+      where: { status: "PUBLISHED" },
+      orderBy: [{ publishedAt: "desc" }, { title: "asc" }],
+      select: { slug: true, title: true, type: true },
+      take: 40,
+    }).catch(() => []),
+  ]),
+  ["public-html-sitemap-v1"],
+  { revalidate: 604800, tags: ["public-sitemap"] },
+);
+
 export default async function HtmlSitemapPage() {
-  const [industries, cities, reports] = await Promise.all([
-    prisma.industryPage
-      .findMany({
-        where: { isIndexable: true },
-        orderBy: [{ supplierCount: "desc" }, { industryName: "asc" }],
-        select: { slug: true, industryName: true, supplierCount: true },
-        take: 80,
-      })
-      .catch(() => []),
-    prisma.cityPage
-      .findMany({
-        where: { isIndexable: true },
-        orderBy: [{ supplierCount: "desc" }, { city: "asc" }],
-        select: { slug: true, city: true, province: true, supplierCount: true },
-        take: 80,
-      })
-      .catch(() => []),
-    prisma.report
-      .findMany({
-        where: { status: "PUBLISHED" },
-        orderBy: [{ publishedAt: "desc" }, { title: "asc" }],
-        select: { slug: true, title: true, type: true },
-        take: 40,
-      })
-      .catch(() => []),
-  ]);
+  const [industries, cities, reports] = await getHtmlSitemapDataCached();
 
   const faqs = [
     {

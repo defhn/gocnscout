@@ -20,7 +20,7 @@ import { createMetadata } from "@/config/seo";
 import { type AppPlanCode } from "@/config/plans";
 
 import { getCurrentAppUser } from "@/server/auth";
-import { getDatabaseFacets, searchSuppliersForDatabase } from "@/server/suppliers";
+import { getDatabaseFacetsCached, searchSuppliersForDatabaseCached } from "@/server/suppliers";
 import { clampSearchPage, searchPageSize } from "@/server/quota";
 
 export const metadata = createMetadata({
@@ -57,7 +57,7 @@ export default async function DatabasePage({
   const maxLimit = searchPageSize(planCode);
   const pageSize = rawLimit > 0 ? Math.min(rawLimit, maxLimit) : maxLimit;
 
-  const emptyFacets: Awaited<ReturnType<typeof getDatabaseFacets>> = {
+  const emptyFacets: Awaited<ReturnType<typeof getDatabaseFacetsCached>> = {
     industries: [],
     provinces: [],
     cities: [],
@@ -71,11 +71,11 @@ export default async function DatabasePage({
   };
 
   const [results, facets] = await Promise.all([
-    searchSuppliersForDatabase({
+    searchSuppliersForDatabaseCached({
       q, industry, province, city, companyType, companySize, companyNature,
       foundedYear, registeredCapital, tradeMode, page, pageSize,
     }).catch(() => ({ suppliers: [], total: 0, page: 1, pageSize, totalPages: 1 })),
-    getDatabaseFacets().catch(() => emptyFacets),
+    getDatabaseFacetsCached().catch(() => emptyFacets),
   ]);
 
   const activeFilters = [

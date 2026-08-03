@@ -6,12 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaqSection } from "@/components/marketing/faq-section";
 import { createMetadata, organizationJsonLd, websiteSearchJsonLd } from "@/config/seo";
 import { mediaAssets } from "@/config/media";
-import { getHomeStats, listCityPages, listIndustryPages } from "@/server/suppliers";
+import { getHomeStatsCached, listCityPagesCached, listIndustryPagesCached } from "@/server/suppliers";
 import { AnalysisForm } from "@/components/supplier-check/analysis-form";
 import { PricingGrid } from "@/components/pricing/pricing-grid";
 import { PLAN_DEFINITIONS } from "@/config/plans";
 import { MANUAL_REVIEW_PACKAGES } from "@/config/manual-review";
 import { formatUsd } from "@/lib/utils";
+
+export const revalidate = 604800;
 
 export const metadata = createMetadata({
   title: "China Supplier Database for Export Manufacturers",
@@ -29,9 +31,9 @@ const plans = [
 
 export default async function HomePage() {
   const [stats, industries, cities] = await Promise.all([
-    getHomeStats().catch(() => ({ supplierCount: 0, industryCount: 0, provinceCount: 0, reportsCount: 0 })),
-    listIndustryPages(8).catch(() => []),
-    listCityPages(8).catch(() => []),
+    getHomeStatsCached().catch(() => ({ supplierCount: 0, industryCount: 0, provinceCount: 0, reportsCount: 0 })),
+    listIndustryPagesCached(8).catch(() => []),
+    listCityPagesCached(8).catch(() => []),
   ]);
 
   const orgSchema = organizationJsonLd();
