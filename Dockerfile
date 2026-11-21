@@ -7,7 +7,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install pnpm
-RUN npm install -g pnpm
+RUN npm install -g pnpm@10
 
 # Install dependencies
 COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* ./
@@ -18,7 +18,7 @@ RUN pnpm install --frozen-lockfile
 FROM base AS builder
 WORKDIR /app
 ENV NODE_OPTIONS=--max-old-space-size=4096
-RUN npm install -g pnpm
+RUN npm install -g pnpm@10
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
