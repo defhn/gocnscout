@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DISCORD_INVITE_URL } from "@/config/community";
 import { SITE } from "@/config/seo";
 
 export function PublicFooter() {
@@ -22,8 +23,7 @@ export function PublicFooter() {
             <Link href="/industries">Industries</Link>
             <Link href="/products">Products</Link>
             <Link href="/cities">Cities</Link>
-            <Link href="/reports">Reports</Link>
-            <Link href="/pricing">Pricing</Link>
+            <Link href="/pricing">Human Services</Link>
             <Link href="/sitemap">Sitemap</Link>
           </div>
         </div>
@@ -33,7 +33,7 @@ export function PublicFooter() {
             <Link href="/data-license">Data License</Link>
             <Link href="/custom-shortlist">Custom Shortlist</Link>
             <Link href="/china-exporter-database">China Exporter Database</Link>
-            <Link href="/exhibitor-intelligence-report">Exhibitor Report</Link>
+            <a href={DISCORD_INVITE_URL} target="_blank" rel="noopener noreferrer">Join Discord</a>
           </div>
         </div>
         <div>

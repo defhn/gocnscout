@@ -345,7 +345,6 @@ export async function getHomeStats() {
     supplierCount,
     industryCount: industryCount.length,
     provinceCount: 34,
-    reportsCount: industryCount.length * 4,
   };
 }
 

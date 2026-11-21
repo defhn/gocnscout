@@ -15,7 +15,7 @@ export const metadata = createMetadata({
 });
 
 export default async function ChinaExporterDatabasePage() {
-  const stats = await getHomeStatsCached().catch(() => ({ supplierCount: 0, industryCount: 0, provinceCount: 0, reportsCount: 0 }));
+  const stats = await getHomeStatsCached().catch(() => ({ supplierCount: 0, industryCount: 0, provinceCount: 0 }));
 
   const faqs = [
     {
@@ -56,17 +56,16 @@ export default async function ChinaExporterDatabasePage() {
             China Exporter Database
           </h1>
           <p className="mt-4 text-base md:text-lg leading-relaxed text-slate-600">
-            A structured directory mapping verified manufacturers, exporter networks, and production clusters. 
+            A structured directory mapping listed manufacturers, exporter networks, and production clusters. 
             Designed specifically for professional buyers looking to build qualified sourcing pipelines.
           </p>
         </div>
 
         {/* Live Metrics */}
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Metric title="Active Suppliers Listed" value={stats.supplierCount || 120531} />
-          <Metric title="Sourcing Categories" value={stats.industryCount || 48} />
-          <Metric title="Regional Clusters Mapped" value={stats.provinceCount || 26} />
-          <Metric title="PDF Intel Reports" value={stats.reportsCount || 12} />
+        <div className="mt-6 grid gap-4 sm:grid-cols-3">
+          <Metric title="Exhibitor Records Listed" value={stats.supplierCount || 20291} />
+          <Metric title="Sourcing Categories" value={stats.industryCount || 54} />
+          <Metric title="Regional Clusters Mapped" value={stats.provinceCount || 34} />
         </div>
 
         {/* Two-Column Search Options & Boundaries */}

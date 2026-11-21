@@ -1,4 +1,4 @@
-import type { BillingInterval, ReportType } from "@/generated/prisma/enums";
+import type { BillingInterval } from "@/generated/prisma/enums";
 
 export const STRIPE_CATALOG = {
   subscriptions: {
@@ -19,23 +19,10 @@ export const STRIPE_CATALOG = {
       year: { name: "gocnscout Team Annual", amountUsdCents: 479000 },
     },
   },
-  reports: {
-    BASIC: { name: "Basic Industry PDF Report", amountUsdCents: 4900 },
-    FULL: { name: "Full Industry PDF Report", amountUsdCents: 9900 },
-    PREMIUM: { name: "Premium Industry PDF Report", amountUsdCents: 29900 },
-    CANTON_FAIR_INTELLIGENCE: {
-      name: "China Sourcing Intelligence Report",
-      amountUsdCents: 14900,
-    },
-  },
   customShortlist: { name: "Custom Supplier Shortlist", amountUsdCents: 39900 },
   dataLicenseAnnualUsdCents: 600000,
 } as const;
 
 export function getSubscriptionPrice(planCode: "STARTER" | "GROWTH" | "PRO" | "TEAM", interval: BillingInterval) {
   return STRIPE_CATALOG.subscriptions[planCode][interval === "YEAR" ? "year" : "month"];
-}
-
-export function getReportPrice(type: ReportType) {
-  return STRIPE_CATALOG.reports[type];
 }

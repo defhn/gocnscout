@@ -14,6 +14,17 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    // Legacy URLs are permanently redirected to generic pages. These source paths are
+    // only used to catch old links and are never rendered or linked anywhere on the site.
+    return [
+      { source: "/canton-fair-exhibitor-database", destination: "/china-exporter-database", permanent: true },
+      { source: "/canton-fair-exhibitor-intelligence-report", destination: "/industries", permanent: true },
+      { source: "/exhibitor-intelligence-report", destination: "/industries", permanent: true },
+      { source: "/reports", destination: "/industries", permanent: true },
+      { source: "/reports/:path*", destination: "/industries", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

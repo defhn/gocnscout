@@ -9,3 +9,12 @@ customs_exportGoods.html
 customs_exportGoods.png
 page.html
 tmp
+.env
+.env.*
+.import-state
+private-backups
+output
+tools
+seo-blog
+seo-reports
+docs

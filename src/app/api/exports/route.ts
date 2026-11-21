@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { requireAppUser } from "@/server/auth";
+import { requireAdminUser } from "@/server/auth";
 import { createSupplierExport } from "@/server/exports";
 
 const schema = z.object({
@@ -17,8 +17,9 @@ const schema = z.object({
   requestedCount: z.coerce.number().int().min(1).max(8000),
 });
 
+// CSV 导出不再对普通访客开放,仅管理员可为人工服务(定制名单/数据授权)生成文件。
 export async function POST(request: Request) {
-  const user = await requireAppUser();
+  const { user } = await requireAdminUser();
   const body = await request.json();
   const parsed = schema.parse(body);
   const { requestedCount, ...filters } = parsed;

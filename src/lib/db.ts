@@ -14,12 +14,11 @@ function createPrismaClient() {
 
   const adapter = new PrismaPg({
     connectionString: activeString,
-    // Keep each serverless instance small and release idle clients quickly so
-    // pooled connections do not linger after a burst of public traffic.
-    max: 2,
-    idleTimeoutMillis: 10_000,
+    // Self-hosted PostgreSQL on the same server: a modest persistent pool is
+    // cheaper than reconnecting on every request now that search is public.
+    max: Number(process.env.DATABASE_POOL_MAX || 10),
+    idleTimeoutMillis: 30_000,
     connectionTimeoutMillis: 10_000,
-    allowExitOnIdle: true,
   });
   return new PrismaClient({ adapter });
 }

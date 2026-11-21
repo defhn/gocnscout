@@ -256,7 +256,7 @@ export default async function BlogPostPage({ params }: Props) {
             {/* 1. Deep Supplier Database */}
             <div className="rounded-xl bg-slate-950 p-5 text-white shadow-sm border border-slate-800">
               <h2 className="font-bold text-sm">Deep Supplier Database</h2>
-              <p className="mt-2 text-xs leading-5 text-slate-300">Filter verified manufacturers by regional clusters, trade mode, company scale, and official website domain availability.</p>
+              <p className="mt-2 text-xs leading-5 text-slate-300">Filter listed manufacturers by regional clusters, trade mode, company scale, and official website domain availability.</p>
               <Link href="/database" className="mt-4 inline-flex w-full justify-center rounded-lg bg-teal-500 px-3 py-2 text-xs font-bold !text-slate-950 hover:bg-teal-400 transition-colors">
                 Search Database
               </Link>

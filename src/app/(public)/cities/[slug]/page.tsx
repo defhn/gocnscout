@@ -179,7 +179,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
           
           {/* H1: 重点词强化 */}
           <h1 className="text-3xl md:text-4xl font-extrabold text-slate-950 tracking-tight">
-            {cityEn} Exporters Database: Verified Manufacturers &amp; Suppliers
+            {cityEn} Exporters Database: Manufacturers &amp; Suppliers
           </h1>
           <p className="mt-4 text-base leading-relaxed text-slate-600 max-w-4xl">
             Access verified database records of active export factories in {cityEn}. Optimize your sourcing strategies by locating regional supplier clusters, checking registered capital parameters, and filtering target products.

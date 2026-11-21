@@ -4,7 +4,7 @@ import { createMetadata, SITE } from "@/config/seo";
 
 export const metadata = createMetadata({
   title: "Refund Policy",
-  description: "Review refund rules for gocnscout subscriptions, one-time industry PDF reports, custom supplier shortlists, and annual data licenses.",
+  description: "Review refund rules for gocnscout human supplier reviews, custom supplier shortlists, data licenses, and legacy subscriptions.",
   path: "/legal/refund-policy",
 });
 
@@ -13,34 +13,47 @@ export default function RefundPolicyPage() {
     <>
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Legal", href: "/legal/terms" }, { label: "Refund Policy" }]} />
       <LegalLayout title="Refund Policy" activePath="/legal/refund-policy">
-        <h2>1. Overview of Digital Assets</h2>
+        <h2>1. Overview</h2>
         <p>
-          gocnscout provides digital services, downloadable CSV exports, custom shortlist research, and digital PDF whitepapers. Because digital assets are accessible immediately upon delivery, we implement strict guidelines to prevent platform exploitation.
+          The company database, industry reports and Discord community are free and involve no payment. This policy covers paid
+          human services: supplier identity checks, buyer decision reviews, custom supplier shortlists and data licenses.
         </p>
 
-        <h2>2. Database Subscriptions</h2>
-        <h3>2.1 Self-Service Cancellation</h3>
+        <h2>2. Scope Is Confirmed Before Payment</h2>
         <p>
-          Subscribers can terminate their Starter, Pro, or Team monthly plans anytime via their Stripe-powered billing dashboard. Cancellation stops subsequent billing auto-renewals. Access to advanced queries and export allowances remains valid until the current billing cycle expires.
-        </p>
-        <h3>2.2 Subscription Refund Audits</h3>
-        <p>
-          If you encounter unexpected technical errors or billing discrepancies, refund requests can be directed to support. We review account logs prior to issuing refunds. Accounts that have initiated CSV data exports, downloaded reports, or viewed multiple profile details are ineligible for subscription refunds.
+          We confirm what will be checked, what cannot be checked, the price and the timeline with you before sending a payment
+          link. Please review that confirmation carefully before you pay.
         </p>
 
-        <h2>3. Standalone PDF Reports and Custom Shortlists</h2>
-        <h3>3.1 PDF Market Analysis Reports</h3>
+        <h2>3. Human Reviews and Shortlists</h2>
+        <h3>3.1 Before work starts</h3>
         <p>
-          All PDF category analysis reports are considered digital download items. Once a PDF file is processed and delivered via the dashboard, the transaction is final and non-refundable. If a system failure blocks PDF file delivery, contact support for immediate assistance.
+          If you change your mind before research work has started, contact us and we will refund the payment in full.
         </p>
-        <h3>3.2 Custom Sourcing Shortlists</h3>
+        <h3>3.2 After work has started</h3>
         <p>
-          Custom supplier shortlists are personalized consulting requests. Sourcing agents allocate time to cross-reference data and draft profiles. Sourcing requests are non-refundable once researching work has been initiated. If research cannot be completed due to category constraints, we will issue a full refund.
+          These services are personalized research that takes analyst time, so they are generally non-refundable once work has
+          started. If we cannot complete the agreed scope, for example because the required public records are not available,
+          we will refund the affected part or the full amount as appropriate.
+        </p>
+        <h3>3.3 Nature of the result</h3>
+        <p>
+          A review is research on public information. It does not guarantee that a supplier is safe, compliant or suitable for
+          payment, and a disappointing supplier outcome by itself is not a basis for a refund.
         </p>
 
-        <h2>4. Vetting Support Contact</h2>
+        <h2>4. Data Licenses</h2>
+        <p>Data license terms and refund conditions are agreed in writing with each licensee before payment.</p>
+
+        <h2>5. Legacy Subscriptions and Report Purchases</h2>
         <p>
-          Direct all questions regarding billing portals, Stripe errors, or refund requests to our billing support staff: <strong>{SITE.supportEmail}</strong>.
+          Database subscriptions and paid report purchases are no longer offered. Existing customers can contact support about
+          cancellation or billing questions for past purchases. Industry reports are now free to download.
+        </p>
+
+        <h2>6. Contact</h2>
+        <p>
+          Direct questions about payments or refund requests to: <strong>{SITE.supportEmail}</strong>.
         </p>
       </LegalLayout>
     </>

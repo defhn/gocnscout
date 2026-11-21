@@ -20,14 +20,12 @@ const corePages = [
   { href: "/database", label: "Supplier Database", note: "Search public supplier profiles and filters." },
   { href: "/industries", label: "Industries", note: "Browse supplier categories and industry hubs." },
   { href: "/cities", label: "Cities", note: "Browse manufacturing cities and supplier clusters." },
-  { href: "/reports", label: "Reports", note: "Industry PDF reports and sourcing analysis." },
-  { href: "/pricing", label: "Pricing", note: "Subscription, report, shortlist, and data license pricing." },
+  { href: "/pricing", label: "Human Services", note: "Human supplier review, custom shortlist, and data license enquiries." },
   { href: "/contact", label: "Contact", note: "Support and inquiry form." },
 ];
 
 const servicePages = [
   { href: "/china-exporter-database", label: "China Exporter Database" },
-  { href: "/exhibitor-intelligence-report", label: "Exhibitor Intelligence Report" },
   { href: "/custom-shortlist", label: "Custom Supplier Shortlist" },
   { href: "/data-license", label: "Data License" },
   { href: "/methodology", label: "Methodology" },
@@ -64,19 +62,13 @@ const getHtmlSitemapDataCached = unstable_cache(
       select: { slug: true, city: true, province: true, supplierCount: true },
       take: 80,
     }).catch(() => []),
-    prisma.report.findMany({
-      where: { status: "PUBLISHED" },
-      orderBy: [{ publishedAt: "desc" }, { title: "asc" }],
-      select: { slug: true, title: true, type: true },
-      take: 40,
-    }).catch(() => []),
   ]),
-  ["public-html-sitemap-v1"],
+  ["public-html-sitemap-v2"],
   { revalidate: 604800, tags: ["public-sitemap"] },
 );
 
 export default async function HtmlSitemapPage() {
-  const [industries, cities, reports] = await getHtmlSitemapDataCached();
+  const [industries, cities] = await getHtmlSitemapDataCached();
 
   const faqs = [
     {
@@ -165,23 +157,6 @@ export default async function HtmlSitemapPage() {
             </CardContent>
           </Card>
         </div>
-
-        <Card className="mt-8">
-          <CardContent>
-            <h2 className="text-xl font-semibold text-slate-950">Published Reports</h2>
-            {reports.length ? (
-              <div className="mt-5 grid gap-2 md:grid-cols-3">
-                {reports.map((report) => (
-                  <SitemapLink key={report.slug} href={`/reports/${report.slug}`} label={report.title} note={report.type.replaceAll("_", " ")} />
-                ))}
-              </div>
-            ) : (
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                No public report detail pages are listed until the admin publishes real PDF reports. The report hub remains available for pricing and workflow information.
-              </p>
-            )}
-          </CardContent>
-        </Card>
 
         <Card className="mt-8">
           <CardContent>

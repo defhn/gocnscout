@@ -1,18 +1,23 @@
-import { ButtonLink } from "@/components/ui/button";
+import Link from "next/link";
+import { MessageCircle } from "lucide-react";
+import { DISCORD_INVITE_URL } from "@/config/community";
 
 export function PublicAuthActions() {
   return (
-    <div className="flex shrink-0 items-center gap-2">
-      <ButtonLink href="/sign-in" variant="ghost" className="font-semibold">
-        Sign In
-      </ButtonLink>
-      <ButtonLink
-        href="/app"
-        variant="outline"
-        className="border-teal-200 bg-teal-50 !text-teal-800 hover:border-teal-300 hover:bg-teal-100 font-semibold"
+    <div className="flex shrink-0 items-center gap-3">
+      <a
+        href={DISCORD_INVITE_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex h-9 items-center gap-2 rounded-lg bg-teal-600 px-3.5 text-sm font-semibold !text-white shadow-sm transition-colors hover:bg-teal-700"
       >
-        Dashboard
-      </ButtonLink>
+        <MessageCircle className="h-4 w-4" />
+        Join Discord
+      </a>
+      {/* 管理员后台入口保留,但不在主导航中突出 */}
+      <Link href="/sign-in" className="hidden text-xs text-slate-400 hover:text-slate-600 md:inline">
+        Admin
+      </Link>
     </div>
   );
 }

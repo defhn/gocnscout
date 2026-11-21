@@ -2,8 +2,6 @@
 
 import dynamic from "next/dynamic";
 import type { SupplierRow } from "@/components/database/supplier-detail-modal";
-import type { AppPlanCode } from "@/config/plans";
-
 
 const SupplierTable = dynamic(
   () =>
@@ -13,14 +11,12 @@ const SupplierTable = dynamic(
 
 export default function SupplierTableClient({
   suppliers,
-  planCode,
   total,
   page,
   totalPages,
   searchParams,
 }: {
   suppliers: SupplierRow[];
-  planCode: AppPlanCode;
   total: number;
   page: number;
   totalPages: number;
@@ -29,7 +25,6 @@ export default function SupplierTableClient({
   return (
     <SupplierTable
       suppliers={suppliers}
-      planCode={planCode}
       total={total}
       page={page}
       totalPages={totalPages}
@@ -37,6 +32,3 @@ export default function SupplierTableClient({
     />
   );
 }
-
-
-

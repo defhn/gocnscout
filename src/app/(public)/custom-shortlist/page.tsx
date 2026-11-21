@@ -37,7 +37,8 @@ export default function CustomShortlistPage() {
         </div>
         <Card>
           <CardContent>
-            <h2 className="text-2xl font-semibold text-slate-950">{formatUsd(STRIPE_CATALOG.customShortlist.amountUsdCents)}/request</h2>
+            <h2 className="text-2xl font-semibold text-slate-950">From {formatUsd(STRIPE_CATALOG.customShortlist.amountUsdCents)}</h2>
+            <p className="mt-1 text-xs leading-5 text-slate-500">Reference price. We confirm scope and final price with you before any payment.</p>
             <h3 className="mt-3 text-sm font-semibold text-slate-950">Request details</h3>
             <form action="/api/inquiries" method="post" className="mt-4 grid gap-3">
               <input type="hidden" name="type" value="CUSTOM_SHORTLIST" />

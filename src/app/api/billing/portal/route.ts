@@ -1,19 +1,10 @@
 import { NextResponse } from "next/server";
-import { absoluteUrl } from "@/lib/utils";
-import { requireAppUser } from "@/server/auth";
-import { stripe } from "@/server/stripe";
 
-export async function GET() {
-  const user = await requireAppUser();
+/** 订阅账单入口已停用。历史订阅的续费/退款仍由 Stripe webhook 处理。 */
+export async function GET(request: Request) {
+  return NextResponse.redirect(new URL("/pricing", request.url));
+}
 
-  if (!user.stripeCustomerId) {
-    return NextResponse.redirect(absoluteUrl("/pricing"));
-  }
-
-  const session = await stripe().billingPortal.sessions.create({
-    customer: user.stripeCustomerId,
-    return_url: absoluteUrl("/app/billing"),
-  });
-
-  return NextResponse.redirect(session.url);
+export async function POST() {
+  return NextResponse.json({ error: "Billing portal is no longer available." }, { status: 410 });
 }

@@ -146,7 +146,7 @@ export default function DataPolicyPage() {
                 </div>
                 <h3 className="text-xs font-bold text-slate-950">CSV Dataset Downloads</h3>
                 <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
-                  CSV downloads adhere rigidly to the authorized Exportable Fields schema. All automated downloads are bound to your active plan export allowances.
+                  Bulk CSV downloads of the database are not offered to visitors. Spreadsheet deliverables are provided only through paid human services or data licenses and follow the same Exportable Fields schema.
                 </p>
               </CardContent>
             </Card>

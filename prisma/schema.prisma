@@ -30,27 +30,6 @@ enum SubscriptionStatus {
   INCOMPLETE
 }
 
-enum ReportType {
-  BASIC
-  FULL
-  PREMIUM
-  CANTON_FAIR_INTELLIGENCE
-}
-
-enum ReportStatus {
-  DRAFT
-  PUBLISHED
-  ARCHIVED
-}
-
-enum PurchaseStatus {
-  PENDING
-  PAID
-  FULFILLED
-  CANCELED
-  REFUNDED
-}
-
 enum ExportStatus {
   QUEUED
   PROCESSING
@@ -124,7 +103,6 @@ model User {
   savedLists            SavedList[]
   profileViews          SupplierProfileView[]
   exportJobs            ExportJob[]
-  reportPurchases       ReportPurchase[]
   inquiries             Inquiry[]
   usageCounters         UsageCounter[]
   teamMemberships       TeamMember[]
@@ -473,42 +451,6 @@ model ExportJob {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model Report {
-  id              String           @id @default(cuid())
-  slug            String           @unique
-  title           String
-  type            ReportType
-  priceUsdCents   Int
-  industryName    String?
-  description     String?
-  sampleSummary   String?
-  status          ReportStatus     @default(DRAFT)
-  fileKey         String?
-  fileName        String?
-  fileSizeBytes   Int?
-  uploadedBy      String?
-  publishedAt     DateTime?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  purchases       ReportPurchase[]
-}
-
-model ReportPurchase {
-  id                    String         @id @default(cuid())
-  userId                String
-  reportId              String
-  status                PurchaseStatus @default(PENDING)
-  stripeCheckoutSession String?        @unique
-  stripePaymentIntent   String?
-  amountUsdCents        Int
-  createdAt             DateTime       @default(now())
-  updatedAt             DateTime       @updatedAt
-  user                  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  report                Report         @relation(fields: [reportId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, reportId])
 }
 
 model Inquiry {

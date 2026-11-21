@@ -4,7 +4,7 @@ import {
   Download,
   Filter,
   Search,
-  Sparkles,
+  MessageCircle,
   Check,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -17,11 +17,10 @@ import SupplierTableClient from "@/components/database/supplier-table-client";
 
 
 import { createMetadata } from "@/config/seo";
-import { type AppPlanCode } from "@/config/plans";
+import { DISCORD_INVITE_URL } from "@/config/community";
 
-import { getCurrentAppUser } from "@/server/auth";
 import { getDatabaseFacetsCached, searchSuppliersForDatabaseCached } from "@/server/suppliers";
-import { clampSearchPage, searchPageSize } from "@/server/quota";
+import { clampSearchPage, resolveSearchPageSize } from "@/server/quota";
 
 export const metadata = createMetadata({
   title: "Search China Suppliers by Industry, City and Product",
@@ -37,9 +36,6 @@ export default async function DatabasePage({
 }) {
   const params = await searchParams;
 
-  // 获取当前登录用户的套餐（必须登录，middleware 已保证）
-  const appUser = await getCurrentAppUser();
-  const planCode = (appUser?.planCode ?? "FREE") as AppPlanCode;
 
   const q = stringParam(params.q);
   const industry = stringParam(params.industry);
@@ -52,10 +48,9 @@ export default async function DatabasePage({
   const registeredCapital = stringParam(params.registeredCapital);
   const tradeMode = stringParam(params.tradeMode);
   const rawPage = Math.max(1, Number(stringParam(params.page) || 1));
-  const page = clampSearchPage(planCode, rawPage);
+  const page = clampSearchPage(rawPage);
   const rawLimit = Number(stringParam(params.limit) || 0);
-  const maxLimit = searchPageSize(planCode);
-  const pageSize = rawLimit > 0 ? Math.min(rawLimit, maxLimit) : maxLimit;
+  const pageSize = resolveSearchPageSize(rawLimit);
 
   const emptyFacets: Awaited<ReturnType<typeof getDatabaseFacetsCached>> = {
     industries: [],
@@ -86,15 +81,6 @@ export default async function DatabasePage({
   ].filter(([, value]) => value);
   const currentQuery = queryString(params);
 
-  const planLabel = planCode === "FREE"
-    ? "Free: 2 pages, 10 results/page, 10 profiles/month (Soft-masked)"
-    : planCode === "STARTER"
-    ? "Starter: unlimited search, 25 results/page"
-    : planCode === "GROWTH"
-    ? "Growth: unlimited search, 50 results/page"
-    : planCode === "PRO"
-    ? "Pro: unlimited search, 100 results/page"
-    : "Team: unlimited search, 100 results/page";
 
   return (
     <div className="min-h-[calc(100vh-65px)] w-full bg-[#f3f6f9]">
@@ -108,16 +94,16 @@ export default async function DatabasePage({
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <span className="rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600">
-              {planLabel}
+              Free to search - no sign-up required
             </span>
-            {planCode === "FREE" && (
-              <Link
-                href="/pricing"
-                className="inline-flex h-9 items-center gap-2 rounded-md bg-gradient-to-r from-teal-600 to-teal-500 px-3 text-sm font-semibold text-white shadow-sm hover:from-teal-700 hover:to-teal-600"
-              >
-                <Sparkles className="h-3.5 w-3.5" /> Upgrade
-              </Link>
-            )}
+            <a
+              href={DISCORD_INVITE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-9 items-center gap-2 rounded-md bg-gradient-to-r from-teal-600 to-teal-500 px-3 text-sm font-semibold text-white shadow-sm hover:from-teal-700 hover:to-teal-600"
+            >
+              <MessageCircle className="h-3.5 w-3.5" /> Ask on Discord
+            </a>
           </div>
         </div>
       </div>
@@ -181,10 +167,10 @@ export default async function DatabasePage({
                   <ArrowDownUp className="h-4 w-4" /> Sort: Supplier
                 </button>
                 <Link
-                  href="/pricing"
+                  href="/custom-shortlist"
                   className="inline-flex h-9 items-center gap-2 rounded-md border border-border bg-white px-3 text-sm text-slate-700 hover:bg-slate-50"
                 >
-                  <Download className="h-4 w-4" /> Export
+                  <Download className="h-4 w-4" /> Need a spreadsheet?
                 </Link>
               </div>
             </div>
@@ -193,7 +179,6 @@ export default async function DatabasePage({
           {/* Table — Client Component handles modal state, locked fields and pagination paywall */}
           <SupplierTableClient
             suppliers={results.suppliers as SupplierRow[]}
-            planCode={planCode}
             total={results.total}
             page={results.page}
             totalPages={results.totalPages}

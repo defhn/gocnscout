@@ -2,9 +2,9 @@ import { AnalysisForm } from "@/components/supplier-check/analysis-form";
 import { createMetadata, faqJsonLd, breadcrumbJsonLd } from "@/config/seo";
 
 export const metadata = createMetadata({
-  title: "Free Alibaba Supplier Checker | Verify Chinese Suppliers Before You Pay",
+  title: "Supplier Check Guide | What to Verify Before You Pay a Chinese Supplier",
   description:
-    "Paste an Alibaba product page, supplier store, or company website. Get a free public-source supplier screening report before contact, samples, or payment.",
+    "A practical checklist of what to verify before contacting, sampling, or paying a Chinese supplier. Ask the community on Discord or request a human review.",
   path: "/supplier-check",
 });
 
@@ -120,6 +120,8 @@ const faqs = [
   },
 ];
 
+import Link from "next/link";
+import { DISCORD_INVITE_URL } from "@/config/community";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { 
   CheckCircle2, 
@@ -198,25 +200,31 @@ export default function SupplierCheckPage({
           </h1>
           
           <p className="text-base md:text-lg leading-relaxed text-slate-600 max-w-3xl mx-auto">
-            Paste an Alibaba product page, supplier store, or company website. We identify the supplier-level pages,
-            collect public signals, and show what still needs manual verification before you make a buying decision.
+            The automatic AI scan is paused while we review its running costs. Use the checklist below, ask the community
+            for free, or request a human review when the decision matters.
           </p>
           
-          <div className="rounded-2xl border border-slate-200 bg-white/85 backdrop-blur-xs p-6 shadow-md shadow-slate-100/50 hover:shadow-lg transition-all duration-300 max-w-3xl mx-auto text-left">
-            <SupplierCheckFormLoader searchParams={searchParams} />
-            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-slate-505 justify-center">
-              <span className="flex items-center gap-1">
-                <Check className="h-3.5 w-3.5 text-teal-600" />
-                No credit card required
-              </span>
-              <span className="flex items-center gap-1">
-                <Check className="h-3.5 w-3.5 text-teal-600" />
-                Instant report generation
-              </span>
-              <span className="flex items-center gap-1">
-                <Check className="h-3.5 w-3.5 text-teal-600" />
-                Alibaba & standalone websites
-              </span>
+          <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-6 shadow-sm max-w-3xl mx-auto text-left">
+            <h2 className="text-lg font-bold text-amber-950">The automatic scan is currently paused</h2>
+            <p className="mt-2 text-sm leading-6 text-amber-900">
+              You can still get help: ask in our Discord community for free, or request a human review of a specific supplier.
+              Any review is a first pass on public information and does not guarantee a supplier is safe or suitable for payment.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <a
+                href={DISCORD_INVITE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-10 items-center rounded-md bg-teal-600 px-4 text-sm font-semibold !text-white hover:bg-teal-700"
+              >
+                Ask on Discord (free)
+              </a>
+              <Link
+                href="/pricing#human-review"
+                className="inline-flex h-10 items-center rounded-md border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-800 hover:bg-slate-50"
+              >
+                Request a human review
+              </Link>
             </div>
           </div>
         </div>

@@ -1,389 +1,228 @@
-import { Check, X, ShieldAlert, Sparkles } from "lucide-react";
+import { Check } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { FaqSection } from "@/components/marketing/faq-section";
 import { ButtonLink } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PLAN_DEFINITIONS } from "@/config/plans";
-import { MANUAL_REVIEW_COMPARISON_ROWS, MANUAL_REVIEW_PACKAGES } from "@/config/manual-review";
+import { Input, Textarea } from "@/components/ui/input";
+import { COMMUNITY_SCOPE, DISCORD_INVITE_URL } from "@/config/community";
+import { getManualReviewPackage } from "@/config/manual-review";
 import { STRIPE_CATALOG } from "@/config/pricing";
-import { createMetadata, productJsonLd } from "@/config/seo";
+import { createMetadata } from "@/config/seo";
 import { formatUsd } from "@/lib/utils";
-import { PricingGrid } from "@/components/pricing/pricing-grid";
 
 export const metadata = createMetadata({
-  title: "Pricing for Supplier Database, Reports and Shortlists",
-  description: "Compare plans for China supplier research, CSV exports, industry PDF reports, custom shortlists, and annual data licensing.",
+  title: "Human Supplier Review and Sourcing Services",
+  description:
+    "The database, sourcing guides and community are free. When you need hands-on research on a specific supplier or a custom shortlist, request a human service here.",
   path: "/pricing",
 });
 
-const plans = [
-  PLAN_DEFINITIONS.FREE,
-  PLAN_DEFINITIONS.STARTER,
-  PLAN_DEFINITIONS.GROWTH,
-  PLAN_DEFINITIONS.PRO,
-  PLAN_DEFINITIONS.TEAM,
+const identity = getManualReviewPackage("IDENTITY_SINGLE");
+const decision = getManualReviewPackage("DECISION_SINGLE");
+const decisionBundle = getManualReviewPackage("DECISION_BUNDLE");
+
+const SERVICE_OPTIONS = [
+  { value: "HUMAN_REVIEW_IDENTITY_SINGLE", query: "IDENTITY_SINGLE", label: `Supplier Identity Check (from ${formatUsd(identity.amountUsdCents)})` },
+  { value: "HUMAN_REVIEW_DECISION_SINGLE", query: "DECISION_SINGLE", label: `Buyer Decision Review (from ${formatUsd(decision.amountUsdCents)})` },
+  { value: "HUMAN_REVIEW_DECISION_BUNDLE", query: "DECISION_BUNDLE", label: `Buyer Decision Review - 3 Suppliers (from ${formatUsd(decisionBundle.amountUsdCents)})` },
+  { value: "CUSTOM_SHORTLIST", query: "CUSTOM_SHORTLIST", label: `Custom Supplier Shortlist (from ${formatUsd(STRIPE_CATALOG.customShortlist.amountUsdCents)})` },
+  { value: "DATA_LICENSE", query: "DATA_LICENSE", label: "Data license enquiry" },
+  { value: "OTHER_RESEARCH", query: "OTHER", label: "Something else" },
 ];
 
-const comparisonRows = [
-  ["Public SEO pages", "Yes", "Yes", "Yes", "Yes", "Yes"],
-  ["Search result pages", "2 pages", "Unlimited", "Unlimited", "Unlimited", "Unlimited"],
-  ["Results per page", "10", "25", "50", "100", "100"],
-  ["Supplier profile views", "10/month", "Unlimited", "Unlimited", "Unlimited", "Unlimited"],
-  ["Advanced filters", "Industry, province, city", "Yes", "Yes", "Yes", "Yes"],
-  ["Trade mode access", "Soft-masked", "Yes", "Yes", "Yes", "Yes"],
-  ["Official website access", "Soft-masked", "Yes", "Yes", "Yes", "Yes"],
-  ["Exhibition tier label", "Soft-masked", "Yes", "Yes", "Yes", "Yes"],
-  ["Exhibition count", "No", "No", "Yes", "Yes", "Yes"],
-  ["Sourcing signals (awards)", "No", "No", "No", "Yes", "Yes"],
-  ["Saved lists", "No", "5", "20", "Unlimited", "Unlimited"],
-  ["Saved suppliers", "No", "500", "1,500", "5,000", "Unlimited"],
-  ["Supplier comparison", "No", "5 suppliers", "10 suppliers", "20 suppliers", "20 suppliers"],
-  ["CSV export", "No", "Yes", "Yes", "Yes", "Yes"],
-  ["Export rows/month", "0", "500", "1,500", "4,000", "15,000"],
-  ["Included PDF reports", "0", "1/month", "1/month", "3/month", "10/month"],
-  ["Team seats", "1", "1", "2 seats", "3 seats", "5 seats"],
-  ["Team notes", "No", "No", "No", "No", "Yes"],
-  ["Custom fields", "No", "No", "No", "No", "Yes"],
-  ["API", "No", "No", "No", "No", "API-lite"],
-  ["Data license rights", "No", "No", "No", "No", "No"],
-  ["Private contacts (phone/email)", "Not included", "Not included", "Not included", "Not included", "Not included"],
-];
-
-export default function PricingPage() {
-  const pricingSchema = productJsonLd({
-    name: "gocnscout Database Subscriptions",
-    description: "Compare subscriptions, PDF reports, and data license options for verified China suppliers.",
-    lowPrice: "29.00",
-    highPrice: "199.00",
-    offerCount: "3",
-  });
+export default async function PricingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ service?: string; supplier?: string; submitted?: string }>;
+}) {
+  const params = await searchParams;
+  const selected = SERVICE_OPTIONS.find((item) => item.query === params.service) ?? SERVICE_OPTIONS[0];
+  const supplier = (params.supplier || "").slice(0, 200);
+  const defaultMessage = supplier ? `Supplier: ${supplier}\n` : "";
 
   return (
     <>
-      {/* Schema Injection */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(pricingSchema) }}
-      />
+      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Human Services" }]} />
 
-      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Pricing" }]} />
-      
       <section className="container-page pb-20">
-        {/* Header Section */}
         <div className="max-w-4xl mx-auto text-center py-10">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-950">
-            Simple, Transparent Sourcing Pricing
-          </h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-950">Human Supplier Review and Sourcing Services</h1>
           <p className="mt-4 text-base md:text-lg leading-relaxed text-slate-600">
-            Choose database access, standalone intelligence PDF reports, or a custom manufacturer shortlist. 
-            All subscriptions exclude sensitive personal contacts in compliance with privacy regulations.
+            The company database, sourcing guides and Discord community are free. If you need someone to research a specific
+            supplier or find candidates for you, we do that as a paid service.
           </p>
         </div>
 
-        {/* Pricing Cards Grid */}
-        <PricingGrid plans={plans} />
-
-        {/* Feature Comparison Table */}
-        <section className="mt-16">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold tracking-tight text-slate-950">Detailed Feature Comparison</h2>
-            <p className="text-sm text-slate-600 mt-1">Every parameter you need to map out your sourcing research workflow.</p>
-          </div>
-
-          <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <table className="min-w-[920px] w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="border-b border-slate-200 bg-slate-50 text-slate-600 font-bold uppercase tracking-wider">
-                  <th className="px-5 py-4">Feature Capacity</th>
-                  <th className="px-5 py-4">Free</th>
-                  <th className="px-5 py-4">Starter</th>
-                  <th className="px-5 py-4">Growth</th>
-                  <th className="px-5 py-4">Pro</th>
-                  <th className="px-5 py-4">Team</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {comparisonRows.map((row) => (
-                  <tr key={row[0]} className="hover:bg-slate-50/50 transition-colors">
-                    {row.map((cell, index) => {
-                      const isHeader = index === 0;
-                      return (
-                        <td 
-                          key={`${row[0]}-${index}`} 
-                          className={`px-5 py-3.5 ${isHeader ? "font-bold text-slate-900 bg-slate-50/30" : "text-slate-600"}`}
-                        >
-                          {isHeader ? (
-                            cell
-                          ) : cell === "Yes" ? (
-                            <span className="inline-flex items-center text-teal-600 font-semibold">
-                              <Check className="h-4 w-4 mr-1 text-teal-500" /> Yes
-                            </span>
-                          ) : cell === "No" ? (
-                            <span className="inline-flex items-center text-slate-400 font-medium">
-                              <X className="h-3.5 w-3.5 mr-1 text-slate-300" /> No
-                            </span>
-                          ) : cell === "Not included" ? (
-                            <span className="inline-flex items-center text-slate-400 bg-slate-100 px-2 py-0.5 rounded text-[10px] font-semibold tracking-wide">
-                              Compliance Safe
-                            </span>
-                          ) : (
-                            cell
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
+        {/* Free vs paid */}
+        <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
+          <Card className="border border-teal-200 bg-teal-50/40">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">Free</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2 text-sm text-slate-700">
+                <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" />Company database search and profiles</li>
+                <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" />Industry and city pages, sourcing guides</li>
+                {COMMUNITY_SCOPE.free.map((item) => (
+                  <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" />{item} (Discord)</li>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Feature Descriptions Grid */}
-        <section className="mt-16 rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm">
-          <h2 className="text-xl font-bold text-slate-950 mb-6 text-center">Which sourcing tier aligns with your targets?</h2>
-          <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-5">
-            <PlanFit title="Free" text="Excellent for inspecting database structure and SEO pages (soft-masked preview data)." />
-            <PlanFit title="Starter" text="Tailored for individual buyers and niche importers conducting low-volume research ($39/mo, 500 CSVs)." />
-            <PlanFit title="Growth" text="Designed for growing e-commerce brands and active agents needing 1,500 CSVs/mo and 2 team seats ($89/mo)." />
-            <PlanFit title="Pro" text="Built for professional consultants needing 4,000 CSVs/mo, 3 seats, and deep risk signals ($199/mo)." />
-            <PlanFit title="Team" text="Built for wholesale sourcing offices requiring 15,000 CSVs/mo, 5 seats, and API-lite exports ($499/mo)." />
-          </div>
-        </section>
-
-        {/* Standalone Offerings Grid */}
-        <section className="mt-20">
-          <div className="mb-10 text-center max-w-2xl mx-auto">
-            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-teal-50 border border-teal-200/60 text-[10px] font-extrabold uppercase text-teal-800 tracking-wider">
-              <Sparkles className="h-3 w-3 animate-pulse" />
-              Verified Sourcing Intelligence
-            </span>
-            <h2 className="text-3xl font-extrabold tracking-tight text-slate-950 mt-3">Manual Supplier Verification</h2>
-            <p className="mt-3 text-sm leading-relaxed text-slate-600">
-              Human review by Chinese sourcing analysts who verify corporate databases, business license registrations, court dispute records, and domestic social signals before you transact.
-            </p>
-          </div>
-
-          <div className="mb-10 overflow-x-auto rounded-2xl border border-slate-250 bg-white shadow-md relative">
-            <table className="min-w-[820px] w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="border-b border-slate-200 bg-slate-50 text-slate-600 font-bold uppercase tracking-wider">
-                  <th className="w-[28%] px-6 py-5 border-r border-slate-200">Review Area</th>
-                  <th className="w-[36%] px-6 py-5 text-slate-700 border-r border-slate-200">Supplier Identity Check ($149)</th>
-                  <th className="w-[36%] px-6 py-5 bg-teal-600 text-white font-extrabold relative shadow-sm border-x border-teal-600">
-                    <div className="flex items-center justify-between">
-                      <span className="text-white text-sm font-black">Buyer Decision Review ($249)</span>
-                      <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-[9px] font-extrabold uppercase text-white tracking-wider border border-white/10">
-                        Recommended
-                      </span>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-150">
-                {MANUAL_REVIEW_COMPARISON_ROWS.map((row) => (
-                  <tr key={row.feature} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="bg-slate-50/10 px-6 py-4 font-bold text-slate-900 border-r border-slate-200">{row.feature}</td>
-                    <td className="px-6 py-4 leading-relaxed text-slate-600 border-r border-slate-150">{renderManualReviewCell(row.identity)}</td>
-                    <td className="px-6 py-4 leading-relaxed text-slate-900 bg-teal-50/30 border-x border-teal-500/20 font-medium">
-                      {renderManualReviewCell(row.decision, true)}
-                    </td>
-                  </tr>
+              </ul>
+              <a
+                href={DISCORD_INVITE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-5 inline-flex h-10 items-center rounded-md bg-teal-600 px-4 text-sm font-semibold !text-white hover:bg-teal-700"
+              >
+                Join Discord
+              </a>
+            </CardContent>
+          </Card>
+          <Card className="border border-slate-200 bg-white">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">Paid human services</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2 text-sm text-slate-700">
+                {COMMUNITY_SCOPE.paid.map((item) => (
+                  <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />{item}</li>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </ul>
+              <p className="mt-5 text-xs leading-relaxed text-slate-500">
+                We confirm scope, what we can and cannot check, and the final price with you before any payment.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
 
-          <div className="grid gap-8 md:grid-cols-2">
-            {MANUAL_REVIEW_PACKAGES.map((pkg) => {
-              const isDecision = pkg.code.includes("DECISION");
-              const isBundle = pkg.code.includes("BUNDLE");
-              
-              return (
-                <Card 
-                  key={pkg.code} 
-                  className={`flex flex-col rounded-2xl transition-all duration-300 relative ${
-                    isDecision 
-                      ? "border-2 border-teal-500 bg-gradient-to-b from-teal-50/20 via-white to-white shadow-lg scale-[1.01] hover:scale-[1.02]" 
-                      : "border border-slate-200 bg-white shadow-xs hover:shadow-md"
-                  }`}
-                >
-                  {isDecision && (
-                    <span className="absolute -top-3.5 left-6 inline-flex items-center space-x-1 rounded-full bg-teal-500 px-3 py-1 text-[10px] font-black text-slate-950 uppercase tracking-wider shadow-sm">
-                      <Sparkles className="h-3 w-3 animate-pulse" />
-                      <span>{isBundle ? "3-Supplier Ultimate Pack" : "Highly Recommended"}</span>
-                    </span>
-                  )}
-                  
-                  <CardHeader className="p-6 pb-4">
-                    <div className="flex items-center justify-between gap-2 mt-1">
-                      <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[9px] font-extrabold uppercase text-slate-600 tracking-wider">
-                        {isBundle ? "3-Supplier Bundle" : "Single Supplier Target"}
-                      </span>
-                    </div>
-                    <CardTitle className="text-base font-extrabold text-slate-950 mt-3">{pkg.name}</CardTitle>
-                    <p className="mt-1.5 text-xs text-slate-500 flex items-center gap-1">
-                      <span className="h-1.5 w-1.5 rounded-full bg-teal-500" />
-                      {pkg.delivery}
-                    </p>
-                  </CardHeader>
-                  <CardContent className="flex flex-1 flex-col p-6 pt-0">
-                    <div className="text-3xl font-black tracking-tight text-slate-950">{formatUsd(pkg.amountUsdCents)}</div>
-                    <p className="mt-3.5 text-xs leading-relaxed text-slate-600">{pkg.description}</p>
-                    
-                    <ul className="mt-6 pt-5 border-t border-slate-150 space-y-3.5 text-xs text-slate-700 flex-1">
+        {/* Services */}
+        <section className="mt-16 max-w-6xl mx-auto">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-950 text-center">Services and reference prices</h2>
+          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {[identity, decision, decisionBundle].map((pkg) => (
+              <Card key={pkg.code} className="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-xs">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base font-extrabold text-slate-950">{pkg.name}</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-1 flex-col">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">From</div>
+                  <div className="text-3xl font-black tracking-tight text-slate-950">{formatUsd(pkg.amountUsdCents)}</div>
+                  <p className="mt-3 text-xs leading-relaxed text-slate-600">{pkg.description}</p>
+                  <details className="mt-4 text-xs text-slate-600">
+                    <summary className="cursor-pointer font-semibold text-slate-800">What may be checked</summary>
+                    <ul className="mt-3 space-y-2">
                       {pkg.features.map((feature) => (
-                        <li key={feature} className="flex gap-2.5 items-start">
-                          <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 bg-teal-50 rounded-full p-0.5" />
-                          <span className="leading-relaxed">{feature}</span>
-                        </li>
+                        <li key={feature} className="flex gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-teal-600" /><span>{feature}</span></li>
                       ))}
                     </ul>
-                    
-                    <ButtonLink 
-                      href={`/api/manual-review/checkout?package=${pkg.code}`} 
-                      className="w-full text-xs font-semibold py-3 rounded-xl transition-all duration-200 mt-6 shadow-xs hover:shadow-md" 
-                      variant={isDecision ? "teal" : "outline"}
-                    >
-                      Order Verification
-                    </ButtonLink>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </section>
-
-
-        {/* Standalone Offerings Grid */}
-        <section className="mt-16 grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
-          {/* PDF Reports Card */}
-          <Card className="border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl flex flex-col justify-between">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-bold text-slate-950">Standalone PDF Reports</CardTitle>
-            </CardHeader>
-            <CardContent className="flex-1 flex flex-col justify-between pt-0">
-              <div>
-                <div className="mt-1 flex items-baseline">
-                  <span className="text-3xl font-extrabold tracking-tight">
-                    $99.00
-                  </span>
-                  <span className="text-xs ml-1 font-semibold text-slate-500">/report</span>
-                </div>
-                <h4 className="mt-4 text-xs font-bold text-slate-900 uppercase tracking-wider">Comprehensive sourcing guides</h4>
-                <p className="mt-2 text-xs leading-relaxed text-slate-600">
-                  Download structural analysis reports detailing cluster density, exporter rankings, product keywords, and custom buyer checklists for a specific B2B export category.
+                    <p className="mt-3 text-slate-500">Items depend on which public records are available for the company; we tell you what we could not find.</p>
+                  </details>
+                </CardContent>
+              </Card>
+            ))}
+            <Card className="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-xs">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base font-extrabold text-slate-950">Custom Supplier Shortlist</CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-1 flex-col">
+                <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">From</div>
+                <div className="text-3xl font-black tracking-tight text-slate-950">{formatUsd(STRIPE_CATALOG.customShortlist.amountUsdCents)}</div>
+                <p className="mt-3 text-xs leading-relaxed text-slate-600">
+                  Candidate suppliers matched to your product, region and requirements, with a buyer verification checklist. A research shortlist, not a recommendation or guarantee.
                 </p>
-                <div className="mt-6 flex items-start space-x-2 rounded-lg bg-slate-50 border border-slate-100 p-3 text-xs leading-normal text-slate-500">
-                  <ShieldAlert className="h-4 w-4 text-slate-400 mt-0.5 shrink-0" />
-                  <span>Reports map regional clusters and manufacturer distribution. They do not sell list files of private contacts.</span>
-                </div>
-              </div>
-              <ButtonLink href="/reports" className="mt-6 w-full text-xs font-bold" variant="outline">
-                Browse Published Reports
-              </ButtonLink>
-            </CardContent>
-          </Card>
-
-          {/* Data License Card */}
-          <Card className="border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl flex flex-col justify-between">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-bold text-slate-950">Enterprise Data License</CardTitle>
-            </CardHeader>
-            <CardContent className="flex-1 flex flex-col justify-between pt-0">
-              <div>
-                <div className="mt-1 flex items-baseline">
-                  <span className="text-3xl font-extrabold tracking-tight">
-                    {formatUsd(STRIPE_CATALOG.dataLicenseAnnualUsdCents)}
-                  </span>
-                  <span className="text-xs ml-1 font-semibold text-slate-500">/year</span>
-                </div>
-                <h4 className="mt-4 text-xs font-bold text-slate-900">Custom local integration</h4>
-                <p className="mt-2 text-xs leading-relaxed text-slate-600">
-                  Integrate our raw, non-sensitive manufacturer exhibition records into your local corporate ERP, sourcing applications, or supply chain tools.
-                </p>
-              </div>
-              <ButtonLink href="/data-license" className="mt-6 w-full text-xs font-bold" variant="outline">
-                Consult Data Experts
-              </ButtonLink>
-            </CardContent>
-          </Card>
-        </section>
-
-        {/* Global Compliance Framework */}
-        <section className="mt-16 rounded-2xl border border-slate-200 bg-teal-950 text-white p-6 md:p-8 shadow-sm relative overflow-hidden">
-          <div className="absolute right-0 top-0 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
-          <h2 className="text-xl font-bold">Comprehensive Data Compliance Framework</h2>
-          <div className="mt-6 grid gap-6 md:grid-cols-2 text-xs">
-            <div>
-              <h3 className="font-bold text-teal-400">Exclusion of Private Sourcing Contacts</h3>
-              <p className="mt-2 leading-relaxed text-slate-300">
-                To guarantee zero regulatory issues for your importing entities, we block names of contact representatives, personal mobile numbers, emails, and full postcodes. We supply clean company registries.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-bold text-teal-400">Zero Procurement Guarantees</h3>
-              <p className="mt-2 leading-relaxed text-slate-300">
-                gocnscout serves as a high-fidelity intelligence platform. We catalog active exhibitors but do not underwrite transaction safety, supplier delivery liability, or material defects.
-              </p>
-            </div>
+                <ButtonLink href="/custom-shortlist" variant="outline" className="mt-4 w-full text-xs font-semibold">Details</ButtonLink>
+              </CardContent>
+            </Card>
           </div>
+          <p className="mt-6 text-center text-xs text-slate-500">
+            Need a spreadsheet export or a licensed dataset?{" "}
+            <a href="/data-license" className="font-semibold text-teal-700 underline">Data license enquiries</a> start at {formatUsd(STRIPE_CATALOG.dataLicenseAnnualUsdCents)} per year.
+          </p>
         </section>
 
-        {/* Pricing FAQ Section */}
-        <FaqSection
-          title="Pricing FAQ"
-          items={[
-            {
-              question: "Will I find personal cell numbers or direct emails on paid plans?",
-              answer: "No. gocnscout strictly complies with GDPR, CCPA, and regional laws. Paid subscriptions unlock search capabilities, website directories, comparisons, and exports of public corporate data fields.",
-            },
-            {
-              question: "Can I cancel my monthly subscription anytime?",
-              answer: "Yes. You can manage and terminate your subscription directly via the billing console. Cancellation requests take effect at the end of the billing period.",
-            },
-            {
-              question: "What is the difference between reports and the database?",
-              answer: "Category reports offer aggregated structural reviews (densities, exporter hubs, product groupings). The database allows interactive multi-field search query filtering, sorting, list compilation, and CSV downloading.",
-            },
-            {
-              question: "How is the enterprise annual data license delivered?",
-              answer: "Licenses are processed through custom consults. We outline scope requirements, update frequencies, internal redistribution rules, and deliver secure custom CSV datasets.",
-            },
-          ]}
-        />
+        {/* How it works */}
+        <section className="mt-16 max-w-5xl mx-auto grid gap-4 md:grid-cols-4">
+          {[
+            ["1. Tell us what you need", "Fill in the form below with the supplier or product."],
+            ["2. We confirm scope", "We reply with what we can check, the price and the timeline."],
+            ["3. You pay", "We send a secure Stripe payment link once you agree."],
+            ["4. We deliver", "You receive the findings and what is still missing."],
+          ].map(([title, text]) => (
+            <Card key={title}>
+              <CardContent>
+                <h3 className="text-sm font-bold text-slate-950">{title}</h3>
+                <p className="mt-2 text-xs leading-5 text-slate-600">{text}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </section>
+
+        {/* Request form */}
+        <section id="human-review" className="mt-16 max-w-2xl mx-auto scroll-mt-24">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-950 text-center">Request a human service</h2>
+          {params.submitted === "1" && (
+            <p className="mt-4 rounded-lg border border-teal-200 bg-teal-50 p-4 text-sm text-teal-900">
+              Thanks, your request was received. We will contact you by email to confirm scope and price.
+            </p>
+          )}
+          <form action="/api/inquiries" method="post" className="mt-6 grid gap-3">
+            <input type="hidden" name="redirectTo" value="/pricing#human-review" />
+            <label className="grid gap-1 text-sm text-slate-700">
+              Service
+              <select
+                name="type"
+                defaultValue={selected.value}
+                className="h-10 rounded-md border border-border bg-white px-3 text-sm text-slate-900"
+              >
+                {SERVICE_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </label>
+            <Input name="name" placeholder="Your name" required />
+            <Input name="email" type="email" placeholder="Email" required />
+            <Input name="companyName" placeholder="Your company (optional)" />
+            <Textarea
+              name="message"
+              defaultValue={defaultMessage}
+              placeholder="Supplier name or website, product, order size, and what you want checked"
+              required
+            />
+            {/* 蜜罐字段:真人看不到,机器人会填写 */}
+            <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+              <label>
+                Website
+                <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+              </label>
+            </div>
+            <Button type="submit">Send request</Button>
+          </form>
+        </section>
+
+        <div className="mt-16 max-w-4xl mx-auto">
+          <FaqSection
+            title="Frequently asked questions"
+            items={[
+              {
+                question: "Why is the database free but this is paid?",
+                answer: "Searching public records costs us very little. Researching a specific company, finding candidates or comparing suppliers takes a person's time, so that part is paid.",
+              },
+              {
+                question: "Do I pay before you confirm what you will check?",
+                answer: "No. You send a request, we confirm scope and price by email, and only then do we send a payment link.",
+              },
+              {
+                question: "Can you guarantee a supplier is safe?",
+                answer: "No. Our work is desk research on public information. It helps you decide what to ask and what to check next, but it does not guarantee any supplier or replace sample testing or contract review.",
+              },
+              {
+                question: "Do you provide private contact details?",
+                answer: "No. We do not provide or sell personal phone numbers, personal emails or contact names.",
+              },
+            ]}
+          />
+        </div>
       </section>
     </>
-  );
-}
-
-
-function PlanFit({ title, text }: { title: string; text: string }) {
-  return (
-    <div>
-      <h3 className="text-sm font-bold text-slate-900">{title}</h3>
-      <p className="mt-2 text-xs leading-relaxed text-slate-600">{text}</p>
-    </div>
-  );
-}
-
-function renderManualReviewCell(text: string, highlight = false) {
-  const unavailable = text.startsWith("Not included");
-  const limited = text.includes("Basic") || text.includes("basic");
-
-  if (unavailable) {
-    return (
-      <span className="inline-flex items-start gap-2 text-slate-450">
-        <X className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-300" />
-        <span className="leading-relaxed">{text}</span>
-      </span>
-    );
-  }
-
-  return (
-    <span className={`inline-flex items-start gap-2 ${highlight ? "font-bold text-teal-950" : "text-slate-700"}`}>
-      <Check className={`mt-0.5 h-4 w-4 shrink-0 rounded-full p-0.5 ${highlight ? "bg-teal-600 text-white" : limited ? "bg-amber-100 text-amber-600" : "bg-teal-50 text-teal-600"}`} />
-      <span className="leading-relaxed">{text}</span>
-    </span>
   );
 }

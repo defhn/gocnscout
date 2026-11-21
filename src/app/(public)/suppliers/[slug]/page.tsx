@@ -9,8 +9,7 @@ import {
   ExternalLink,
   FileCheck2,
   Globe,
-  Lock,
-  Search,
+  MessageCircle,
   ShieldCheck,
 } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
@@ -19,15 +18,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input, Textarea } from "@/components/ui/input";
 import { createMetadata } from "@/config/seo";
+import { DISCORD_INVITE_URL } from "@/config/community";
 import { getExhibitionTierLabel } from "@/config/field-policy";
-import { canViewStarterFields, canViewProFields, getPlan, type AppPlanCode } from "@/config/plans";
 import { getManualReviewPackage } from "@/config/manual-review";
-import { getCurrentAppUser } from "@/server/auth";
 import { getSimilarSuppliersCached, getSupplierBySlugCached } from "@/server/suppliers";
 import { prisma } from "@/lib/db";
-import { formatUsd, monthKey, truncate } from "@/lib/utils";
-import { canViewSupplierProfile } from "@/server/quota";
-import { PlanCode } from "@/generated/prisma/enums";
+import { formatUsd, truncate } from "@/lib/utils";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -77,10 +73,7 @@ const getCityPageSlugCached = unstable_cache(
 export default async function SupplierPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  const [supplier, appUser] = await Promise.all([
-    getSupplierBySlugCached(slug).catch(() => null),
-    getCurrentAppUser().catch(() => null),
-  ]);
+  const supplier = await getSupplierBySlugCached(slug).catch(() => null);
 
   if (!supplier) notFound();
 
@@ -92,52 +85,10 @@ export default async function SupplierPage({ params }: { params: Promise<{ slug:
   ]);
   const cityPageSlug = cityPage?.slug || "";
 
-  const planCode = (appUser?.planCode ?? "FREE") as AppPlanCode;
-  const userId = appUser?.id;
-  const planLimit = appUser ? getPlan(planCode).profileViewsPerMonth : "limited";
-
-  if (appUser && userId && planLimit !== "unlimited") {
-    const mKey = monthKey();
-    const existingView = await prisma.supplierProfileView.findFirst({
-      where: {
-        userId,
-        supplierId: supplier.id,
-        monthKey: mKey,
-      },
-    });
-
-    if (!existingView) {
-      const allowed = await canViewSupplierProfile(userId, planCode as PlanCode);
-      if (!allowed) {
-        return <ProfileViewPaywall />;
-      }
-
-      await prisma.$transaction(async (tx) => {
-        await tx.supplierProfileView.create({
-          data: {
-            userId,
-            supplierId: supplier.id,
-            monthKey: mKey,
-          },
-        });
-        await tx.usageCounter.upsert({
-          where: { userId_kind_periodKey: { userId, kind: "profile_view", periodKey: mKey } },
-          update: { used: { increment: 1 } },
-          create: { userId, kind: "profile_view", periodKey: mKey, used: 1 },
-        });
-      });
-    }
-  }
-
-  const canStarter = canViewStarterFields(planCode);
-  const canPro = canViewProFields(planCode);
   const { label: tierLabel, tier } = getExhibitionTierLabel(supplier.exhibitionSessionCount);
-  const reviewTargetUrl = supplier.websiteUrl || `https://gocnscout.com/suppliers/${supplier.slug}`;
-  const identityReviewHref = `/api/manual-review/checkout?package=IDENTITY_SINGLE&supplierUrl=${encodeURIComponent(reviewTargetUrl)}`;
-  const decisionReviewHref = `/api/manual-review/checkout?package=DECISION_SINGLE&supplierUrl=${encodeURIComponent(reviewTargetUrl)}`;
-  const supplierCheckHref = supplier.websiteUrl
-    ? `/supplier-check?url=${encodeURIComponent(supplier.websiteUrl)}`
-    : "/supplier-check";
+  const reviewQuery = `supplier=${encodeURIComponent(supplier.exhibitorName)}`;
+  const identityReviewHref = `/pricing?service=IDENTITY_SINGLE&${reviewQuery}#human-review`;
+  const decisionReviewHref = `/pricing?service=DECISION_SINGLE&${reviewQuery}#human-review`;
   const comparisonHref = cityPageSlug && supplier.industrySlug
     ? `/cities/${cityPageSlug}/${supplier.industrySlug}`
     : `/database?industry=${encodeURIComponent(supplier.industryName)}`;
@@ -187,19 +138,21 @@ export default async function SupplierPage({ params }: { params: Promise<{ slug:
               {supplier.province && <span className="text-slate-400">, {supplier.province}</span>}
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
-              <Link
-                href={supplierCheckHref}
+              <a
+                href={DISCORD_INVITE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold !text-white shadow-sm transition-colors hover:bg-teal-700"
               >
-                <Search className="h-4 w-4" />
-                {supplier.websiteUrl ? "Run free supplier check" : "Check with an Alibaba URL"}
-              </Link>
+                <MessageCircle className="h-4 w-4" />
+                Ask about this supplier on Discord
+              </a>
               <Link
                 href={identityReviewHref}
                 className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-50"
               >
                 <FileCheck2 className="h-4 w-4 text-teal-600" />
-                Order {formatUsd(identityPackage.amountUsdCents)} identity check
+                Request a human identity check (from {formatUsd(identityPackage.amountUsdCents)})
               </Link>
             </div>
           </div>
@@ -207,7 +160,6 @@ export default async function SupplierPage({ params }: { params: Promise<{ slug:
           <VerificationCard
             hasWebsite={Boolean(supplier.websiteUrl)}
             supplierName={supplier.exhibitorName}
-            supplierCheckHref={supplierCheckHref}
             identityReviewHref={identityReviewHref}
             decisionReviewHref={decisionReviewHref}
           />
@@ -222,7 +174,7 @@ export default async function SupplierPage({ params }: { params: Promise<{ slug:
               {cityPageSlug && supplier.industrySlug && (
                 <div className="rounded-lg border border-teal-100 bg-teal-50/20 p-4 text-xs flex flex-wrap items-center justify-between gap-4">
                   <div className="text-slate-600 leading-relaxed max-w-xl">
-                    Not enough information on this company? Compare similar verified <strong>{supplier.industryName}</strong> exporters and manufacturers based in <strong>{supplier.city}</strong>.
+                    Not enough information on this company? Compare similar <strong>{supplier.industryName}</strong> exporters and manufacturers listed in <strong>{supplier.city}</strong>.
                   </div>
                   <Link
                     href={comparisonHref}
@@ -269,34 +221,22 @@ export default async function SupplierPage({ params }: { params: Promise<{ slug:
                 <h2 className="text-lg font-semibold text-slate-950">Trade and exhibition context</h2>
 
                 <h3 className="mt-4 text-sm font-semibold text-slate-950">Trade modes</h3>
-                {canStarter ? (
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                    {supplier.tradeModes.length ? supplier.tradeModes.join(", ") : "Not published."}
-                  </p>
-                ) : (
-                  <LockedFieldInline label="Trade mode data" plan="STARTER" />
-                )}
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  {supplier.tradeModes.length ? supplier.tradeModes.join(", ") : "Not published."}
+                </p>
 
                 <h3 className="mt-4 text-sm font-semibold text-slate-950">Exhibition track</h3>
-                {canStarter ? (
-                  <div className="mt-2 flex flex-wrap items-center gap-3">
-                    <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-semibold ${TIER_COLORS[tier]}`}>
-                      {TIER_ICONS[tier]} {tierLabel}
-                    </span>
-                    {canPro ? (
-                      <span className="text-sm text-slate-500">
-                        {supplier.exhibitionSessionCount ?? 0} sourcing exhibitions
-                      </span>
-                    ) : (
-                      <LockedFieldInline label="Exact count" plan="PRO" compact />
-                    )}
-                  </div>
-                ) : (
-                  <LockedFieldInline label="Exhibition data" plan="STARTER" />
-                )}
+                <div className="mt-2 flex flex-wrap items-center gap-3">
+                  <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-semibold ${TIER_COLORS[tier]}`}>
+                    {TIER_ICONS[tier]} {tierLabel}
+                  </span>
+                  <span className="text-sm text-slate-500">
+                    {supplier.exhibitionSessionCount ?? 0} sourcing exhibitions
+                  </span>
+                </div>
 
                 <h3 className="mt-4 text-sm font-semibold text-slate-950">Official website</h3>
-                {canStarter && supplier.websiteUrl ? (
+                {supplier.websiteUrl ? (
                   <a
                     href={supplier.websiteUrl}
                     target="_blank"
@@ -307,8 +247,6 @@ export default async function SupplierPage({ params }: { params: Promise<{ slug:
                     Visit website
                     <ExternalLink className="h-3.5 w-3.5" />
                   </a>
-                ) : !canStarter && supplier.websiteUrl ? (
-                  <LockedFieldInline label="Official website" plan="STARTER" />
                 ) : (
                   <p className="mt-2 text-sm leading-6 text-slate-500">
                     No official website is listed for this supplier. Use an Alibaba storefront, product listing, quotation document, or business license to continue verification.
@@ -332,7 +270,7 @@ export default async function SupplierPage({ params }: { params: Promise<{ slug:
               <div>
                 <h2 className="text-sm font-semibold text-slate-950">What is never shown</h2>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
-                  Contact persons, mobile numbers, phone numbers, fax, email addresses, full street addresses, and postal codes are permanently excluded from all plans.
+                  Contact persons, mobile numbers, phone numbers, fax, email addresses, full street addresses, and postal codes are never published on this site.
                 </p>
               </div>
               <div className="rounded-lg border border-teal-100 bg-teal-50 p-4">
@@ -440,13 +378,11 @@ export default async function SupplierPage({ params }: { params: Promise<{ slug:
 function VerificationCard({
   hasWebsite,
   supplierName,
-  supplierCheckHref,
   identityReviewHref,
   decisionReviewHref,
 }: {
   hasWebsite: boolean;
   supplierName: string;
-  supplierCheckHref: string;
   identityReviewHref: string;
   decisionReviewHref: string;
 }) {
@@ -465,10 +401,15 @@ function VerificationCard({
             : `No official website is listed for ${supplierName}. Ask for a storefront, business license, or quotation documents before you judge the supplier.`}
         </p>
         <div className="mt-4 grid gap-2">
-          <Link href={supplierCheckHref} className="inline-flex items-center justify-center gap-2 rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold !text-white hover:bg-teal-700">
-            <Search className="h-4 w-4" />
-            {hasWebsite ? "Run free scan" : "Paste Alibaba/storefront URL"}
-          </Link>
+          <a
+            href={DISCORD_INVITE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold !text-white hover:bg-teal-700"
+          >
+            <MessageCircle className="h-4 w-4" />
+            Ask the community (free)
+          </a>
           <Link href={identityReviewHref} className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50">
             <FileCheck2 className="h-4 w-4 text-teal-600" />
             Human identity check
@@ -502,59 +443,3 @@ function UseCard({ title, text }: { title: string; text: string }) {
   );
 }
 
-function LockedFieldInline({ label, plan, compact = false }: { label: string; plan: string; compact?: boolean }) {
-  const isPro = plan === "PRO" || plan.startsWith("PRO");
-  const bgClass = isPro ? "bg-indigo-600 hover:bg-indigo-700" : "bg-teal-600 hover:bg-teal-700";
-  return (
-    <Link
-      href="/pricing"
-      className={`mt-2 inline-flex items-center gap-2 ${compact ? "px-3" : "px-4"} py-1.5 rounded-full ${bgClass} !text-white hover:!text-white transition-all shadow-md font-semibold`}
-      title={`Upgrade to ${plan} to unlock ${label}`}
-    >
-      <Lock className="h-3.5 w-3.5 !text-white" />
-      <span className="text-xs font-semibold text-white">{label} locked</span>
-      <span className="rounded-full bg-white/20 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider !text-white">
-        {plan}+
-      </span>
-    </Link>
-  );
-}
-
-function ProfileViewPaywall() {
-  return (
-    <>
-      <Breadcrumbs
-        items={[
-          { label: "Home", href: "/" },
-          { label: "Database", href: "/database" },
-          { label: "Limit Reached" },
-        ]}
-      />
-      <section className="container-page py-20 flex flex-col items-center justify-center">
-        <div className="w-full max-w-[500px] rounded-3xl bg-white border border-slate-200 p-8 shadow-xl text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-teal-50 text-teal-600 mb-6">
-            <Lock className="h-8 w-8 text-teal-600" />
-          </div>
-          <h1 className="text-2xl font-extrabold text-slate-950 tracking-tight">Supplier Profile Limit Reached</h1>
-          <p className="mt-4 text-sm leading-relaxed text-slate-600">
-            You have used all 5 of your free supplier profile views for this month. Upgrade to Starter or Pro to unlock unlimited profile views and get access to public supplier research fields.
-          </p>
-          <div className="mt-8 flex flex-col gap-3">
-            <Link
-              href="/pricing"
-              className="flex items-center justify-center gap-2 rounded-xl bg-teal-600 hover:bg-teal-700 px-5 py-3 text-sm font-semibold !text-white transition-all shadow-md"
-            >
-              View Plans and Upgrade
-            </Link>
-            <Link
-              href="/database"
-              className="rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-5 py-3 text-sm font-medium text-slate-600 transition-colors"
-            >
-              Back to Database
-            </Link>
-          </div>
-        </div>
-      </section>
-    </>
-  );
-}

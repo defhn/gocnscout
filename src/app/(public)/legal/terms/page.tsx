@@ -4,7 +4,7 @@ import { createMetadata, SITE } from "@/config/seo";
 
 export const metadata = createMetadata({
   title: "Terms of Service",
-  description: "Read the terms for using gocnscout supplier database subscriptions, industry reports, custom shortlists, and data license services.",
+  description: "Read the terms for using gocnscout: the free company directory, free reports, the Discord community, and paid human supplier research services.",
   path: "/legal/terms",
 });
 
@@ -39,12 +39,12 @@ export default function TermsPage() {
         </p>
         <h3>3.2 Prohibited Exploitation and Abuse</h3>
         <p>
-          You are strictly prohibited from harvesting database rows to reconstruct direct email list targets, conducting mass marketing spam, scraping platform UI codes, reselling exported CSV data, or sharing subscription accounts across unauthorized team seats.
+          You are strictly prohibited from harvesting database rows to reconstruct direct email list targets, conducting mass marketing spam, scraping platform UI codes, reselling or republishing data obtained from this site, or using automated tools that place heavy load on our servers.
         </p>
 
-        <h2>4. Billing, Stripe Portal & Terminations</h2>
+        <h2>4. Free Access, Community &amp; Paid Services</h2>
         <p>
-          All premium plans, custom shortlists, and PDF reports are managed securely via Stripe. Subscriptions automatically renew monthly unless canceled through the Stripe self-service billing portal. Failure to pay monthly billing allocations will result in immediate termination of search limits and dashboard export privileges.
+          The company directory, industry reports and sourcing guides are free to use without an account. Our Discord community is a third-party platform: your participation there is also governed by Discord&apos;s own terms, and free answers there are general guidance only. Paid human services (supplier reviews, custom shortlists, data licenses) are agreed with you in advance, including scope and price, and paid through Stripe.
         </p>
 
         <h2>5. Modifications & Contact Information</h2>

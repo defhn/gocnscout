@@ -21,7 +21,7 @@ export default function PrivacyPage() {
         <h2>2. Information We Process</h2>
         <h3>2.1 Customer Account Profiles</h3>
         <p>
-          To maintain subscription portals, dashboard settings, and Stripe transaction security, we log user account emails, payment details, session diagnostics, usage counters, compiled shortlists, and PDF report purchase histories.
+          To handle enquiries, paid services and administration, we may log email addresses, names, messages you send us, payment details handled by Stripe, and basic session diagnostics. Browsing the company directory and downloading reports does not require an account.
         </p>
         <h3>2.2 Supplier Compliance Data Boundaries</h3>
         <p>
@@ -34,8 +34,9 @@ export default function PrivacyPage() {
         </p>
         <ul className="list-disc pl-5 space-y-2 mb-4">
           <li><strong>Clerk</strong>: User identity verification and secure authentication flows.</li>
-          <li><strong>Stripe</strong>: Encrypted checkout processing and subscription portal management.</li>
-          <li><strong>Neon & Cloudflare R2</strong>: Secure database storage and static asset CDN distribution.</li>
+          <li><strong>Stripe</strong>: Encrypted checkout processing for paid human services.</li>
+          <li><strong>Discord</strong>: Our community runs on Discord, a third-party platform with its own privacy practices.</li>
+          <li><strong>Self-hosted PostgreSQL &amp; Cloudflare R2</strong>: Application data is stored in a PostgreSQL database on our own server; report and image files are served from Cloudflare R2.</li>
           <li><strong>PostHog & Sentry</strong>: User experience analytics and automated code crash diagnostic logs.</li>
         </ul>
 

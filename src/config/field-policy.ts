@@ -56,9 +56,9 @@ export const IGNORED_SOURCE_FIELDS = [
   "高新展商",
 ] as const;
 
-export function sanitizeWebsiteAccess(planCode: string, websiteUrl?: string | null) {
-  if (!websiteUrl) return null;
-  return planCode === "FREE" ? null : websiteUrl;
+/** 官网属于公开字段,对所有访客开放。保留 planCode 参数仅为兼容旧调用。 */
+export function sanitizeWebsiteAccess(_planCode: string, websiteUrl?: string | null) {
+  return websiteUrl || null;
 }
 
 /** 根据参展次数返回等级标签（不含任何展会名称，合规） */

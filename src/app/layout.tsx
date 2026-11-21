@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(absoluteUrl("/")),
-  title: "China Supplier Database for Export Research",
+  title: "Free China Exhibitor Database and Sourcing Resources",
   description:
-    "Search public China supplier records, industry reports, sourcing shortlists, and data license options for compliant B2B supplier research.",
+    "Search about 20,000 China exhibitor records for free, read sourcing guides, join our Discord community, and request human supplier research when you need it.",
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" },

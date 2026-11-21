@@ -33,6 +33,7 @@ vi.mock("@/server/auth", () => ({
 
 describe("supplier analysis API", () => {
   beforeEach(() => {
+    process.env.SUPPLIER_CHECK_ENABLED = "true";
     createAnalysis.mockReset();
     createAnalysis.mockResolvedValue({
       id: "analysis_123",

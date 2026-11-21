@@ -25,7 +25,6 @@ export async function POST(request: Request) {
     const session = event.data.object as Stripe.Checkout.Session;
     const userId = session.metadata?.userId;
     const planCode = session.metadata?.planCode;
-    const reportId = session.metadata?.reportId;
     const manualReviewId = session.metadata?.manualReviewId;
 
     if (userId && planCode) {
@@ -38,16 +37,6 @@ export async function POST(request: Request) {
           billingInterval: interval === "YEAR" ? "YEAR" : "MONTH",
           stripeCustomerId: typeof session.customer === "string" ? session.customer : undefined,
           subscriptionStartedAt: new Date(),
-        },
-      });
-    }
-
-    if (userId && reportId) {
-      await prisma.reportPurchase.updateMany({
-        where: { userId, reportId, stripeCheckoutSession: session.id },
-        data: {
-          status: "PAID",
-          stripePaymentIntent: typeof session.payment_intent === "string" ? session.payment_intent : undefined,
         },
       });
     }
