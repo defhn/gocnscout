@@ -26,12 +26,10 @@ const corePages = [
 
 const servicePages = [
   { href: "/china-exporter-database", label: "China Exporter Database" },
-  { href: "/custom-shortlist", label: "Custom Supplier Shortlist" },
   { href: "/data-license", label: "Data License" },
   { href: "/methodology", label: "Methodology" },
   { href: "/data-policy", label: "Data Policy" },
   { href: "/about", label: "About" },
-  { href: "/blog", label: "Blog" },
 ];
 
 const legalPages = [

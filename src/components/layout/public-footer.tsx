@@ -31,7 +31,6 @@ export function PublicFooter() {
           <p className="text-sm font-semibold text-slate-950">Services</p>
           <div className="mt-3 grid gap-2 text-sm text-slate-600">
             <Link href="/data-license">Data License</Link>
-            <Link href="/custom-shortlist">Custom Shortlist</Link>
             <Link href="/china-exporter-database">China Exporter Database</Link>
             <a href={DISCORD_INVITE_URL} target="_blank" rel="noopener noreferrer">Join Discord</a>
           </div>

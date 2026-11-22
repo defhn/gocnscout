@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, ChevronRight, Database, ListChecks, MessageCircle, Search, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { ArrowRight, ChevronRight, Database, ListChecks, MessageCircle, Search, ShieldCheck, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { FaqSection } from "@/components/marketing/faq-section";
@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { COMMUNITY_SCOPE, DISCORD_INVITE_URL } from "@/config/community";
 import { getManualReviewPackage } from "@/config/manual-review";
 import { mediaAssets } from "@/config/media";
-import { STRIPE_CATALOG } from "@/config/pricing";
 import { createMetadata, organizationJsonLd, websiteSearchJsonLd } from "@/config/seo";
 import { formatUsd } from "@/lib/utils";
 import { getHomeStatsCached, listCityPagesCached, listIndustryPagesCached } from "@/server/suppliers";
@@ -17,7 +16,7 @@ export const revalidate = 604800;
 export const metadata = createMetadata({
   title: "Free China Exhibitor Database and Sourcing Resources",
   description:
-    "Search about 20,000 China exhibitor records for free, read sourcing guides, and ask sourcing questions in our Discord community. Human supplier research is available when you need it.",
+    "Search about 20,000 China exhibitor records for free and ask sourcing questions in our Discord community. Human supplier verification is available when you need it.",
 });
 
 const identityPackage = getManualReviewPackage("IDENTITY_SINGLE");
@@ -187,9 +186,18 @@ export default async function HomePage() {
           <p className="mt-3 text-lg text-slate-600">All of this is free to use.</p>
         </div>
         <div className="grid gap-6 md:grid-cols-3">
-          <ResourceCard icon={<Database className="h-6 w-6" />} title="Company database" text="Filter exhibitor records by industry, province, city, product keywords, company size and type." href="/database" cta="Search companies" />
+          <ResourceCard icon={<Database className="h-6 w-6" />} title="Free company database" text="Filter exhibitor records by industry, province, city, product keywords, company size and type." href="/database" cta="Search companies" />
           <ResourceCard icon={<ListChecks className="h-6 w-6" />} title="Industries and cities" text="Browse industry and city pages to see where suppliers cluster and what they make." href="/industries" cta="Browse industries" />
-          <ResourceCard icon={<BookOpen className="h-6 w-6" />} title="Sourcing guides" text="Practical articles on finding, checking and working with Chinese suppliers." href="/blog" cta="Read the guides" />
+          <div className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-teal-50 text-teal-600 transition-colors group-hover:bg-teal-100">
+              <MessageCircle className="h-6 w-6" />
+            </div>
+            <h3 className="mt-4 text-lg font-bold text-slate-950">Discord community</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600">Ask simple sourcing questions, get help reading company profiles, and learn what to check next.</p>
+            <a href={DISCORD_INVITE_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-xs font-bold text-teal-600 mt-4 group-hover:text-teal-700">
+              Join Discord <ChevronRight className="ml-0.5 h-3.5 w-3.5" />
+            </a>
+          </div>
         </div>
       </section>
 
@@ -211,11 +219,10 @@ export default async function HomePage() {
               Prices below are references. Tell us what you need, we confirm scope and price with you, and you only pay after that.
             </p>
           </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto">
+          <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto">
             <ServiceCard title={identityPackage.name} price={formatUsd(identityPackage.amountUsdCents)} text="Desk research on one supplier: registration identity, website and store consistency, and an obvious-risk screen." />
             <ServiceCard title={decisionPackage.name} price={formatUsd(decisionPackage.amountUsdCents)} text="A deeper review of one supplier with ownership, legal-risk interpretation, operating signals and buyer advice." />
             <ServiceCard title={decisionBundlePackage.name} price={formatUsd(decisionBundlePackage.amountUsdCents)} text="Compare up to three supplier candidates with full Buyer Decision Reviews before sampling or payment." />
-            <ServiceCard title="Custom Supplier Shortlist" price={formatUsd(STRIPE_CATALOG.customShortlist.amountUsdCents)} text="Candidate suppliers matched to your product, region and requirements, with a buyer checklist." />
           </div>
           <div className="mt-8 text-center">
             <ButtonLink href="/pricing#human-review" className="bg-teal-600 hover:bg-teal-700 text-white font-semibold">
@@ -255,7 +262,7 @@ export default async function HomePage() {
         <div className="container-page text-center flex flex-col items-center space-y-6">
           <h2 className="text-3xl font-bold tracking-tight">Start with the free database</h2>
           <p className="max-w-xl text-slate-300 text-sm md:text-base leading-relaxed">
-            Search companies, read our sourcing guides, and bring your questions to the community.
+            Search companies for free and bring your questions to the community.
           </p>
           <div className="flex flex-wrap justify-center gap-4 pt-2">
             <ButtonLink href="/database" className="bg-teal-500 hover:bg-teal-400 text-slate-950 font-semibold shadow-lg">

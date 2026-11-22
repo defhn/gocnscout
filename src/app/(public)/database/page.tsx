@@ -180,10 +180,10 @@ export default async function DatabasePage({
                   <ArrowDownUp className="h-4 w-4" /> Sort: Supplier
                 </button>
                 <Link
-                  href="/custom-shortlist"
+                  href="/data-license"
                   className="inline-flex h-9 items-center gap-2 rounded-md border border-border bg-white px-3 text-sm text-slate-700 hover:bg-slate-50"
                 >
-                  <Download className="h-4 w-4" /> Need a spreadsheet?
+                  <Download className="h-4 w-4" /> Need a dataset?
                 </Link>
               </div>
             </div>

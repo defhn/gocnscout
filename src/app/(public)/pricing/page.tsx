@@ -1,20 +1,19 @@
-import { Check } from "lucide-react";
+import { Check, Sparkles, X } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { FaqSection } from "@/components/marketing/faq-section";
-import { ButtonLink } from "@/components/ui/button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input, Textarea } from "@/components/ui/input";
 import { COMMUNITY_SCOPE, DISCORD_INVITE_URL } from "@/config/community";
-import { getManualReviewPackage } from "@/config/manual-review";
+import { getManualReviewPackage, MANUAL_REVIEW_COMPARISON_ROWS } from "@/config/manual-review";
 import { STRIPE_CATALOG } from "@/config/pricing";
 import { createMetadata } from "@/config/seo";
 import { formatUsd } from "@/lib/utils";
 
 export const metadata = createMetadata({
-  title: "Human Supplier Review and Sourcing Services",
+  title: "Human Supplier Verification Services",
   description:
-    "The database, sourcing guides and community are free. When you need hands-on research on a specific supplier or a custom shortlist, request a human service here.",
+    "The company database and Discord community are free. When you need hands-on research on a specific supplier, compare our $149 Identity Check, $249 Buyer Decision Review, and $499 3-Supplier Bundle.",
   path: "/pricing",
 });
 
@@ -26,7 +25,6 @@ const SERVICE_OPTIONS = [
   { value: "HUMAN_REVIEW_IDENTITY_SINGLE", query: "IDENTITY_SINGLE", label: `Supplier Identity Check (from ${formatUsd(identity.amountUsdCents)})` },
   { value: "HUMAN_REVIEW_DECISION_SINGLE", query: "DECISION_SINGLE", label: `Buyer Decision Review (from ${formatUsd(decision.amountUsdCents)})` },
   { value: "HUMAN_REVIEW_DECISION_BUNDLE", query: "DECISION_BUNDLE", label: `Buyer Decision Review - 3 Suppliers (from ${formatUsd(decisionBundle.amountUsdCents)})` },
-  { value: "CUSTOM_SHORTLIST", query: "CUSTOM_SHORTLIST", label: `Custom Supplier Shortlist (from ${formatUsd(STRIPE_CATALOG.customShortlist.amountUsdCents)})` },
   { value: "DATA_LICENSE", query: "DATA_LICENSE", label: "Data license enquiry" },
   { value: "OTHER_RESEARCH", query: "OTHER", label: "Something else" },
 ];
@@ -47,10 +45,10 @@ export default async function PricingPage({
 
       <section className="container-page pb-20">
         <div className="max-w-4xl mx-auto text-center py-10">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-950">Human Supplier Review and Sourcing Services</h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-950">Human Supplier Verification Services</h1>
           <p className="mt-4 text-base md:text-lg leading-relaxed text-slate-600">
-            The company database, sourcing guides and Discord community are free. If you need someone to research a specific
-            supplier or find candidates for you, we do that as a paid service.
+            The company database and Discord community are free. When you need a human analyst to research a specific
+            Chinese supplier before samples or payment, choose a review package below.
           </p>
         </div>
 
@@ -63,7 +61,7 @@ export default async function PricingPage({
             <CardContent>
               <ul className="space-y-2 text-sm text-slate-700">
                 <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" />Company database search and profiles</li>
-                <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" />Industry and city pages, sourcing guides</li>
+                <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" />Industry and city directories</li>
                 {COMMUNITY_SCOPE.free.map((item) => (
                   <li key={item} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" />{item} (Discord)</li>
                 ))}
@@ -95,49 +93,123 @@ export default async function PricingPage({
           </Card>
         </div>
 
-        {/* Services */}
+        {/* Services with full expanded details */}
         <section className="mt-16 max-w-6xl mx-auto">
           <h2 className="text-2xl font-bold tracking-tight text-slate-950 text-center">Services and reference prices</h2>
-          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {[identity, decision, decisionBundle].map((pkg) => (
-              <Card key={pkg.code} className="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-xs">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base font-extrabold text-slate-950">{pkg.name}</CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-1 flex-col">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">From</div>
-                  <div className="text-3xl font-black tracking-tight text-slate-950">{formatUsd(pkg.amountUsdCents)}</div>
-                  <p className="mt-3 text-xs leading-relaxed text-slate-600">{pkg.description}</p>
-                  <details className="mt-4 text-xs text-slate-600">
-                    <summary className="cursor-pointer font-semibold text-slate-800">What may be checked</summary>
-                    <ul className="mt-3 space-y-2">
-                      {pkg.features.map((feature) => (
-                        <li key={feature} className="flex gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-teal-600" /><span>{feature}</span></li>
-                      ))}
-                    </ul>
-                    <p className="mt-3 text-slate-500">Items depend on which public records are available for the company; we tell you what we could not find.</p>
-                  </details>
-                </CardContent>
-              </Card>
-            ))}
-            <Card className="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-xs">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base font-extrabold text-slate-950">Custom Supplier Shortlist</CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-1 flex-col">
-                <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">From</div>
-                <div className="text-3xl font-black tracking-tight text-slate-950">{formatUsd(STRIPE_CATALOG.customShortlist.amountUsdCents)}</div>
-                <p className="mt-3 text-xs leading-relaxed text-slate-600">
-                  Candidate suppliers matched to your product, region and requirements, with a buyer verification checklist. A research shortlist, not a recommendation or guarantee.
-                </p>
-                <ButtonLink href="/custom-shortlist" variant="outline" className="mt-4 w-full text-xs font-semibold">Details</ButtonLink>
-              </CardContent>
-            </Card>
+          <p className="mt-2 text-center text-sm text-slate-600">
+            All packages include full online desk research and public record verification. Scope is confirmed before payment.
+          </p>
+          <div className="mt-8 grid gap-6 lg:grid-cols-3">
+            {[identity, decision, decisionBundle].map((pkg) => {
+              const isRecommended = pkg.code === "DECISION_SINGLE";
+              const isBundle = pkg.code === "DECISION_BUNDLE";
+              return (
+                <Card
+                  key={pkg.code}
+                  className={`relative flex flex-col rounded-2xl bg-white ${
+                    isRecommended
+                      ? "border-2 border-teal-500 shadow-lg"
+                      : "border border-slate-200 shadow-xs"
+                  }`}
+                >
+                  {isRecommended && (
+                    <span className="absolute -top-3 left-6 inline-flex items-center gap-1 rounded-full bg-teal-600 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-white shadow-sm">
+                      <Sparkles className="h-3 w-3" />
+                      Recommended
+                    </span>
+                  )}
+                  <CardHeader className="pb-2">
+                    <span className="w-fit rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-600">
+                      {isBundle ? "3-Supplier Bundle" : "Single Supplier"}
+                    </span>
+                    <CardTitle className="mt-2 text-lg font-extrabold text-slate-950">{pkg.name}</CardTitle>
+                    <p className="text-xs text-slate-500">{pkg.delivery}</p>
+                  </CardHeader>
+                  <CardContent className="flex flex-1 flex-col">
+                    <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">From</div>
+                    <div className="text-3xl font-black tracking-tight text-slate-950">{formatUsd(pkg.amountUsdCents)}</div>
+                    <p className="mt-3 text-xs leading-relaxed text-slate-600">{pkg.description}</p>
+
+                    <div className="mt-5 border-t border-slate-100 pt-4 flex-1">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900">What is included</h3>
+                      <ul className="mt-3 space-y-2.5 text-xs leading-relaxed text-slate-700">
+                        {pkg.features.map((feature) => (
+                          <li key={feature} className="flex items-start gap-2">
+                            <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-teal-600" />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <p className="mt-4 text-[11px] leading-relaxed text-slate-500">
+                        Availability depends on public records for the company; we always report what could and could not be verified.
+                      </p>
+                    </div>
+
+                    <a
+                      href={`/pricing?service=${pkg.code}#human-review`}
+                      className={`mt-6 inline-flex h-10 w-full items-center justify-center rounded-xl text-xs font-bold transition-colors ${
+                        isRecommended
+                          ? "bg-teal-600 !text-white hover:bg-teal-700"
+                          : "border border-slate-300 bg-white text-slate-800 hover:bg-slate-50"
+                      }`}
+                    >
+                      Request {pkg.shortName}
+                    </a>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
           <p className="mt-6 text-center text-xs text-slate-500">
-            Need a spreadsheet export or a licensed dataset?{" "}
+            Need a licensed dataset for internal systems?{" "}
             <a href="/data-license" className="font-semibold text-teal-700 underline">Data license enquiries</a> start at {formatUsd(STRIPE_CATALOG.dataLicenseAnnualUsdCents)} per year.
           </p>
+        </section>
+
+        {/* $149 vs $249 Feature Comparison Table */}
+        <section className="mt-16 max-w-5xl mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold tracking-tight text-slate-950">Compare $149 Identity Check vs $249 Buyer Decision Review</h2>
+            <p className="mt-2 text-sm text-slate-600">
+              See the exact difference between our two verification levels. The $499 bundle includes three full $249 Buyer Decision Reviews.
+            </p>
+          </div>
+
+          <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <table className="min-w-[760px] w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-slate-200 bg-slate-50 text-slate-700 font-bold uppercase tracking-wider">
+                  <th className="w-[24%] px-5 py-4 border-r border-slate-200">Review Area</th>
+                  <th className="w-[38%] px-5 py-4 border-r border-slate-200">
+                    Supplier Identity Check ({formatUsd(identity.amountUsdCents)})
+                  </th>
+                  <th className="w-[38%] px-5 py-4 bg-teal-600 text-white">
+                    <div className="flex items-center justify-between gap-2">
+                      <span>Buyer Decision Review ({formatUsd(decision.amountUsdCents)})</span>
+                      <span className="rounded-full bg-white/20 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider">
+                        Recommended
+                      </span>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {MANUAL_REVIEW_COMPARISON_ROWS.map((row) => (
+                  <tr key={row.feature} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="px-5 py-4 font-bold text-slate-900 bg-slate-50/40 border-r border-slate-200 align-top">
+                      {row.feature}
+                    </td>
+                    <td className="px-5 py-4 leading-relaxed text-slate-600 border-r border-slate-100 align-top">
+                      {renderComparisonCell(row.identity)}
+                    </td>
+                    <td className="px-5 py-4 leading-relaxed text-slate-900 bg-teal-50/25 font-medium align-top">
+                      {renderComparisonCell(row.decision, true)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
 
         {/* How it works */}
@@ -205,7 +277,7 @@ export default async function PricingPage({
             items={[
               {
                 question: "Why is the database free but this is paid?",
-                answer: "Searching public records costs us very little. Researching a specific company, finding candidates or comparing suppliers takes a person's time, so that part is paid.",
+                answer: "Searching public records costs us very little. Researching a specific company and interpreting ownership, legal and operating risks takes a person's time, so that part is paid.",
               },
               {
                 question: "Do I pay before you confirm what you will check?",
@@ -224,5 +296,24 @@ export default async function PricingPage({
         </div>
       </section>
     </>
+  );
+}
+
+function renderComparisonCell(text: string, highlight = false) {
+  const unavailable = text.startsWith("Not included");
+  if (unavailable) {
+    return (
+      <span className="inline-flex items-start gap-2 text-slate-400">
+        <X className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-300" />
+        <span>{text}</span>
+      </span>
+    );
+  }
+
+  return (
+    <span className={`inline-flex items-start gap-2 ${highlight ? "text-teal-950" : "text-slate-700"}`}>
+      <Check className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${highlight ? "text-teal-600" : "text-teal-500"}`} />
+      <span>{text}</span>
+    </span>
   );
 }

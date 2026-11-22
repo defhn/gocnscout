@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
-import { ChevronDown, ShieldCheck, Sparkles, Layers, FileText, Mail, ShieldAlert, Database, Package } from "lucide-react";
+import { ChevronDown, ShieldCheck, Layers, FileText, Mail, ShieldAlert, Database, Package } from "lucide-react";
 import { PublicAuthActions } from "@/components/layout/public-auth-actions";
 
 const NAV_LINK =
@@ -34,9 +34,6 @@ export function PublicHeader() {
           <Link href="/cities" className={NAV_LINK}>
             Cities
           </Link>
-          <Link href="/blog" className={NAV_LINK}>
-            Sourcing Guides
-          </Link>
           <Link href="/pricing" className={NAV_LINK}>
             Human Services
           </Link>
@@ -51,7 +48,6 @@ export function PublicHeader() {
             <div className="absolute top-full right-0 mt-1 hidden group-hover:block w-72 rounded-2xl border border-slate-100 bg-white p-2 shadow-xl shadow-slate-200/50 animate-in fade-in-50 slide-in-from-top-1 duration-200 z-50">
               <div className="grid gap-0.5">
                 <DropdownItem href="/products" title="Product Directory" description="Browse suppliers by product keyword" icon={Package} />
-                <DropdownItem href="/custom-shortlist" title="Custom Supplier Shortlist" description="Human-curated candidate suppliers" icon={Sparkles} />
                 <DropdownItem href="/data-license" title="Enterprise Data License" description="Dataset licensing for internal use" icon={ShieldCheck} />
                 <DropdownItem href="/china-exporter-database" title="Exporter Guide Directory" description="Baseline cluster mapping guide" icon={Layers} />
                 <DropdownItem href="/methodology" title="Normalization Methodology" description="How the records are cleaned" icon={FileText} />

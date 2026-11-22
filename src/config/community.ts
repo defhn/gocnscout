@@ -17,9 +17,8 @@ export const COMMUNITY_SCOPE = {
     "What to check next before samples or payment",
   ],
   paid: [
-    "Research on one specific company",
-    "Finding and organizing candidate suppliers for your product",
-    "Comparing several suppliers side by side",
-    "Contacting suppliers or following up quotes on your behalf",
+    "Identity and public-record verification for a specific company ($149)",
+    "Deep ownership, legal-risk, IP and social-signal review before payment ($249)",
+    "Side-by-side Buyer Decision Reviews for up to three supplier candidates ($499)",
   ],
 } as const;

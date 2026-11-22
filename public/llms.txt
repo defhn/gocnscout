@@ -1,6 +1,6 @@
 # gocnscout
 
-gocnscout is a free China exhibitor research site for international sourcing teams: a searchable company directory, sourcing guides, a Discord community, and optional paid human research.
+gocnscout is a free China exhibitor research site for international sourcing teams: a searchable company directory, a Discord community, and optional paid human supplier verification.
 
 Primary domain: https://gocnscout.com
 Support email: gerry@gocnscout.com
@@ -10,9 +10,8 @@ Support email: gerry@gocnscout.com
 - Free searchable directory of about 20,000 China exhibitor records built from exhibitor registry and public company profile data. Records are not individually verified.
 - Industry pages and city pages for supplier category and cluster discovery.
 - Company profile pages with non-sensitive company fields.
-- Practical sourcing guides.
 - A Discord community for simple sourcing questions.
-- Paid human services: supplier identity check, buyer decision review, custom supplier shortlist, and data license enquiries.
+- Paid human services: supplier identity check ($149), buyer decision review ($249 / $499 for 3 suppliers), and data license enquiries.
 
 ## Data Boundaries
 
