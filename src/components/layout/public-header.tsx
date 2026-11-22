@@ -18,9 +18,15 @@ export function PublicHeader() {
 
         {/* Navigation Controls */}
         <nav className="hidden items-center gap-1.5 lg:flex" aria-label="Main navigation">
-          <Link href="/database" className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200/60 bg-slate-50/50 px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-teal-600 transition-all">
-            <Database className="h-3.5 w-3.5 text-slate-500" />
-            <span>Company Database</span>
+          <Link
+            href="/database"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-teal-300 bg-teal-50 px-3 py-1.5 text-xs font-extrabold text-teal-800 shadow-2xs hover:border-teal-400 hover:bg-teal-100 hover:text-teal-900 transition-all"
+          >
+            <Database className="h-3.5 w-3.5 text-teal-600" />
+            <span>Free Company Database</span>
+            <span className="rounded bg-teal-600 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-white">
+              FREE
+            </span>
           </Link>
           <Link href="/industries" className={NAV_LINK}>
             Industries

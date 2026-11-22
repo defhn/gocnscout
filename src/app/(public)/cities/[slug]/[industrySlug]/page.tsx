@@ -21,7 +21,7 @@ const getCityIndustryData = unstable_cache(async (citySlug: string, industrySlug
   // 查询行业信息，支持从 industryPage 或 supplier 记录反查
   let industryName = "";
   let industryNameCn = "";
-  
+
   const industryPage = await prisma.industryPage.findUnique({ where: { slug: industrySlug } });
   if (industryPage) {
     industryName = industryPage.industryName;
@@ -215,7 +215,7 @@ export default async function CityIndustryPage({ params }: { params: Promise<Par
                         </span>
                       )}
                     </div>
-                    
+
                     {(supplier.productsText || supplier.keywordsText) && (
                       <p className="mt-2 text-xs text-slate-500 line-clamp-2 leading-relaxed">
                         <strong className="text-slate-700">Products: </strong>
@@ -250,7 +250,7 @@ export default async function CityIndustryPage({ params }: { params: Promise<Par
                   href={`/database?province=${encodeURIComponent(city.province)}&city=${encodeURIComponent(city.city)}&industry=${encodeURIComponent(industryName)}`}
                   className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-5 py-3 text-sm font-bold text-white hover:bg-slate-800 transition-colors shadow-sm"
                 >
-                  Unlock All {totalCount.toLocaleString("en-US")} {industryName} Exporters
+                  Browse All {totalCount.toLocaleString("en-US")} {industryName} Exporters Free
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>

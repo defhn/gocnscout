@@ -24,7 +24,7 @@ export default async function ChinaExporterDatabasePage() {
     },
     {
       question: "Can I download or export the exhibitor records?",
-      answer: "Yes. Paid accounts support CSV exports of public company profiles, registration scales, and verified websites up to monthly plan limits. All sensitive contact details are excluded.",
+      answer: "Web search and company profiles are completely free without an account. Bulk CSV exports are not offered to visitors; if you need a curated spreadsheet or licensed dataset, please see our Custom Shortlist or Data License services. All sensitive personal contact details are permanently excluded.",
     },
     {
       question: "How often is the database synced and updated?",

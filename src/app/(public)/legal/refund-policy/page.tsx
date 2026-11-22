@@ -15,7 +15,7 @@ export default function RefundPolicyPage() {
       <LegalLayout title="Refund Policy" activePath="/legal/refund-policy">
         <h2>1. Overview</h2>
         <p>
-          The company database, industry reports and Discord community are free and involve no payment. This policy covers paid
+          The company database, sourcing guides and Discord community are free and involve no payment. This policy covers paid
           human services: supplier identity checks, buyer decision reviews, custom supplier shortlists and data licenses.
         </p>
 
@@ -47,8 +47,8 @@ export default function RefundPolicyPage() {
 
         <h2>5. Legacy Subscriptions and Report Purchases</h2>
         <p>
-          Database subscriptions and paid report purchases are no longer offered. Existing customers can contact support about
-          cancellation or billing questions for past purchases. Industry reports are now free to download.
+          Database subscriptions and standalone PDF reports are no longer offered. Existing customers can contact support about
+          cancellation or billing questions for past purchases.
         </p>
 
         <h2>6. Contact</h2>

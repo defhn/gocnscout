@@ -80,40 +80,66 @@ export function SupplierTable({
   page,
   totalPages,
   searchParams,
+  isSignedIn,
+  initialSavedIds,
 }: {
   suppliers: SupplierRow[];
   total: number;
   page: number;
   totalPages: number;
   searchParams: Record<string, string | string[] | undefined>;
+  isSignedIn: boolean;
+  initialSavedIds: string[];
 }) {
   const [selected, setSelected] = useState<SupplierRow | null>(null);
-  const [savedIds, setSavedIds] = useState<Set<string>>(() => {
-    if (typeof window === "undefined") return new Set();
-    try {
-      const raw = localStorage.getItem("gocnscout_shortlist_ids");
-      return raw ? new Set(JSON.parse(raw)) : new Set();
-    } catch {
-      return new Set();
-    }
-  });
+  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
+  const [savedIds, setSavedIds] = useState<Set<string>>(() => new Set(initialSavedIds));
 
-  const toggleSave = (id: string, e?: React.MouseEvent) => {
+  const toggleSave = async (id: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
+    if (!isSignedIn) {
+      setShowSignInPrompt(true);
+      return;
+    }
+
+    const wasSaved = savedIds.has(id);
     setSavedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      if (typeof window !== "undefined") {
-        try {
-          localStorage.setItem("gocnscout_shortlist_ids", JSON.stringify(Array.from(next)));
-        } catch {}
-      }
+      if (wasSaved) next.delete(id);
+      else next.add(id);
       return next;
     });
+
+    try {
+      const res = await fetch("/api/shortlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ supplierId: id }),
+      });
+      if (res.status === 401) {
+        setSavedIds((prev) => {
+          const next = new Set(prev);
+          if (wasSaved) next.add(id);
+          else next.delete(id);
+          return next;
+        });
+        setShowSignInPrompt(true);
+      } else if (!res.ok) {
+        setSavedIds((prev) => {
+          const next = new Set(prev);
+          if (wasSaved) next.add(id);
+          else next.delete(id);
+          return next;
+        });
+      }
+    } catch {
+      setSavedIds((prev) => {
+        const next = new Set(prev);
+        if (wasSaved) next.add(id);
+        else next.delete(id);
+        return next;
+      });
+    }
   };
 
   const router = useRouter();
@@ -426,6 +452,49 @@ export function SupplierTable({
           onToggleSave={() => toggleSave(selected.id)}
           onClose={() => setSelected(null)}
         />
+      )}
+
+      {/* Sign-in required modal for Save */}
+      {showSignInPrompt && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-xs p-4"
+          onClick={() => setShowSignInPrompt(false)}
+        >
+          <div
+            className="relative w-full max-w-[400px] rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setShowSignInPrompt(false)}
+              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100"
+              aria-label="Close"
+            >
+              <X className="h-4 w-4 text-slate-500" />
+            </button>
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-teal-50 text-teal-600">
+              <Bookmark className="h-6 w-6" />
+            </div>
+            <h3 className="text-lg font-bold text-slate-950">Sign in to save suppliers</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600">
+              Searching and viewing the database is completely free without an account. Sign in or create a free account to save suppliers to your shortlist across devices.
+            </p>
+            <div className="mt-6 flex flex-col gap-2">
+              <Link
+                href="/sign-in?redirect_url=/database"
+                className="flex items-center justify-center rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold !text-white hover:bg-teal-700 transition-colors"
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/sign-up?redirect_url=/database"
+                className="flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+              >
+                Create Free Account
+              </Link>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

@@ -51,15 +51,50 @@ export default async function HomePage() {
               <span>Free China sourcing resources</span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.1] text-balance">
-              Search about 20,000 China exhibitor records for free
+              Free China Company Database: Search 20,000+ Exhibitor Records
             </h1>
             <p className="max-w-2xl text-lg leading-relaxed text-slate-300">
-              Find companies by industry, city, product and company type. Read practical sourcing guides and ask your
-              sourcing questions in our Discord community. No sign-up needed.
+              Search and filter Chinese exporters by product, industry, province, city and company type completely free — no
+              sign-up, no paywall. Ask sourcing questions in our Discord community anytime.
             </p>
-            <div className="flex flex-wrap gap-4 pt-2">
+
+            {/* Direct Free Database Search Box */}
+            <form action="/database" method="get" className="w-full max-w-2xl">
+              <div className="flex flex-col sm:flex-row gap-2 rounded-xl border border-slate-700/80 bg-slate-900/90 p-2 shadow-xl">
+                <div className="relative flex-1">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-teal-400" />
+                  <input
+                    type="text"
+                    name="q"
+                    placeholder="Search products, company names, or cities (e.g. Luggage, LED, Ningbo)..."
+                    className="h-11 w-full rounded-lg bg-slate-950/70 pl-10 pr-3 text-sm text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-lg bg-teal-500 px-5 text-sm font-bold text-slate-950 hover:bg-teal-400 transition-colors cursor-pointer"
+                >
+                  <Search className="h-4 w-4" />
+                  Search Free
+                </button>
+              </div>
+              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+                <span>Popular:</span>
+                {["Hardware", "Home Textiles", "Kitchen & Tableware", "Lighting Products", "Bags & Luggage"].map((tag) => (
+                  <Link
+                    key={tag}
+                    href={`/database?q=${encodeURIComponent(tag)}`}
+                    className="rounded-full border border-slate-700 bg-slate-900/60 px-2.5 py-1 text-slate-300 hover:border-teal-500/60 hover:text-teal-300 transition-colors"
+                  >
+                    {tag}
+                  </Link>
+                ))}
+              </div>
+            </form>
+
+            <div className="flex flex-wrap gap-3 pt-1">
               <ButtonLink href="/database" className="bg-teal-500 hover:bg-teal-400 text-slate-950 font-semibold shadow-[0_0_20px_rgba(20,184,166,0.3)] transition-all duration-300">
-                Search Companies Free <Search className="ml-2 h-4 w-4" />
+                Open Full Free Database <ArrowRight className="ml-2 h-4 w-4" />
               </ButtonLink>
               <a
                 href={DISCORD_INVITE_URL}

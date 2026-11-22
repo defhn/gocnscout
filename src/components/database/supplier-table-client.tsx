@@ -15,12 +15,16 @@ export default function SupplierTableClient({
   page,
   totalPages,
   searchParams,
+  isSignedIn,
+  initialSavedIds,
 }: {
   suppliers: SupplierRow[];
   total: number;
   page: number;
   totalPages: number;
   searchParams: Record<string, string | string[] | undefined>;
+  isSignedIn: boolean;
+  initialSavedIds: string[];
 }) {
   return (
     <SupplierTable
@@ -29,6 +33,8 @@ export default function SupplierTableClient({
       page={page}
       totalPages={totalPages}
       searchParams={searchParams}
+      isSignedIn={isSignedIn}
+      initialSavedIds={initialSavedIds}
     />
   );
 }

@@ -18,7 +18,8 @@ import SupplierTableClient from "@/components/database/supplier-table-client";
 
 import { createMetadata } from "@/config/seo";
 import { DISCORD_INVITE_URL } from "@/config/community";
-
+import { getCurrentAppUser } from "@/server/auth";
+import { prisma } from "@/lib/db";
 import { getDatabaseFacetsCached, searchSuppliersForDatabaseCached } from "@/server/suppliers";
 import { clampSearchPage, resolveSearchPageSize } from "@/server/quota";
 
@@ -65,13 +66,25 @@ export default async function DatabasePage({
     websiteCount: 0,
   };
 
-  const [results, facets] = await Promise.all([
+  const [results, facets, appUser] = await Promise.all([
     searchSuppliersForDatabaseCached({
       q, industry, province, city, companyType, companySize, companyNature,
       foundedYear, registeredCapital, tradeMode, page, pageSize,
     }).catch(() => ({ suppliers: [], total: 0, page: 1, pageSize, totalPages: 1 })),
     getDatabaseFacetsCached().catch(() => emptyFacets),
+    getCurrentAppUser().catch(() => null),
   ]);
+
+  const initialSavedIds = appUser
+    ? (
+        await prisma.savedSupplier
+          .findMany({
+            where: { list: { userId: appUser.id } },
+            select: { supplierId: true },
+          })
+          .catch(() => [])
+      ).map((item) => item.supplierId)
+    : [];
 
   const activeFilters = [
     ["Industry", industry], ["Province", province], ["City", city],
@@ -183,6 +196,8 @@ export default async function DatabasePage({
             page={results.page}
             totalPages={results.totalPages}
             searchParams={params}
+            isSignedIn={Boolean(appUser)}
+            initialSavedIds={initialSavedIds}
           />
         </section>
       </div>

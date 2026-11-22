@@ -8,7 +8,7 @@ import { createMetadata, SITE } from "@/config/seo";
 
 export const metadata = createMetadata({
   title: "Contact gocnscout for Supplier Data Support",
-  description: "Contact gocnscout about billing, custom supplier shortlists, data licenses, report access, privacy questions, or sourcing database support.",
+  description: "Contact gocnscout about the free company database, human supplier reviews, custom shortlists, enterprise data licenses, or data removal requests.",
   path: "/contact",
 });
 
@@ -19,7 +19,7 @@ export default function ContactPage() {
         { label: "Home", href: "/" },
         { label: "Contact" }
       ]} />
-      
+
       <section className="container-page pb-20 max-w-4xl mx-auto">
         {/* Header Section */}
         <div className="py-6 mb-8 border-b border-slate-100">
@@ -28,7 +28,7 @@ export default function ContactPage() {
             Contact gocnscout
           </h1>
           <p className="mt-4 text-base leading-relaxed text-slate-600">
-            Have questions regarding database access, intelligence reports, enterprise licensing, billing queries, or data removal policies? Submit your sourcing parameters or account details, and our support staff will respond promptly.
+            Have questions regarding the free company database, human supplier reviews, custom shortlists, enterprise data licenses, or data removal requests? For quick sourcing questions you can also ask in our Discord community for free.
           </p>
         </div>
 
@@ -96,7 +96,7 @@ export default function ContactPage() {
             <CardContent className="p-6">
               <form action="/api/inquiries" method="post" className="grid gap-4">
                 <input type="hidden" name="redirectTo" value="/contact" />
-                
+
                 <div className="grid gap-1">
                   <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Inquiry Department</label>
                   <select name="type" className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 focus:border-teal-500 focus:ring-1 focus:ring-teal-500/20">

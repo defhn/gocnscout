@@ -399,10 +399,10 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
               <div>
                 <h2 className="text-xl font-bold text-slate-950 flex items-center gap-2 tracking-tight">
                   <Users className="h-5 w-5 text-teal-600" />
-                  Verified Supplier Records Directory ({cityEn})
+                  Listed Supplier Records Directory ({cityEn})
                 </h2>
                 <p className="mt-1 text-xs text-slate-500">
-                  Preview list of exporter profiles. Log in to unlock public company fields, website signals, trade modes, and export-ready filters.
+                  Free public exhibitor directory. Browse all records, websites, and trade modes in the free database — no sign-up required.
                 </p>
               </div>
               <span className="text-xs font-semibold text-slate-400">
@@ -421,7 +421,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                       <h3 className="font-bold text-slate-950 text-sm truncate">{supplier.exhibitorName}</h3>
                       {supplier.websiteUrl && (
                         <span className="bg-teal-50 text-teal-700 border border-teal-100 rounded px-1.5 py-0.5 text-[9px] font-bold flex items-center gap-0.5">
-                          <Globe className="h-2.5 w-2.5" /> Web Verified
+                          <Globe className="h-2.5 w-2.5" /> Official Website
                         </span>
                       )}
                     </div>
@@ -435,16 +435,9 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                       </p>
                     )}
 
-                    {/* 虚实结合的细节：已锁定部分以提高注册转化率 */}
-                    <div className="mt-3 flex flex-wrap gap-2 text-[10px] text-slate-400 font-medium">
+                    <div className="mt-3 flex flex-wrap gap-2 text-[10px] text-slate-500 font-medium">
                       {supplier.companySize && <span className="bg-slate-50 border border-slate-100 rounded px-1.5 py-0.5">{supplier.companySize}</span>}
                       {supplier.companyType && <span className="bg-slate-50 border border-slate-100 rounded px-1.5 py-0.5">{supplier.companyType}</span>}
-                      <span className="bg-slate-50 border border-slate-100 rounded px-1.5 py-0.5 text-slate-400/80 italic font-mono select-none">
-                        Email: [Sign in to view]
-                      </span>
-                      <span className="bg-slate-50 border border-slate-100 rounded px-1.5 py-0.5 text-slate-400/80 italic font-mono select-none">
-                        Tel: [Sign in to view]
-                      </span>
                     </div>
                   </div>
                   <Link
@@ -463,7 +456,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                   href={`/database?province=${encodeURIComponent(city.province)}&city=${encodeURIComponent(city.city)}`}
                   className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-5 py-3 text-sm font-bold text-white hover:bg-slate-800 transition-colors shadow-sm"
                 >
-                  Unlock All {totalCount.toLocaleString("en-US")} {cityEn} Exporters
+                  Browse All {totalCount.toLocaleString("en-US")} {cityEn} Exporters Free
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>

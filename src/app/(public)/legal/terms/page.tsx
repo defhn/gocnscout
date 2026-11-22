@@ -4,7 +4,7 @@ import { createMetadata, SITE } from "@/config/seo";
 
 export const metadata = createMetadata({
   title: "Terms of Service",
-  description: "Read the terms for using gocnscout: the free company directory, free reports, the Discord community, and paid human supplier research services.",
+  description: "Read the terms for using gocnscout: the free company directory, sourcing guides, the Discord community, and paid human supplier research services.",
   path: "/legal/terms",
 });
 
@@ -44,7 +44,7 @@ export default function TermsPage() {
 
         <h2>4. Free Access, Community &amp; Paid Services</h2>
         <p>
-          The company directory, industry reports and sourcing guides are free to use without an account. Our Discord community is a third-party platform: your participation there is also governed by Discord&apos;s own terms, and free answers there are general guidance only. Paid human services (supplier reviews, custom shortlists, data licenses) are agreed with you in advance, including scope and price, and paid through Stripe.
+          The company directory and sourcing guides are free to use without an account. Our Discord community is a third-party platform: your participation there is also governed by Discord&apos;s own terms, and free answers there are general guidance only. Paid human services (supplier reviews, custom shortlists, data licenses) are agreed with you in advance, including scope and price, and paid through Stripe.
         </p>
 
         <h2>5. Modifications & Contact Information</h2>

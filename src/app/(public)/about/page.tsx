@@ -173,7 +173,7 @@ export default function AboutPage() {
             gocnscout is an independent digital intelligence provider. We are not affiliated with, sponsored by, or endorsed by official state-run trade fairs, municipal government offices, or any of the suppliers listed in our directories. All database records are curated from public registries and historical trade directories to assist in preliminary feasibility research.
           </p>
           <p>
-            Our revenue is derived solely from premium digital subscriptions and customized B2B research reports. We do not receive commissions, transaction fees, or sponsorship funds from listed exporters, ensuring our data filtration rules remain completely objective.
+            Our company directory and Discord community are free to use. Our revenue comes solely from optional paid human research services (supplier reviews, custom shortlists, and enterprise data licenses). We do not receive commissions, transaction fees, or sponsorship funds from listed exporters, ensuring our listings remain objective.
           </p>
         </section>
 
