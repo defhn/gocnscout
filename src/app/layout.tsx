@@ -43,12 +43,13 @@ export default function RootLayout({
     </html>
   );
 
-  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
+  const clerkPublishableKey = process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
+  if (!clerkPublishableKey) {
     return content;
   }
 
   return (
-    <ClerkProvider>
+    <ClerkProvider publishableKey={clerkPublishableKey}>
       {content}
     </ClerkProvider>
   );

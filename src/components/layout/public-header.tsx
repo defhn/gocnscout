@@ -59,7 +59,7 @@ export function PublicHeader() {
         </nav>
 
         {/* Right side CTA Button Panel */}
-        <PublicAuthActions />
+        <PublicAuthActions clerkEnabled={Boolean(process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"])} />
       </div>
     </header>
   );
