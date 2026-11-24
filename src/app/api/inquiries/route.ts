@@ -58,11 +58,20 @@ export async function POST(request: Request) {
   const redirectTo = safeRedirectPath(typeof entries.redirectTo === "string" ? entries.redirectTo : undefined);
 
   // 蜜罐字段:真人看不到该输入框,机器人通常会自动填写
+  const wantsJson = request.headers.get("accept")?.includes("application/json");
   if (typeof entries.website === "string" && entries.website.trim() !== "") {
+    if (wantsJson) return NextResponse.json({ ok: true });
     return NextResponse.redirect(buildSubmittedRedirectUrl(redirectTo, request), 303);
   }
 
-  const parsed = inquirySchema.parse(entries);
+  const parsedResult = inquirySchema.safeParse(entries);
+  if (!parsedResult.success) {
+    if (wantsJson) {
+      return NextResponse.json({ error: "Please check your name, email, and message." }, { status: 400 });
+    }
+    throw parsedResult.error;
+  }
+  const parsed = parsedResult.data;
   const user = await getCurrentAppUser().catch(() => null);
 
   await prisma.inquiry.create({
@@ -92,6 +101,10 @@ export async function POST(request: Request) {
     }).catch((err) => {
       console.error("[inquiries] Failed to send email notification:", err);
     });
+  }
+
+  if (wantsJson) {
+    return NextResponse.json({ ok: true });
   }
 
   // 必须使用 303 See Other,否则浏览器会对重定向目标继续发 POST 导致 405

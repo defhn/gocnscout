@@ -1,4 +1,6 @@
-import { Check, Sparkles, X } from "lucide-react";
+"use client";
+
+import { Check, FileCheck2, Info, Sparkles, X } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getManualReviewPackage, MANUAL_REVIEW_COMPARISON_ROWS } from "@/config/manual-review";
@@ -9,19 +11,43 @@ const identity = getManualReviewPackage("IDENTITY_SINGLE");
 const decision = getManualReviewPackage("DECISION_SINGLE");
 const decisionBundle = getManualReviewPackage("DECISION_BUNDLE");
 
-const PACKAGES = [identity, decision, decisionBundle];
+const PACKAGES = [
+  {
+    pkg: identity,
+    stageTag: "Stage 1 · First Quote & Screening",
+    idealFor: "Best when you just received a quote or B2B link and want to rule out trading shells or fake office addresses before investing time.",
+  },
+  {
+    pkg: decision,
+    stageTag: "Stage 2 · Pre-Sample & Pre-Deposit",
+    idealFor: "Best before paying tooling fees or a 30% T/T deposit — covers ownership trace, lawsuits, CNCA/CNIPA checks, and wire-beneficiary safety.",
+  },
+  {
+    pkg: decisionBundle,
+    stageTag: "Stage 3 · Comparing 2-3 Finalists",
+    idealFor: "Best when choosing between up to three shortlisted suppliers so you eliminate risky candidates before paying for samples or SGS audits.",
+  },
+] as const;
 
 const BUNDLE_SAVINGS_CENTS = decision.amountUsdCents * 3 - decisionBundle.amountUsdCents;
 
 export function HumanVerificationPackages({
   heading = "Services and reference prices",
-  subtitle = "All packages include full online desk research and public record verification. Scope is confirmed before payment.",
+  subtitle = "All packages include 100% independent buyer-side desk research across official Chinese registries. Scope is confirmed before payment.",
   eyebrow,
+  inPageAnchor = false,
 }: {
   heading?: string;
   subtitle?: string;
   eyebrow?: string;
+  inPageAnchor?: boolean;
 }) {
+  function handleSelectInPage(code: string) {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("gocnscout:select-service", { detail: { query: code } }));
+    }
+  }
+
   return (
     <div className="max-w-6xl mx-auto">
       <div className="text-center max-w-3xl mx-auto">
@@ -35,9 +61,11 @@ export function HumanVerificationPackages({
       </div>
 
       <div className="mt-10 grid gap-6 lg:grid-cols-3">
-        {PACKAGES.map((pkg) => {
+        {PACKAGES.map(({ pkg, stageTag, idealFor }) => {
           const isRecommended = pkg.code === "DECISION_SINGLE";
           const isBundle = pkg.code === "DECISION_BUNDLE";
+          const href = inPageAnchor ? "#human-review" : `/pricing?service=${pkg.code}#human-review`;
+
           return (
             <Card
               key={pkg.code}
@@ -50,11 +78,11 @@ export function HumanVerificationPackages({
               {isRecommended && (
                 <span className="absolute -top-3 left-6 inline-flex items-center gap-1 rounded-full bg-teal-600 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-white shadow-sm">
                   <Sparkles className="h-3 w-3" />
-                  Recommended
+                  Most Popular Before Deposit
                 </span>
               )}
               <CardHeader className="pb-2">
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="w-fit rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-600">
                     {isBundle ? "3-Supplier Bundle" : "Single Supplier"}
                   </span>
@@ -64,15 +92,18 @@ export function HumanVerificationPackages({
                     </span>
                   )}
                 </div>
-                <CardTitle className="mt-2 text-lg font-extrabold text-slate-950">{pkg.name}</CardTitle>
-                <p className="text-xs text-slate-500">{pkg.delivery}</p>
+                <div className="mt-2 text-[11px] font-bold text-teal-700">{stageTag}</div>
+                <CardTitle className="mt-1 text-lg font-extrabold text-slate-950">{pkg.name}</CardTitle>
+                <p className="text-xs text-slate-500">{pkg.delivery} · Confidential (supplier is never contacted)</p>
               </CardHeader>
               <CardContent className="flex flex-1 flex-col">
                 <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">From</div>
                 <div className="text-3xl font-black tracking-tight text-slate-950">{formatUsd(pkg.amountUsdCents)}</div>
-                <p className="mt-3 text-xs leading-relaxed text-slate-600">{pkg.description}</p>
+                <p className="mt-2.5 rounded-lg bg-slate-50 border border-slate-100 p-2.5 text-xs leading-relaxed text-slate-700">
+                  {idealFor}
+                </p>
 
-                <div className="mt-5 border-t border-slate-100 pt-4 flex-1">
+                <div className="mt-4 border-t border-slate-100 pt-4 flex-1">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900">What is included</h3>
                   <ul className="mt-3 space-y-2.5 text-xs leading-relaxed text-slate-700">
                     {pkg.features.map((feature) => (
@@ -87,28 +118,63 @@ export function HumanVerificationPackages({
                   </p>
                 </div>
 
-                <Link
-                  href={`/pricing?service=${pkg.code}#human-review`}
-                  className={`mt-6 inline-flex h-10 w-full items-center justify-center rounded-xl text-xs font-bold transition-colors ${
-                    isRecommended
-                      ? "bg-teal-600 !text-white hover:bg-teal-700"
-                      : "border border-slate-300 bg-white text-slate-800 hover:bg-slate-50"
-                  }`}
-                >
-                  Request {pkg.shortName}
-                </Link>
+                {inPageAnchor ? (
+                  <a
+                    href={href}
+                    onClick={() => handleSelectInPage(pkg.code)}
+                    className={`mt-6 inline-flex h-10 w-full items-center justify-center rounded-xl text-xs font-bold transition-colors ${
+                      isRecommended
+                        ? "bg-teal-600 !text-white hover:bg-teal-700"
+                        : "border border-slate-300 bg-white text-slate-800 hover:bg-slate-50"
+                    }`}
+                  >
+                    Request {pkg.shortName}
+                  </a>
+                ) : (
+                  <Link
+                    href={href}
+                    onClick={() => handleSelectInPage(pkg.code)}
+                    className={`mt-6 inline-flex h-10 w-full items-center justify-center rounded-xl text-xs font-bold transition-colors ${
+                      isRecommended
+                        ? "bg-teal-600 !text-white hover:bg-teal-700"
+                        : "border border-slate-300 bg-white text-slate-800 hover:bg-slate-50"
+                    }`}
+                  >
+                    Request {pkg.shortName}
+                  </Link>
+                )}
               </CardContent>
             </Card>
           );
         })}
       </div>
 
-      <p className="mt-6 text-center text-xs text-slate-500">
-        Need a licensed dataset for internal systems?{" "}
+      {/* Desk Due Diligence vs On-Site QC Audit Complementarity Note */}
+      <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <Info className="h-5 w-5 text-teal-600 shrink-0 mt-0.5" />
+          <div className="text-xs leading-relaxed text-slate-600">
+            <strong className="text-slate-900">How desk verification fits with on-site audits (SGS / TÜV):</strong>{" "}
+            Our {formatUsd(identity.amountUsdCents)}–{formatUsd(decision.amountUsdCents)} desk review screens out paper
+            shells, fake certificates, lawsuit defaults, and entity mismatches <em>before</em> you wire a deposit or
+            spend $800–$1,500+ booking an on-site factory inspection during production.
+          </div>
+        </div>
+        <Link
+          href="/sample-report"
+          className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl border border-teal-200 bg-teal-50 px-4 py-2.5 text-xs font-bold text-teal-800 hover:bg-teal-100 transition-colors"
+        >
+          <FileCheck2 className="h-4 w-4 text-teal-600" />
+          View Redacted Sample Report
+        </Link>
+      </div>
+
+      <p className="mt-5 text-center text-xs text-slate-500">
+        Need a licensed dataset for internal procurement or supply-chain systems?{" "}
         <Link href="/data-license" className="font-semibold text-teal-700 underline hover:text-teal-800">
-          Data license enquiries
+          Enterprise Data License
         </Link>{" "}
-        start at {formatUsd(STRIPE_CATALOG.dataLicenseAnnualUsdCents)} per year.
+        starts at {formatUsd(STRIPE_CATALOG.dataLicenseAnnualUsdCents)} per year.
       </p>
     </div>
   );
@@ -167,10 +233,10 @@ export function HumanVerificationComparison() {
 
 export function HumanVerificationProcess() {
   const steps = [
-    ["1. Tell us what you need", "Send us the supplier name, website, or B2B store link along with your target product."],
-    ["2. We confirm scope", "We reply by email with what public records we can check, the exact price, and the timeline."],
-    ["3. You pay after confirmation", "Only once you approve the scope do we send a secure Stripe payment link."],
-    ["4. Delivered in 24-48h", "You receive our structured human findings, risk signals, and clear buyer next steps."],
+    ["1. Submit supplier target", "Share the English/Chinese name, Alibaba link, website, or proforma invoice draft."],
+    ["2. Free scope confirmation", "We check record availability and reply by email with exact scope, price, and timeline."],
+    ["3. Pay via Stripe link", "Only after you approve the scope do we send a secure Stripe payment link."],
+    ["4. Receive report in 24-48h", "Get a structured English verification report, risk verdict, and pre-deposit checklist."],
   ] as const;
 
   return (

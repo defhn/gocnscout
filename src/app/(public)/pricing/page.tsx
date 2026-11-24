@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { Check, ShieldCheck } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { FaqSection } from "@/components/marketing/faq-section";
 import {
@@ -6,32 +6,17 @@ import {
   HumanVerificationPackages,
   HumanVerificationProcess,
 } from "@/components/pricing/human-verification-showcase";
-import { Button } from "@/components/ui/button";
+import { InquiryRequestForm } from "@/components/pricing/inquiry-request-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input, Textarea } from "@/components/ui/input";
 import { COMMUNITY_SCOPE, DISCORD_INVITE_URL } from "@/config/community";
-import { getManualReviewPackage } from "@/config/manual-review";
 import { createMetadata } from "@/config/seo";
-import { formatUsd } from "@/lib/utils";
 
 export const metadata = createMetadata({
   title: "Human Supplier Verification Services",
   description:
-    "The company database and Discord community are free. When you need hands-on research on a specific supplier, compare our $149 Identity Check, $249 Buyer Decision Review, and $499 3-Supplier Bundle.",
+    "100% buyer-side supplier due diligence in China. Compare our $149 Identity Check, $249 Buyer Decision Review, and $499 3-Supplier Bundle — scope confirmed before payment.",
   path: "/pricing",
 });
-
-const identity = getManualReviewPackage("IDENTITY_SINGLE");
-const decision = getManualReviewPackage("DECISION_SINGLE");
-const decisionBundle = getManualReviewPackage("DECISION_BUNDLE");
-
-const SERVICE_OPTIONS = [
-  { value: "HUMAN_REVIEW_IDENTITY_SINGLE", query: "IDENTITY_SINGLE", label: `Supplier Identity Check (from ${formatUsd(identity.amountUsdCents)})` },
-  { value: "HUMAN_REVIEW_DECISION_SINGLE", query: "DECISION_SINGLE", label: `Buyer Decision Review (from ${formatUsd(decision.amountUsdCents)})` },
-  { value: "HUMAN_REVIEW_DECISION_BUNDLE", query: "DECISION_BUNDLE", label: `Buyer Decision Review - 3 Suppliers (from ${formatUsd(decisionBundle.amountUsdCents)})` },
-  { value: "DATA_LICENSE", query: "DATA_LICENSE", label: "Data license enquiry" },
-  { value: "OTHER_RESEARCH", query: "OTHER", label: "Something else" },
-];
 
 export default async function PricingPage({
   searchParams,
@@ -39,9 +24,7 @@ export default async function PricingPage({
   searchParams: Promise<{ service?: string; supplier?: string; submitted?: string }>;
 }) {
   const params = await searchParams;
-  const selected = SERVICE_OPTIONS.find((item) => item.query === params.service) ?? SERVICE_OPTIONS[0];
   const supplier = (params.supplier || "").slice(0, 200);
-  const defaultMessage = supplier ? `Supplier: ${supplier}\n` : "";
 
   return (
     <>
@@ -49,10 +32,17 @@ export default async function PricingPage({
 
       <section className="container-page pb-20">
         <div className="max-w-4xl mx-auto text-center py-10">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-950">Human Supplier Verification Services</h1>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-50 border border-teal-200 px-3 py-1 text-xs font-bold uppercase tracking-wider text-teal-800">
+            <ShieldCheck className="h-3.5 w-3.5 text-teal-600" />
+            100% Buyer-Side Independent · Zero Supplier Commissions
+          </span>
+          <h1 className="mt-4 text-4xl md:text-5xl font-extrabold tracking-tight text-slate-950">
+            Human Supplier Verification Services
+          </h1>
           <p className="mt-4 text-base md:text-lg leading-relaxed text-slate-600">
-            The company database and Discord community are free. When you need a human analyst to research a specific
-            Chinese supplier before samples or payment, choose a review package below.
+            The company database and Discord community are free. When you need a human analyst to verify a specific
+            Chinese supplier across official GSXT, court, CNCA, and IP registries before samples or payment, choose a
+            package below.
           </p>
         </div>
 
@@ -99,7 +89,7 @@ export default async function PricingPage({
 
         {/* Services with full expanded details */}
         <section className="mt-16">
-          <HumanVerificationPackages />
+          <HumanVerificationPackages inPageAnchor />
         </section>
 
         {/* $149 vs $249 Feature Comparison Table */}
@@ -114,44 +104,18 @@ export default async function PricingPage({
 
         {/* Request form */}
         <section id="human-review" className="mt-16 max-w-2xl mx-auto scroll-mt-24">
-          <h2 className="text-2xl font-bold tracking-tight text-slate-950 text-center">Request a human service</h2>
-          {params.submitted === "1" && (
-            <p className="mt-4 rounded-lg border border-teal-200 bg-teal-50 p-4 text-sm text-teal-900">
-              Thanks, your request was received. We will contact you by email to confirm scope and price.
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-bold tracking-tight text-slate-950">Request free scope confirmation</h2>
+            <p className="mt-1.5 text-sm text-slate-600">
+              Tell us who you want verified. You pay nothing until we confirm record availability and scope by email.
             </p>
-          )}
-          <form action="/api/inquiries" method="post" className="mt-6 grid gap-3">
-            <input type="hidden" name="redirectTo" value="/pricing#human-review" />
-            <label className="grid gap-1 text-sm text-slate-700">
-              Service
-              <select
-                name="type"
-                defaultValue={selected.value}
-                className="h-10 rounded-md border border-border bg-white px-3 text-sm text-slate-900"
-              >
-                {SERVICE_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>{option.label}</option>
-                ))}
-              </select>
-            </label>
-            <Input name="name" placeholder="Your name" required />
-            <Input name="email" type="email" placeholder="Email" required />
-            <Input name="companyName" placeholder="Your company (optional)" />
-            <Textarea
-              name="message"
-              defaultValue={defaultMessage}
-              placeholder="Supplier name or website, product, order size, and what you want checked"
-              required
-            />
-            {/* 蜜罐字段:真人看不到,机器人会填写 */}
-            <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-              <label>
-                Website
-                <input type="text" name="website" tabIndex={-1} autoComplete="off" />
-              </label>
-            </div>
-            <Button type="submit">Send request</Button>
-          </form>
+          </div>
+          <InquiryRequestForm
+            defaultServiceQuery={params.service}
+            defaultSupplier={supplier}
+            initiallySubmitted={params.submitted === "1"}
+            redirectTo="/pricing#human-review"
+          />
         </section>
 
         <div className="mt-16 max-w-4xl mx-auto">
@@ -159,20 +123,29 @@ export default async function PricingPage({
             title="Frequently asked questions"
             items={[
               {
-                question: "Why is the database free but this is paid?",
-                answer: "Searching public records costs us very little. Researching a specific company and interpreting ownership, legal and operating risks takes a person's time, so that part is paid.",
+                question: "Why is GoCNScout more objective than B2B marketplace 'Verified' badges?",
+                answer:
+                  "B2B marketplaces charge Chinese suppliers annual membership and ad fees, creating an incentive to promote paying sellers. GoCNScout is 100% buyer-funded: we take zero commissions, zero listing fees, and never notify the supplier when you investigate them.",
+              },
+              {
+                question: "Why is the database free but supplier verification is paid?",
+                answer:
+                  "Searching aggregated public exhibitor records costs very little. Tracing a specific Chinese legal entity across GSXT, court judgments, CNCA certificate registries, CNIPA patents, and domestic platforms takes a bilingual analyst's time.",
               },
               {
                 question: "Do I pay before you confirm what you will check?",
-                answer: "No. You send a request, we confirm scope and price by email, and only then do we send a payment link.",
+                answer:
+                  "No. You send a request first, we confirm exact scope and price by email, and only then do we send a Stripe payment link.",
               },
               {
-                question: "Can you guarantee a supplier is safe?",
-                answer: "No. Our work is desk research on public information. It helps you decide what to ask and what to check next, but it does not guarantee any supplier or replace sample testing or contract review.",
+                question: "Can desk due diligence replace sample testing or an on-site QC inspection?",
+                answer:
+                  "No — they solve different stages. Desk due diligence ($149-$249) eliminates paper shells, fake certificates, lawsuit defaults, and beneficiary mismatches before you wire a deposit. Once mass production starts, you should still test physical samples and book pre-shipment QC (e.g. SGS/TÜV) for large orders.",
               },
               {
                 question: "Do you provide private contact details?",
-                answer: "No. We do not provide or sell personal phone numbers, personal emails or contact names.",
+                answer:
+                  "No. We do not publish or sell personal phone numbers, private emails, or personal contact names.",
               },
             ]}
           />

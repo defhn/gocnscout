@@ -2,20 +2,26 @@ import {
   AlertTriangle,
   ArrowRight,
   Award,
+  BadgeCheck,
+  Briefcase,
   Building2,
   CheckCircle2,
   ChevronRight,
   ClipboardCheck,
+  Container,
   Database,
+  FileCheck2,
   FileSearch,
   Globe,
   Layers,
+  Lock,
   MapPin,
   MessageCircle,
   Scale,
   Search,
   ShieldAlert,
   ShieldCheck,
+  Store,
   UserCheck,
 } from "lucide-react";
 import Image from "next/image";
@@ -26,6 +32,7 @@ import {
   HumanVerificationPackages,
   HumanVerificationProcess,
 } from "@/components/pricing/human-verification-showcase";
+import { InquiryRequestForm } from "@/components/pricing/inquiry-request-form";
 import { ButtonLink } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { COMMUNITY_SCOPE, DISCORD_INVITE_URL } from "@/config/community";
@@ -36,39 +43,121 @@ import { getHomeStatsCached, listCityPagesCached, listIndustryPagesCached } from
 export const revalidate = 604800;
 
 export const metadata = createMetadata({
-  title: "Free China Exhibitor Database & Human Supplier Verification",
+  title: "Free China Exhibitor Database & Independent Supplier Verification",
   description:
-    "Search 20,000+ China exhibitor records for free, ask sourcing questions in our Discord community, and order 24-48h human supplier verification before paying a deposit.",
+    "Search 20,000+ China exhibitor records for free and verify Chinese suppliers across GSXT, court judgments, CNCA certificates, and CNIPA patents before paying a deposit.",
 });
 
-const WORKFLOW_STEPS = [
+const INDEPENDENCE_PILLARS = [
   {
-    step: "Step 1",
-    badge: "100% Free",
-    title: "Discover & Shortlist Exporters",
-    text: "Filter 20,000+ Chinese exhibitor profiles by product keywords, sourcing city, OEM/ODM trade mode, registered capital, and founding year — no paywall.",
-    image: mediaAssets.workflowApplyFilters,
-    ctaLabel: "Open Free Database",
+    icon: ShieldCheck,
+    title: "100% Buyer-Funded Independence",
+    text: "Not a B2B marketplace. Zero listing fees, ad rankings, or commissions taken from Chinese suppliers.",
+  },
+  {
+    icon: Lock,
+    title: "Silent & Confidential Checks",
+    text: "We never tip off or contact the target supplier — your negotiations and pricing leverage stay intact.",
+  },
+  {
+    icon: FileSearch,
+    title: "Official Chinese Registry Sources",
+    text: "Analysts cross-verify GSXT corporate filings, court enforcement portals, CNCA certificates, and CNIPA IP.",
+  },
+  {
+    icon: BadgeCheck,
+    title: "Scope Confirmed Before Payment",
+    text: "Submit your target free first. You only pay via Stripe after we confirm what public records exist.",
+  },
+] as const;
+
+const BUYER_PERSONAS = [
+  {
+    icon: Store,
+    audience: "E-Commerce & DTC Sellers",
+    subtitle: "Amazon FBA · Shopify · Niche Private Label",
+    pain: "Tight budgets where a single $3,000 deposit lost to a trading shell or bad batch wipes out months of margin.",
+    path: "Screen candidates free in our database, ask pre-sample questions in Discord, and run a $149 Identity Check before wiring your first sample or deposit.",
+    ctaLabel: "Start with Free Database",
     href: "/database",
   },
   {
-    step: "Step 2",
-    badge: "Free Community",
-    title: "Sanity-Check in Discord",
-    text: "Unsure how to interpret a company field, a supplier quote, or what documents to request first? Ask in our sourcing community for free.",
-    image: mediaAssets.workflowInspectProfile,
-    ctaLabel: "Join Discord",
-    href: DISCORD_INVITE_URL,
-    external: true,
+    icon: Container,
+    audience: "Wholesalers & Distributors",
+    subtitle: "Repeat Containers · Multi-SKU Catalogs",
+    pain: "Lead-time slippage and single-factory dependency when an over-extended supplier subcontracts behind your back.",
+    path: "Use our Sourcing City Atlas & multi-session exhibition signals to find cluster factories, then compare your top 3 finalists with the $499 Bundle.",
+    ctaLabel: "Compare 3-Supplier Bundle",
+    href: "#human-verification",
   },
   {
-    step: "Step 3",
-    badge: "24-48h Human Review",
-    title: "Verify Before You Pay a Deposit",
-    text: "Once you narrow down 1-3 finalists, our human analysts cross-check Chinese registration, ownership, litigation, IP, and store consistency.",
-    image: mediaAssets.workflowDirectVetting,
-    ctaLabel: "Compare Verification Plans",
-    href: "#human-verification",
+    icon: Briefcase,
+    audience: "Brands & Enterprise Importers",
+    subtitle: "Strict Compliance · Custom Tooling & IP",
+    pain: "High exposure to fake CE/FDA/ISO certificates, patent infringement lawsuits, or entity-mixing between trading desks and plants.",
+    path: "Order a $249 Buyer Decision Review before tooling or deposit — or license the full structured dataset ($6,000/yr) for internal procurement teams.",
+    ctaLabel: "Inspect Sample Report",
+    href: "/sample-report",
+  },
+] as const;
+
+const PROCUREMENT_STAGES = [
+  {
+    stage: "01 · First Quote",
+    trigger: "Supplier sends catalog or B2B quote",
+    risk: "Trading shell or office room posing as an industrial factory",
+    solution: "Free DB lookup + $149 Identity Check (GSXT business scope & satellite address check)",
+  },
+  {
+    stage: "02 · Shortlist Filter",
+    trigger: "Comparing 2–3 supplier quotes",
+    risk: "Hidden contract lawsuits, zero insured workers, or shell affiliates",
+    solution: "$499 3-Supplier Bundle to eliminate risky finalists before paying sample/audit fees",
+  },
+  {
+    stage: "03 · Sample & Compliance",
+    trigger: "Reviewing ISO / CE / FCC / patent claims",
+    risk: "Forged, expired, or wrong-voltage certificates belonging to another factory",
+    solution: "$249 Decision Review (CNCA certificate number & CNIPA patent ownership cross-check)",
+  },
+  {
+    stage: "04 · Pre-Deposit Wire",
+    trigger: "Proforma Invoice requests 30% T/T deposit",
+    risk: "PI beneficiary account (e.g. unlinked HK shell) does not match actual manufacturer",
+    solution: "$249 Decision Review (shareholder penetration + contract chop & bank-entity checklist)",
+  },
+  {
+    stage: "05 · Production & QC",
+    trigger: "Mass production & pre-shipment",
+    risk: "Subcontracting or spec drift on the assembly line",
+    solution: "Pair our prior legal/address verification with an on-site QC agency (SGS / TÜV) at the verified plant",
+  },
+] as const;
+
+const RED_FLAGS = [
+  {
+    icon: ShieldAlert,
+    tag: "Case #1 · Fake Factory",
+    title: "Office-Tower Shell Using Borrowed Workshop Photos",
+    text: "B2B storefront claims a 200-worker factory, but GSXT filings & satellite maps reveal Room 1408 in a commercial plaza, 0 paid-in capital, and a trading-only license.",
+  },
+  {
+    icon: AlertTriangle,
+    tag: "Case #2 · Compliance Trap",
+    title: "Forged, Expired, or Wrong-Scope CE / ISO Certificates",
+    text: "Scanned certificates look legitimate until checked on CNCA — often belonging to an unrelated third-party plant or covering 220V models instead of your 110V SKU.",
+  },
+  {
+    icon: Scale,
+    tag: "Case #3 · Default Risk",
+    title: "Active Supply-Contract Lawsuits & Dishonest Debtors",
+    text: "Suppliers facing cash-flow collapse, frozen bank accounts, or multiple raw-material lawsuits aggressively push for fast T/T deposits to plug old debts.",
+  },
+  {
+    icon: FileSearch,
+    tag: "Case #4 · Wire & IP Trap",
+    title: "Beneficiary Account Mismatch & Patent Infringement",
+    text: "Signing with an asset-light export desk or wiring to an unlinked offshore account leaves zero legal recourse — while copied molds risk customs seizure.",
   },
 ] as const;
 
@@ -76,78 +165,32 @@ const PROFILE_DIMENSIONS = [
   {
     icon: Building2,
     title: "Company Scale & Capital",
-    text: "Registered capital, establishment year, headcount band, and company nature to separate established factories from newly registered shells.",
+    text: "Registered capital, establishment year, headcount band, and company nature to separate established exporters from newly formed shells.",
   },
   {
     icon: Layers,
     title: "Business & Trade Modes",
-    text: "Identify whether an exporter operates as a manufacturer or trading company and supports OEM, ODM, or OBM cooperation.",
+    text: "Identify whether an exporter lists manufacturer or trading capabilities and supports OEM, ODM, or OBM cooperation.",
   },
   {
     icon: Award,
     title: "Exhibition Track & Signals",
-    text: "Multi-session exhibitor history alongside public signals such as brand exhibitor status, customs certification, and high-tech recognition.",
+    text: "Multi-session exhibition continuity alongside public signals such as brand exhibitor status, customs certification, and high-tech recognition.",
   },
   {
     icon: Search,
     title: "Products & Export Keywords",
-    text: "Search across structured product lines and export keywords to find niche factories across 54 industry verticals.",
+    text: "Search structured product lines and export keywords across 54 industry verticals to pinpoint specialized producers.",
   },
   {
     icon: MapPin,
     title: "Province & Industrial Cluster",
-    text: "Pinpoint whether a supplier sits inside a core manufacturing hub (e.g. Shenzhen, Ningbo, Foshan, Quanzhou) or an unrelated city.",
+    text: "Verify whether a supplier sits inside China's true manufacturing belt (Shenzhen, Ningbo, Foshan, Yongkang, Quanzhou) or an unrelated city.",
   },
   {
     icon: Globe,
     title: "Official Website & Shortlist",
-    text: "Visit published corporate websites directly and sign in to save shortlisted suppliers to your personal workspace.",
-  },
-] as const;
-
-const RED_FLAGS = [
-  {
-    icon: ShieldAlert,
-    title: "Trading Shell Disguised as Factory",
-    text: "Many B2B storefronts showcase borrowed workshop videos while their Chinese registry shows zero insured staff and a trading-only business scope.",
-  },
-  {
-    icon: FileSearch,
-    title: "Entity & Beneficiary Mismatch",
-    text: "The English brand name, B2B storefront, corporate website filing, and invoice or wire beneficiary belong to completely different legal entities.",
-  },
-  {
-    icon: Scale,
-    title: "Hidden Lawsuits & Dishonest Debtors",
-    text: "Active supply-contract litigation, dishonest judgment debtor records, equity pledges, or business abnormalities rarely appear on English listings.",
-  },
-  {
-    icon: AlertTriangle,
-    title: "Unverified Patents & Certificates",
-    text: "Suppliers frequently claim proprietary molds, patents, or export certifications that have no matching record in Chinese public registries.",
-  },
-] as const;
-
-const REPORT_MODULES = [
-  {
-    code: "01",
-    title: "Legal Entity & Ownership Trace",
-    detail: "Chinese legal name, Unified Social Credit Code, registered address, shareholder control, and historical changes to legal rep or address.",
-  },
-  {
-    code: "02",
-    title: "Storefront & Website Consistency",
-    detail: "Cross-check between Alibaba / B2B store, official website ICP/owner signals, stated product lines, and actual registered business scope.",
-  },
-  {
-    code: "03",
-    title: "Litigation, Enforcement & Penalties",
-    detail: "Human interpretation of contract lawsuits, hearing trends, dishonest debtor records, administrative penalties, and equity pledges.",
-  },
-  {
-    code: "04",
-    title: "Operating Scale, IP & Social Signals",
-    detail: "Insured employee count, administrative licenses, trademarks, patents, and manual checks across Xiaohongshu, Douyin, and Zhihu.",
+    text: "Inspect corporate domain links directly and sign in free to save shortlisted candidates for side-by-side review.",
   },
 ] as const;
 
@@ -178,15 +221,15 @@ export default async function HomePage() {
           <div className="flex flex-col space-y-6">
             <div className="inline-flex items-center space-x-2 rounded-full bg-teal-500/10 border border-teal-500/30 px-3 py-1 text-xs sm:text-sm text-teal-300 font-semibold tracking-wide w-fit">
               <span className="flex h-2 w-2 rounded-full bg-teal-400 animate-pulse" />
-              <span>Free China Exporter Database + Human Verification</span>
+              <span>100% Buyer-Side Intelligence · Zero Supplier Commissions</span>
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-[3.4rem] font-bold tracking-tight text-white leading-[1.08] text-balance">
-              Search 20,000+ China Exporters Free. Verify Before You Pay.
+            <h1 className="text-4xl md:text-5xl lg:text-[3.35rem] font-bold tracking-tight text-white leading-[1.08] text-balance">
+              Search 20,000+ China Exporters Free. Verify Before You Wire $1.
             </h1>
             <p className="max-w-2xl text-base md:text-lg leading-relaxed text-slate-300">
-              Filter Chinese exhibitors by product, industry, city, trade mode, and company scale completely free — no
-              sign-up, no paywall. When you are ready to sample or pay a deposit, our analysts verify the supplier in
-              24-48 hours.
+              Screen Chinese exhibitor profiles by product, industrial cluster, trade mode, and scale with zero paywall.
+              Before you pay for samples, tooling, or a 30% deposit, our analysts cross-check Chinese GSXT, court, CNCA,
+              and IP records in 24-48 hours.
             </p>
 
             {/* Direct Free Database Search Box */}
@@ -231,8 +274,14 @@ export default async function HomePage() {
                 href="#human-verification"
                 className="inline-flex h-10 items-center justify-center rounded-md border border-teal-500/40 bg-teal-500/10 px-4 text-sm font-semibold text-teal-200 hover:bg-teal-500/20 transition-colors"
               >
-                <UserCheck className="mr-2 h-4 w-4" /> Verify a Supplier
+                <UserCheck className="mr-2 h-4 w-4" /> Verify a Supplier ($149–$249)
               </a>
+              <Link
+                href="/sample-report"
+                className="inline-flex h-10 items-center justify-center rounded-md border border-slate-700 px-4 text-sm font-semibold text-slate-200 hover:bg-slate-800 transition-colors"
+              >
+                <FileCheck2 className="mr-2 h-4 w-4 text-teal-400" /> Sample Report
+              </Link>
             </div>
           </div>
 
@@ -253,15 +302,15 @@ export default async function HomePage() {
               </div>
               <div className="rounded-xl border border-teal-800/50 bg-teal-950/30 p-4">
                 <p className="text-2xl sm:text-3xl font-bold text-teal-300 tracking-tight">$0</p>
-                <p className="mt-1 text-[11px] font-semibold text-teal-200/80 uppercase tracking-wide">Database Search</p>
+                <p className="mt-1 text-[11px] font-semibold text-teal-200/80 uppercase tracking-wide">Database Paywall</p>
               </div>
             </div>
 
             {/* Sample Record Preview */}
             <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
               <div className="flex items-center justify-between gap-2 text-[11px] text-slate-400">
-                <span className="font-semibold uppercase tracking-wider text-teal-400">Sample Free Profile</span>
-                <span className="rounded-full bg-slate-800 px-2 py-0.5 text-slate-300">Lighting Products</span>
+                <span className="font-semibold uppercase tracking-wider text-teal-400">Free Preliminary Screening Layer</span>
+                <span className="rounded-full bg-slate-800 px-2 py-0.5 text-slate-300">Lighting Cluster</span>
               </div>
               <p className="mt-2 text-sm font-bold text-white">Ningbo Precision Lighting Co., Ltd.</p>
               <div className="mt-2.5 flex flex-wrap gap-1.5 text-[11px]">
@@ -275,146 +324,210 @@ export default async function HomePage() {
             <div className="rounded-lg bg-teal-950/25 border border-teal-800/30 p-3.5 text-xs leading-normal text-teal-300/90 flex items-start space-x-2">
               <ShieldCheck className="h-4 w-4 text-teal-400 mt-0.5 shrink-0" />
               <span>
-                Company-level public information only. Personal phone numbers and private emails are never published.
-                Always verify company identity before samples or payment.
+                Company-level public registry data only (private phone numbers and emails are never published). Use the
+                free database for initial discovery, then verify legal identity before payment.
               </span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. 3-Step Buyer Workflow */}
-      <section className="bg-white border-b border-slate-200 py-16 lg:py-20">
-        <div className="container-page">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <span className="text-xs font-bold uppercase tracking-wider text-teal-700">How buyers use gocnscout</span>
-            <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-950">
-              From free supplier discovery to confident deposit decisions
-            </h2>
-            <p className="mt-3 text-base text-slate-600">
-              Start with our open exhibitor database, ask quick questions in Discord, and use human due diligence only
-              on the finalists that matter.
-            </p>
-          </div>
-
-          <div className="grid gap-6 lg:grid-cols-3">
-            {WORKFLOW_STEPS.map((item) => (
-              <Card key={item.step} className="overflow-hidden flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow">
-                <div className="relative aspect-[16/9] bg-slate-100 border-b border-slate-100">
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    fill
-                    sizes="(min-width: 1024px) 33vw, 100vw"
-                    quality={65}
-                    className="object-cover"
-                  />
-                </div>
-                <CardContent className="p-6 flex flex-1 flex-col">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400">{item.step}</span>
-                    <span className="rounded-full bg-teal-50 border border-teal-200 px-2.5 py-0.5 text-[11px] font-bold text-teal-700">
-                      {item.badge}
-                    </span>
-                  </div>
-                  <h3 className="mt-3 text-lg font-bold text-slate-950">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-600 flex-1">{item.text}</p>
-                  {"external" in item && item.external ? (
-                    <a
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-5 inline-flex items-center text-xs font-bold text-teal-700 hover:text-teal-800"
-                    >
-                      {item.ctaLabel} <ChevronRight className="ml-0.5 h-3.5 w-3.5" />
-                    </a>
-                  ) : (
-                    <Link
-                      href={item.href}
-                      className="mt-5 inline-flex items-center text-xs font-bold text-teal-700 hover:text-teal-800"
-                    >
-                      {item.ctaLabel} <ChevronRight className="ml-0.5 h-3.5 w-3.5" />
-                    </Link>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Inside Every Free Company Profile */}
-      <section className="container-page py-16 lg:py-20">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="text-xs font-bold uppercase tracking-wider text-teal-700">Free Company Database</span>
-          <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-950">
-            What&apos;s inside every free exporter profile
-          </h2>
-          <p className="mt-3 text-base text-slate-600">
-            Structured company-level fields designed to help you screen out mismatches before spending hours emailing
-            unqualified contacts.
-          </p>
-        </div>
-
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {PROFILE_DIMENSIONS.map((dim) => {
-            const Icon = dim.icon;
+      {/* 2. Buyer-Side Independence Strip (Why Not Just Trust B2B Badges?) */}
+      <section className="bg-white border-b border-slate-200 py-10">
+        <div className="container-page grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {INDEPENDENCE_PILLARS.map((pillar) => {
+            const Icon = pillar.icon;
             return (
-              <div
-                key={dim.title}
-                className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs hover:border-teal-500/30 transition-colors"
-              >
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-teal-50 text-teal-600">
+              <div key={pillar.title} className="flex items-start gap-3.5">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-50 border border-teal-100 text-teal-700">
                   <Icon className="h-5 w-5" />
                 </div>
-                <h3 className="mt-4 text-base font-bold text-slate-950">{dim.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">{dim.text}</p>
+                <div>
+                  <h2 className="text-sm font-extrabold text-slate-950">{pillar.title}</h2>
+                  <p className="mt-1 text-xs leading-relaxed text-slate-600">{pillar.text}</p>
+                </div>
               </div>
             );
           })}
         </div>
+      </section>
 
-        {/* Visual Signal Strip */}
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          {[
-            { image: mediaAssets.signalCapitalRegistration, label: "Registered Capital & Founding Signals" },
-            { image: mediaAssets.signalExhibitionStability, label: "Exhibition Stability & Certifications" },
-            { image: mediaAssets.signalWebsiteVerification, label: "Corporate Website & Product Footprint" },
-          ].map((signal) => (
-            <div key={signal.label} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
-              <div className="relative aspect-[16/9] bg-slate-100">
-                <Image
-                  src={signal.image}
-                  alt={signal.label}
-                  fill
-                  sizes="(min-width: 768px) 33vw, 100vw"
-                  quality={60}
-                  className="object-cover"
-                />
-              </div>
-              <div className="px-4 py-3 text-xs font-bold text-slate-800">{signal.label}</div>
-            </div>
-          ))}
+      {/* 3. Built for Every Sourcing Scale (3 Buyer Personas) */}
+      <section className="container-page py-16 lg:py-20">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <span className="text-xs font-bold uppercase tracking-wider text-teal-700">Tailored Sourcing Workflows</span>
+          <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-950">
+            How overseas buyers use GoCNScout at every order size
+          </h2>
+          <p className="mt-3 text-base text-slate-600">
+            Whether you are testing a 300-unit SKU or locking in a multi-container OEM partner, match the right free
+            tools and verification depth to your risk exposure.
+          </p>
         </div>
 
-        <div className="mt-8 text-center">
-          <ButtonLink href="/database" className="bg-slate-900 hover:bg-slate-800 text-white font-semibold">
-            <Database className="mr-2 h-4 w-4" /> Explore All {supplierCount} Free Profiles
-          </ButtonLink>
+        <div className="grid gap-6 lg:grid-cols-3">
+          {BUYER_PERSONAS.map((persona) => {
+            const Icon = persona.icon;
+            return (
+              <Card key={persona.audience} className="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-xs hover:shadow-md transition-shadow">
+                <CardHeader className="pb-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900 text-teal-400">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <CardTitle className="mt-3 text-lg font-extrabold text-slate-950">{persona.audience}</CardTitle>
+                  <p className="text-xs font-semibold text-teal-700">{persona.subtitle}</p>
+                </CardHeader>
+                <CardContent className="flex flex-1 flex-col space-y-4 text-xs leading-relaxed">
+                  <div className="rounded-xl bg-rose-50/70 border border-rose-100 p-3 text-slate-700">
+                    <strong className="text-rose-900 block mb-0.5">Core Exposure:</strong>
+                    {persona.pain}
+                  </div>
+                  <p className="text-slate-600 flex-1">
+                    <strong className="text-slate-900">Recommended Path: </strong>
+                    {persona.path}
+                  </p>
+                  <Link
+                    href={persona.href}
+                    className="inline-flex items-center font-bold text-teal-700 hover:text-teal-800 pt-1"
+                  >
+                    {persona.ctaLabel} <ChevronRight className="ml-0.5 h-3.5 w-3.5" />
+                  </Link>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </section>
 
-      {/* 4. Industry & Sourcing City Directory Browser */}
-      <section className="container-page pb-16 lg:pb-20">
+      {/* 4. Free Preliminary Screening vs Official Chinese Registry Due Diligence (Gap Matrix) */}
+      <section className="bg-white border-y border-slate-200 py-16 lg:py-20">
+        <div className="container-page">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <span className="text-xs font-bold uppercase tracking-wider text-teal-700">Closing the Information Gap</span>
+            <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-950">
+              Free Exhibitor Screening vs. Official Chinese Registry Verification
+            </h2>
+            <p className="mt-3 text-sm md:text-base text-slate-600 leading-relaxed">
+              Our free database solves <strong>supplier discovery</strong>. Because public exhibition directories do not
+              expose legal representatives, court defaults, or certificate authenticity, our human analysts bridge the
+              last mile across Chinese government registries.
+            </p>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* Layer 1: Free Exhibitor DB */}
+            <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-6 md:p-8 flex flex-col">
+              <div className="flex items-center justify-between gap-2">
+                <span className="rounded-full bg-teal-100 px-3 py-1 text-xs font-extrabold text-teal-900">
+                  Layer 1 · Free Self-Serve Tool
+                </span>
+                <span className="text-sm font-black text-teal-700">$0 Forever</span>
+              </div>
+              <h3 className="mt-4 text-xl font-extrabold text-slate-950">
+                20,000+ Exhibitor Database (Initial Discovery)
+              </h3>
+              <p className="mt-2 text-xs leading-relaxed text-slate-600">
+                Ideal for building an initial candidate list by product category and industrial cluster:
+              </p>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2 flex-1">
+                {PROFILE_DIMENSIONS.map((dim) => {
+                  const Icon = dim.icon;
+                  return (
+                    <div key={dim.title} className="rounded-xl border border-slate-200 bg-white p-3.5">
+                      <div className="flex items-center gap-2 font-bold text-xs text-slate-950">
+                        <Icon className="h-4 w-4 text-teal-600 shrink-0" />
+                        <span>{dim.title}</span>
+                      </div>
+                      <p className="mt-1.5 text-[11px] leading-relaxed text-slate-600">{dim.text}</p>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="mt-6">
+                <ButtonLink href="/database" variant="outline" className="w-full justify-center font-semibold text-xs">
+                  <Database className="mr-2 h-4 w-4" /> Search {supplierCount} Free Profiles
+                </ButtonLink>
+              </div>
+            </div>
+
+            {/* Layer 2: Paid Official Chinese Sources */}
+            <div className="rounded-2xl border-2 border-teal-600 bg-slate-950 text-white p-6 md:p-8 flex flex-col shadow-xl">
+              <div className="flex items-center justify-between gap-2">
+                <span className="rounded-full bg-teal-500/20 border border-teal-500/40 px-3 py-1 text-xs font-extrabold text-teal-300">
+                  Layer 2 · Human Analyst Penetration
+                </span>
+                <span className="text-sm font-black text-teal-300">From $149 · 24-48h</span>
+              </div>
+              <h3 className="mt-4 text-xl font-extrabold text-white">
+                4 Chinese Official Systems Public English Tools Miss
+              </h3>
+              <p className="mt-2 text-xs leading-relaxed text-slate-300">
+                What our bilingual analysts verify manually before you sign a contract or wire a deposit:
+              </p>
+
+              <div className="mt-5 space-y-3 flex-1 text-xs">
+                <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
+                  <div className="font-bold text-teal-300">1. GSXT (National Enterprise Credit Publicity System)</div>
+                  <p className="mt-1 text-slate-300 leading-relaxed">
+                    Exact Chinese legal name, Unified Social Credit Code (USCC), paid-in vs. subscribed capital, legal
+                    representative, shareholder chain, manufacturing vs. trading-only scope, and satellite check on
+                    industrial zone vs. office-room address.
+                  </p>
+                </div>
+                <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
+                  <div className="font-bold text-teal-300">2. China Judgments Online &amp; Court Enforcement Portal</div>
+                  <p className="mt-1 text-slate-300 leading-relaxed">
+                    Supply-contract defaults, defendant hearing trends, dishonest judgment debtor (&ldquo;Laolai&rdquo;)
+                    blacklists, frozen equity, and administrative penalties.
+                  </p>
+                </div>
+                <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
+                  <div className="font-bold text-teal-300">3. CNCA Certificate Registry &amp; Insured Headcount</div>
+                  <p className="mt-1 text-slate-300 leading-relaxed">
+                    Authenticity &amp; product-scope check on ISO / CCC / CE lab credentials, plus social-security
+                    insured employee count to expose &ldquo;200-worker&rdquo; shells with 0–2 staff.
+                  </p>
+                </div>
+                <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
+                  <div className="font-bold text-teal-300">4. CNIPA Patents/Trademarks, MIIT ICP &amp; Domestic Signals</div>
+                  <p className="mt-1 text-slate-300 leading-relaxed">
+                    Patent/trademark ownership verification, corporate domain ICP owner match, and manual reputation
+                    checks on 1688, Xiaohongshu, Douyin, and Zhihu.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6 flex flex-wrap gap-3">
+                <a
+                  href="#human-review"
+                  className="inline-flex flex-1 h-10 items-center justify-center rounded-xl bg-teal-500 px-4 text-xs font-bold text-slate-950 hover:bg-teal-400 transition-colors"
+                >
+                  Request Scope Confirmation <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                </a>
+                <Link
+                  href="/sample-report"
+                  className="inline-flex h-10 items-center justify-center rounded-xl border border-slate-700 px-4 text-xs font-bold text-slate-200 hover:bg-slate-800 transition-colors"
+                >
+                  Read Sample Report
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Industry & Sourcing City Directory Browser */}
+      <section className="container-page py-16 lg:py-20">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-teal-700">China Sourcing Atlas</span>
             <h2 className="mt-1 text-2xl md:text-3xl font-extrabold tracking-tight text-slate-950">
-              Browse by Industry Category &amp; Manufacturing Hub
+              Browse by Industry Category &amp; Manufacturing Cluster
             </h2>
           </div>
           <p className="text-sm text-slate-600 max-w-md">
-            Jump straight into China&apos;s regional industrial clusters to see where real exporters concentrate.
+            Suppliers located inside established industrial hubs enjoy stronger upstream component supply and lower
+            disruption risk.
           </p>
         </div>
         <div className="grid gap-6 lg:grid-cols-2">
@@ -441,126 +554,171 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 5. Why Public Directories Aren't Enough (4 Red Flags) */}
+      {/* 6. 4 Costly Sourcing Traps + 5-Stage Procurement Risk Map */}
       <section className="bg-slate-950 text-white py-16 lg:py-20 border-y border-slate-800">
-        <div className="container-page">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-300">
-              <AlertTriangle className="h-3.5 w-3.5" /> Before You Pay a Deposit
-            </span>
-            <h2 className="mt-4 text-3xl md:text-4xl font-extrabold tracking-tight text-white">
-              4 supplier risks public directories cannot catch
-            </h2>
-            <p className="mt-3 text-base text-slate-300 leading-relaxed">
-              A polished English catalog or exhibition listing proves marketing presence — not legal safety, factory
-              ownership, or financial reliability.
-            </p>
+        <div className="container-page space-y-14">
+          <div>
+            <div className="text-center max-w-3xl mx-auto mb-12">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-300">
+                <AlertTriangle className="h-3.5 w-3.5" /> Real Cross-Border Failure Modes
+              </span>
+              <h2 className="mt-4 text-3xl md:text-4xl font-extrabold tracking-tight text-white">
+                4 supplier traps that swallow overseas deposits
+              </h2>
+              <p className="mt-3 text-base text-slate-300 leading-relaxed">
+                Most sourcing losses happen because buyers skip Chinese registry verification and rely solely on B2B
+                chat promises or PDF scans.
+              </p>
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+              {RED_FLAGS.map((flag) => {
+                const Icon = flag.icon;
+                return (
+                  <div
+                    key={flag.title}
+                    className="rounded-2xl border border-slate-800 bg-slate-900/75 p-6 flex flex-col"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300/90">{flag.tag}</span>
+                    </div>
+                    <h3 className="mt-4 text-base font-bold text-white">{flag.title}</h3>
+                    <p className="mt-2 text-xs leading-relaxed text-slate-300">{flag.text}</p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {RED_FLAGS.map((flag) => {
-              const Icon = flag.icon;
-              return (
-                <div
-                  key={flag.title}
-                  className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 flex flex-col"
-                >
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
-                    <Icon className="h-5 w-5" />
+          {/* 5-Stage Procurement Trigger Strip */}
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 md:p-8">
+            <div className="mb-6">
+              <span className="text-xs font-bold uppercase tracking-wider text-teal-400">When to Verify</span>
+              <h3 className="mt-1 text-xl md:text-2xl font-bold text-white">
+                What to check at each stage of your China order
+              </h3>
+            </div>
+            <div className="grid gap-4 md:grid-cols-5">
+              {PROCUREMENT_STAGES.map((item) => (
+                <div key={item.stage} className="rounded-xl border border-slate-800 bg-slate-950/70 p-4 flex flex-col justify-between">
+                  <div>
+                    <div className="text-xs font-black text-teal-400">{item.stage}</div>
+                    <div className="mt-1 text-xs font-bold text-white">{item.trigger}</div>
+                    <p className="mt-2 text-[11px] text-amber-300/90 leading-relaxed">
+                      <strong>Risk:</strong> {item.risk}
+                    </p>
                   </div>
-                  <h3 className="mt-4 text-base font-bold text-white">{flag.title}</h3>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-300">{flag.text}</p>
+                  <p className="mt-3 pt-2.5 border-t border-slate-800 text-[11px] text-slate-300 leading-relaxed">
+                    <strong className="text-teal-300">Defense:</strong> {item.solution}
+                  </p>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 6. Inside a Human Verification Report (Sample Report Anatomy) */}
+      {/* 7. Inside a Human Verification Report (Sample Report Anatomy + Full Sample Link) */}
       <section className="bg-white border-b border-slate-200 py-16 lg:py-20">
         <div className="container-page">
           <div className="grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-center">
             <div className="space-y-5">
-              <span className="text-xs font-bold uppercase tracking-wider text-teal-700">What You Actually Receive</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-teal-700">Deliverable Preview</span>
               <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-950">
-                Inside a 24-48h Human Verification Report
+                See exactly what our 24-48h verification uncovers
               </h2>
               <p className="text-base leading-relaxed text-slate-600">
-                No automated scraping dump. Every review is researched manually by an analyst who reads Chinese
-                corporate registries, court records, IP databases, and domestic platforms — then translates the findings
-                into clear buyer decisions.
+                We don&apos;t hand you raw machine-translated Chinese tables. Every report gives you a clear executive
+                verdict, cross-verified registry evidence, and exact contract/bank safeguards before you wire funds.
               </p>
 
-              <div className="grid gap-4 sm:grid-cols-2 pt-2">
-                {REPORT_MODULES.map((mod) => (
-                  <div key={mod.code} className="rounded-xl border border-slate-200 bg-slate-50/70 p-4">
-                    <span className="text-[11px] font-black tracking-wider text-teal-700">SECTION {mod.code}</span>
-                    <h3 className="mt-1 text-sm font-bold text-slate-950">{mod.title}</h3>
-                    <p className="mt-1.5 text-xs leading-relaxed text-slate-600">{mod.detail}</p>
-                  </div>
-                ))}
+              <div className="space-y-3 pt-1 text-xs text-slate-700">
+                <div className="flex items-start gap-2.5">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" />
+                  <span><strong>GSXT Legal &amp; Satellite Address Check:</strong> Confirms whether your seller is a licensed plant in an industrial zone or a 2-person office desk.</span>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" />
+                  <span><strong>Shareholder &amp; Beneficiary Penetration:</strong> Detects entity-mixing when a trading shell uses an affiliate factory&apos;s photos or an offshore HK bank account.</span>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" />
+                  <span><strong>Actionable Pre-Deposit Playbook:</strong> Clear <em>Proceed / Restructure / Pause</em> verdict plus required license chops and trap-testing RFQ questions.</span>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-3 pt-3">
+                <ButtonLink href="/sample-report" className="bg-slate-900 hover:bg-slate-800 text-white font-semibold">
+                  <FileCheck2 className="mr-2 h-4 w-4 text-teal-400" /> Read Full Redacted Sample Report
+                </ButtonLink>
+                <a
+                  href="#human-review"
+                  className="inline-flex h-10 items-center justify-center rounded-md border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-800 hover:bg-slate-50 transition-colors"
+                >
+                  Submit Your Supplier <ArrowRight className="ml-2 h-4 w-4" />
+                </a>
               </div>
             </div>
 
-            {/* Structured Sample Deliverable Preview Card */}
+            {/* Real Case Redacted Snapshot */}
             <div className="rounded-2xl border border-slate-200 bg-slate-950 text-white p-6 md:p-7 shadow-xl">
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-4">
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-teal-400">Sample Deliverable Preview</p>
-                  <h3 className="mt-1 text-lg font-bold text-white">Buyer Decision Review ($249)</h3>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-teal-400">Real Redacted Case Snapshot</p>
+                  <h3 className="mt-1 text-base md:text-lg font-bold text-white">
+                    &ldquo;Shenzhen [Redacted] Smart Appliances&rdquo; · $249 Review
+                  </h3>
                 </div>
-                <span className="rounded-full bg-teal-500/15 border border-teal-500/30 px-3 py-1 text-xs font-bold text-teal-300">
-                  Delivered in 24-48h
+                <span className="rounded-full bg-amber-500/15 border border-amber-500/30 px-3 py-1 text-[11px] font-extrabold text-amber-300">
+                  HOLD DEPOSIT
                 </span>
               </div>
 
               <div className="mt-5 space-y-3 text-xs">
                 <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-4">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-200">1. Legal Identity &amp; Ownership</span>
-                    <span className="rounded bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-300">Verified Match</span>
+                    <span className="font-bold text-slate-200">1. Claimed vs. GSXT Reality</span>
+                    <span className="rounded bg-rose-500/15 px-2 py-0.5 text-[10px] font-bold text-rose-300">Shell Detected</span>
                   </div>
                   <p className="mt-1.5 text-slate-400 leading-relaxed">
-                    Active limited company founded 2014 · 10M RMB registered capital · Majority shareholder unchanged for 8+ years · Business scope includes manufacturing &amp; export.
+                    Claimed &ldquo;200-worker factory&rdquo;, but GSXT showed a 14-month-old office-plaza trading company
+                    with 0 RMB paid-in capital, 2 insured staff, and no manufacturing scope.
                   </p>
                 </div>
 
                 <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-4">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-200">2. Risk &amp; Litigation Interpretation</span>
-                    <span className="rounded bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold text-amber-300">1 Note Flagged</span>
+                    <span className="font-bold text-slate-200">2. Ownership &amp; Certificate Cross-Check</span>
+                    <span className="rounded bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold text-amber-300">Entity Mismatch</span>
                   </div>
                   <p className="mt-1.5 text-slate-400 leading-relaxed">
-                    No dishonest debtor or enforcement records. One minor domestic delivery dispute settled in 2023. Insured headcount aligns with mid-size workshop claims.
+                    70% owner held a 25% stake in a real Foshan Shunde plant whose ISO 9001 certificate was borrowed —
+                    while the PI asked to wire $6,300 to an unlinked HK account.
                   </p>
                 </div>
 
                 <div className="rounded-xl border border-teal-500/30 bg-teal-950/35 p-4">
                   <div className="flex items-center gap-2 font-bold text-teal-300">
                     <ClipboardCheck className="h-4 w-4 shrink-0" />
-                    <span>3. Buyer Action Verdict &amp; Pre-Payment Checklist</span>
+                    <span>3. How We Saved the Buyer&apos;s $21,000 Order</span>
                   </div>
-                  <ul className="mt-2 space-y-1.5 text-slate-200">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-teal-400" />
-                      <span><strong>Verdict:</strong> Proceed to paid sample — verify wire beneficiary matches Chinese entity name.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-teal-400" />
-                      <span><strong>Includes:</strong> Tailored RFQ questions + required business license &amp; bank letter checklist.</span>
-                    </li>
-                  </ul>
+                  <p className="mt-1.5 text-slate-200 leading-relaxed">
+                    Guided buyer to re-sign the contract directly under the licensed Foshan factory&apos;s official chop
+                    and onshore USD account, plus verify 120V UL scope before paying.
+                  </p>
                 </div>
               </div>
 
-              <div className="mt-5 flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-800">
-                <span className="text-[11px] text-slate-400">Pure online desk research · Scope confirmed before payment</span>
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-800">
+                <span className="text-[11px] text-slate-400">Turnaround: 31 hours · Supplier never notified</span>
                 <Link
-                  href="/pricing?service=DECISION_SINGLE#human-review"
+                  href="/sample-report"
                   className="inline-flex items-center text-xs font-bold text-teal-300 hover:text-teal-200"
                 >
-                  Request This Review <ArrowRight className="ml-1 h-3.5 w-3.5" />
+                  Inspect Full Redacted Report <ArrowRight className="ml-1 h-3.5 w-3.5" />
                 </Link>
               </div>
             </div>
@@ -568,44 +726,59 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 7. Human Verification Packages (100% synced with /pricing) */}
+      {/* 8. Human Verification Packages (100% synced with /pricing) */}
       <section id="human-verification" className="bg-slate-50 py-16 lg:py-20 scroll-mt-20">
         <div className="container-page">
           <HumanVerificationPackages
             eyebrow="Human Verification Services"
-            heading="Services and reference prices"
-            subtitle="Prices below match our full pricing page. Tell us what you need, we confirm scope and final price by email, and you only pay via Stripe after confirming."
+            heading="Choose the right verification depth before you pay"
+            subtitle="Identical pricing to our full services page. Select a package to request free scope confirmation — you only pay via Stripe once we confirm record availability."
+            inPageAnchor
           />
         </div>
       </section>
 
-      {/* 8. $149 vs $249 Comparison Table + 4-Step Scope-First Process (100% synced with /pricing) */}
+      {/* 9. $149 vs $249 Comparison Table + 4-Step Process + Direct Inline Request Form */}
       <section className="bg-white border-y border-slate-200 py-16 lg:py-20">
-        <div className="container-page space-y-14">
+        <div className="container-page space-y-16">
           <HumanVerificationComparison />
 
           <div>
             <div className="text-center max-w-2xl mx-auto mb-8">
-              <span className="text-xs font-bold uppercase tracking-wider text-teal-700">Zero Upfront Guessing</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-teal-700">Zero Upfront Risk</span>
               <h2 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">
-                How our scope-first payment process works
+                Scope confirmed first. Payment second.
               </h2>
             </div>
             <HumanVerificationProcess />
           </div>
+
+          {/* Direct Inline Inquiry Request Form */}
+          <div id="human-review" className="max-w-2xl mx-auto scroll-mt-24">
+            <div className="text-center mb-6">
+              <span className="text-xs font-bold uppercase tracking-wider text-teal-700">Start Here — Free Scope Check</span>
+              <h2 className="mt-1 text-2xl md:text-3xl font-extrabold tracking-tight text-slate-950">
+                Have a Chinese supplier you want checked?
+              </h2>
+              <p className="mt-2 text-sm text-slate-600">
+                Send us their English/Chinese name, B2B storefront, or website. We reply by email to confirm what public
+                records exist and the exact price before any payment.
+              </p>
+            </div>
+            <InquiryRequestForm redirectTo="/pricing#human-review" />
+          </div>
         </div>
       </section>
 
-      {/* 9. Discord Community & Clear Free vs Paid Scope */}
-      <section className="container-page py-16 lg:py-20">
+      {/* 10. Discord Community + Expanded FAQ + Bottom CTA */}
+      <section className="container-page py-16 lg:py-20 space-y-16">
         <div className="rounded-3xl border border-slate-200 bg-white p-8 lg:p-10 shadow-sm grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <div className="space-y-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-teal-700">Sourcing Community</span>
-            <h2 className="text-3xl font-bold tracking-tight text-slate-950">Ask your sourcing questions on Discord</h2>
+            <span className="text-xs font-bold uppercase tracking-wider text-teal-700">Free Sourcing Community</span>
+            <h2 className="text-3xl font-bold tracking-tight text-slate-950">Ask general sourcing questions on Discord</h2>
             <p className="text-slate-600 leading-relaxed text-sm md:text-base">
-              Stuck on a database field, a supplier reply, or what to ask before paying a deposit? Ask in our Discord
-              community for free. When you need hands-on research on a specific company, our human verification services
-              take over.
+              Not ready for a paid company check yet? Join other importers and Amazon/DTC buyers in our Discord to ask
+              process questions, learn how to read Chinese business licenses, and grab our free pre-contact checklist.
             </p>
             <a
               href={DISCORD_INVITE_URL}
@@ -645,52 +818,49 @@ export default async function HomePage() {
             </Card>
           </div>
         </div>
-      </section>
 
-      {/* 10. Expanded FAQ + Bottom Dual CTA */}
-      <section className="container-page pb-16 lg:pb-20">
         <FaqSection
           title="Frequently Asked Questions"
           items={[
             {
-              question: "Is the China company database really free?",
+              question: "Is the China exporter database really 100% free?",
               answer:
-                "Yes. You can search, filter, and open all 20,000+ exhibitor profiles without signing up or paying. Creating a free account lets you save suppliers to your personal shortlist. Visitor CSV exports are not offered.",
+                "Yes. You can search, filter, and open all 20,000+ exhibitor profiles without signing up or hitting a paywall. Signing in free lets you save shortlisted companies. Visitor CSV downloads are disabled to prevent spam.",
             },
             {
-              question: "Are companies in the database already verified factories?",
+              question: "How is GoCNScout different from B2B marketplace 'Verified' badges?",
               answer:
-                "No. The records are compiled from public exhibitor registry data and are not individually verified, and a listing does not prove a company is a direct factory. Always confirm identity before samples or payment, or request a human review.",
+                "B2B marketplaces earn revenue from Chinese suppliers through memberships and ad placements. GoCNScout is 100% independent and buyer-funded — we never accept supplier fees, never take order commissions, and never alert the supplier that you are checking them.",
             },
             {
-              question: "Do you publish contact names, phone numbers, or personal emails?",
+              question: "Are companies in the free database already verified factories?",
               answer:
-                "No. Contact persons, personal phone numbers, and private emails are never published or sold on this site.",
+                "No. Free database profiles come from public exhibitor registry records and are meant for initial discovery only. They do not expose Unified Social Credit Codes, shareholder chains, lawsuits, or certificate validity — always verify a finalist before wiring samples or deposits.",
             },
             {
-              question: "What if I only have an English company name or an Alibaba store link?",
+              question: "What if I only have an English name, WeChat quote, or Alibaba store URL?",
               answer:
-                "That is completely fine. Send us whatever you have — an English name, Alibaba / Made-in-China store URL, website, or invoice draft — and we will confirm whether we can trace the underlying Chinese legal entity before you pay.",
+                "Send us whatever you have — an English company name, Alibaba / Made-in-China store link, website, or Proforma Invoice. During our free scope check, we confirm whether we can trace the underlying Chinese legal entity before you pay anything.",
+            },
+            {
+              question: "Will the supplier know I ordered a verification on them?",
+              answer:
+                "Never. Our reviews are 100% silent desk investigations across official Chinese registries and public platforms. We do not call, email, or tip off the supplier.",
+            },
+            {
+              question: "How do desk reviews ($149–$249) work alongside physical QC agencies like SGS or TÜV?",
+              answer:
+                "Use our $149–$249 desk review BEFORE paying deposits or booking costly $800–$1,500 on-site audits — it eliminates trading shells, fake certificates, lawsuit defaults, and bank-account mismatches upfront. Once mass production runs at a verified plant, pair it with physical sample testing and pre-shipment QC.",
             },
             {
               question: "Do I pay upfront before you confirm what can be checked?",
               answer:
-                "No. You submit your request first, we review what public records are available and confirm exact scope and price by email, and only then do we send a secure Stripe payment link.",
+                "No. Submit the request form first, receive our email confirming exact scope and price, and pay via a secure Stripe link only after you approve.",
             },
             {
-              question: "How should I choose between the $149 Identity Check and $249 Buyer Decision Review?",
+              question: "Do you publish or sell personal phone numbers or private emails?",
               answer:
-                "Choose the $149 Identity Check for basic registration verification and obvious-risk screening before first contact. Choose the $249 Buyer Decision Review when you are preparing for samples, negotiation, or a deposit and want ownership, litigation interpretation, operating scale, IP, social signals, and actionable buyer advice.",
-            },
-            {
-              question: "How long does a human supplier verification take?",
-              answer:
-                "Most single-supplier and 3-supplier reviews are delivered within 24-48 hours after scope confirmation and payment.",
-            },
-            {
-              question: "What can I ask in Discord, and what costs money?",
-              answer:
-                "General sourcing process questions, help reading database fields, and generic pre-contact checklists are free in Discord. Hands-on desk research on a specific supplier ($149 / $249) and 3-supplier decision comparisons ($499) are paid human services.",
+                "No. Contact persons, mobile numbers, and personal emails are never published or sold on GoCNScout.",
             },
           ]}
         />
@@ -699,22 +869,28 @@ export default async function HomePage() {
       {/* Bottom CTA */}
       <section className="bg-gradient-to-br from-slate-950 to-teal-950 text-white py-16 border-t border-slate-800">
         <div className="container-page text-center flex flex-col items-center space-y-5">
-          <h2 className="text-3xl font-bold tracking-tight">Ready to source smarter in China?</h2>
+          <h2 className="text-3xl font-bold tracking-tight">Eliminate supplier blind spots before you wire a deposit</h2>
           <p className="max-w-xl text-slate-300 text-sm md:text-base leading-relaxed">
-            Explore {supplierCount} exporter profiles for free, or send us a supplier you are evaluating for a 24-48h
-            human verification before sending a deposit.
+            Screen {supplierCount} exporter profiles for free, inspect our redacted $249 sample report, or submit a
+            supplier for free scope confirmation today.
           </p>
           <div className="flex flex-wrap justify-center gap-4 pt-2">
             <ButtonLink href="/database" className="bg-teal-500 hover:bg-teal-400 text-slate-950 font-semibold shadow-lg">
               Search Companies Free <ArrowRight className="ml-2 h-4 w-4" />
             </ButtonLink>
             <ButtonLink
-              href="/pricing#human-review"
+              href="/sample-report"
               variant="outline"
               className="border-slate-600 bg-transparent text-white hover:bg-slate-800 hover:text-white font-semibold"
             >
-              Request Supplier Verification
+              Read Sample Report
             </ButtonLink>
+            <a
+              href="#human-review"
+              className="inline-flex h-10 items-center justify-center rounded-md bg-white/10 border border-teal-400/40 px-4 text-sm font-semibold text-teal-200 hover:bg-white/15 transition-colors"
+            >
+              Request Supplier Verification
+            </a>
           </div>
         </div>
       </section>

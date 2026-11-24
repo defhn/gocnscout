@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
-import { ChevronDown, ShieldCheck, Layers, FileText, Mail, ShieldAlert, Database, Package } from "lucide-react";
+import { ChevronDown, ShieldCheck, Layers, FileText, Mail, ShieldAlert, Database, Package, FileSearch } from "lucide-react";
 import { PublicAuthActions } from "@/components/layout/public-auth-actions";
 import { getClerkPublishableKey } from "@/lib/env";
 
@@ -48,6 +48,7 @@ export function PublicHeader() {
 
             <div className="absolute top-full right-0 mt-1 hidden group-hover:block w-72 rounded-2xl border border-slate-100 bg-white p-2 shadow-xl shadow-slate-200/50 animate-in fade-in-50 slide-in-from-top-1 duration-200 z-50">
               <div className="grid gap-0.5">
+                <DropdownItem href="/sample-report" title="Sample Verification Report" description="Redacted $249 buyer due diligence example" icon={FileSearch} />
                 <DropdownItem href="/products" title="Product Directory" description="Browse suppliers by product keyword" icon={Package} />
                 <DropdownItem href="/data-license" title="Enterprise Data License" description="Dataset licensing for internal use" icon={ShieldCheck} />
                 <DropdownItem href="/china-exporter-database" title="Exporter Guide Directory" description="Baseline cluster mapping guide" icon={Layers} />
