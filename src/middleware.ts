@@ -13,18 +13,22 @@ function redirectToCanonicalHost(req: NextRequest) {
   return NextResponse.redirect(url, 301);
 }
 
-const clerkHandler = clerkMiddleware(async (auth, req) => {
-  const canonicalRedirect = redirectToCanonicalHost(req);
-  if (canonicalRedirect) return canonicalRedirect;
-
-  if (isProtectedRoute(req)) {
-    await auth.protect();
-  }
-});
-
 export default function middleware(req: NextRequest, event: NextFetchEvent) {
-  const clerkEnabled = Boolean(getClerkPublishableKey() && getRuntimeEnv("CLERK_SECRET_KEY"));
-  if (clerkEnabled) {
+  const publishableKey = getClerkPublishableKey();
+  const secretKey = getRuntimeEnv("CLERK_SECRET_KEY");
+
+  if (publishableKey && secretKey) {
+    const clerkHandler = clerkMiddleware(
+      async (auth, request) => {
+        const canonicalRedirect = redirectToCanonicalHost(request);
+        if (canonicalRedirect) return canonicalRedirect;
+
+        if (isProtectedRoute(request)) {
+          await auth.protect();
+        }
+      },
+      { publishableKey, secretKey },
+    );
     return clerkHandler(req, event);
   }
 
