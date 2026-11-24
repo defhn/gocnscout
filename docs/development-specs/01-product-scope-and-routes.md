@@ -1,5 +1,8 @@
 # 01. 产品范围与路由
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](../文档和脚本使用说明.md) and current code before use.
+
+
 ## 产品定位
 
 产品名称：`gocnscout`

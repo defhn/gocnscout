@@ -1,4 +1,7 @@
 # GoCNScout: High-Authority B2B SEO Blog Writing Guidelines
+
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](文档和脚本使用说明.md) and current code before use.
+
 (长期资产级 B2B 出口贸易与采购 SEO 博客三轨差异化写作规范与标准)
 
 本指南旨在规范 GoCNScout 官方博客的内容创作，将博客打造为具备长期流量沉淀与商业转化能力的"数字资产"。在撰写面向全球采购经理、亚马逊 FBA 卖家、B2B 进口商及供应链管理者（Procurement Managers）的内容时，必须严格遵循本规范。

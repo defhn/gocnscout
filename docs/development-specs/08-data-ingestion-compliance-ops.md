@@ -1,5 +1,8 @@
 # 08. 数据导入、合规与运营
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](../文档和脚本使用说明.md) and current code before use.
+
+
 ## 数据导入流程
 
 1. Admin 上传 Excel。

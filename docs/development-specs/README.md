@@ -1,5 +1,8 @@
 # gocnscout 开发规格索引
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](../文档和脚本使用说明.md) and current code before use.
+
+
 本目录是 `gocnscout` 的开发级交付文档。目标是让开发者在不反复追问产品细节的情况下，能按统一规则完成完整版本。
 
 完整版本不是 MVP。可以分阶段开发，但最终必须覆盖所有文档中的功能、权限、字段、合规和商业化规则。

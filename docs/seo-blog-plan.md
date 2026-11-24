@@ -1,5 +1,8 @@
 # GoCNScout 50-Blog SEO Content Strategy Plan (50篇博客SEO内容策略规划)
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](文档和脚本使用说明.md) and current code before use.
+
+
 This document outlines the **50-Article Topic Cluster Content Plan** for `gocnscout.com`. It utilizes 100 low-difficulty (KD), high-value Semrush keywords to build B2B organic traffic and funnel visitors to GoCNScout's core services. All articles are structured strictly according to [seo-blog-writing-guidelines.md](file:///c:/Users/Administrator/Documents/GitHub/cnscout/docs/seo-blog-writing-guidelines.md).
 
 本文件为 `gocnscout.com` 规划了 **50篇博客主题集群内容方案**。结构严格对齐 [seo-blog-writing-guidelines.md](file:///c:/Users/Administrator/Documents/GitHub/cnscout/docs/seo-blog-writing-guidelines.md) 中的 H2/H3 嵌套铁律（即：每个 H2 标题下方必须包含 2 到 3 个 H3 标题），提到年份均锁定为 2026 年。

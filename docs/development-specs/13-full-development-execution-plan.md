@@ -1,5 +1,8 @@
 # 13. 全量开发执行步骤
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](../文档和脚本使用说明.md) and current code before use.
+
+
 本文档是 `gocnscout` 全量开发执行清单。开发必须按顺序推进，除非某一步明确可以并行。每一步完成后，应能通过对应的本地检查或人工验收。
 
 ## Phase 0: 准备与约束确认

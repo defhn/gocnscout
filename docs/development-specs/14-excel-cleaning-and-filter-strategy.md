@@ -1,5 +1,8 @@
 ﻿# Excel Cleaning, Translation, and Filter Strategy
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](../文档和脚本使用说明.md) and current code before use.
+
+
 This document summarizes the data strategy for importing `139th Canton Fair Exhibitor Database (Full Version).xlsx` into gocnscout.
 
 ## Source File Summary

@@ -1,5 +1,8 @@
 # Blog Card Layout Implementation Plan
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](../../文档和脚本使用说明.md) and current code before use.
+
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Make public blog cards display 16:9 covers and use three columns on desktop.

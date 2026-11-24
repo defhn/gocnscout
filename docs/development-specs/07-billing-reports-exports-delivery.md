@@ -1,5 +1,8 @@
 # 07. 支付、报告、导出与交付
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](../文档和脚本使用说明.md) and current code before use.
+
+
 ## 核心原则
 
 Stripe 不在后台手动新建产品和价格。产品、价格、权益全部在代码中维护。支付时由服务端临时创建 Stripe Checkout Session，并使用 Checkout line item 的 `price_data` 和 `product_data`。

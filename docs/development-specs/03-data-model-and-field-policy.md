@@ -1,5 +1,8 @@
 # 03. 数据模型与字段策略
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](../文档和脚本使用说明.md) and current code before use.
+
+
 ## 字段公开原则
 
 产品可以公开企业和采购研究字段，不公开个人或联系方式字段。

@@ -1,5 +1,8 @@
 # 10. API 契约与服务端边界
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](../文档和脚本使用说明.md) and current code before use.
+
+
 ## 目标
 
 本文件定义前端、服务端、数据库、第三方服务之间的接口边界。开发完成后，前端页面不能直接猜字段，必须通过这些服务端契约读取数据、提交操作和触发第三方服务。

@@ -1,5 +1,8 @@
 # Blog Card Layout Design
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](../../文档和脚本使用说明.md) and current code before use.
+
+
 ## Goal
 
 Display blog cover images in their intended 16:9 ratio and use a denser three-column card layout on desktop.

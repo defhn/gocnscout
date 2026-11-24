@@ -1,5 +1,8 @@
 # 04. 权限、套餐与额度
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](../文档和脚本使用说明.md) and current code before use.
+
+
 ## 套餐
 
 | 套餐 | 价格 | 年付 | 角色 |

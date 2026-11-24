@@ -1,5 +1,8 @@
 # 11. 环境变量与联调 Runbook
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](../文档和脚本使用说明.md) and current code before use.
+
+
 ## 目标
 
 开发完成后，用户只需要填好环境变量、执行数据库迁移和导入数据，就能跑通前端、后端、数据库、支付、存储、邮件、分析和错误监控。

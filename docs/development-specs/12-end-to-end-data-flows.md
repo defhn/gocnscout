@@ -1,5 +1,8 @@
 # 12. 端到端数据流
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](../文档和脚本使用说明.md) and current code before use.
+
+
 ## 目标
 
 本文件把核心业务从前端操作到数据库和第三方服务的完整路径串起来，确保开发完成后不是静态页面，而是真正前后端数据库打通。

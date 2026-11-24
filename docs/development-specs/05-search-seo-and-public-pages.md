@@ -1,5 +1,8 @@
 # 05. 搜索、SEO 与公开页面
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](../文档和脚本使用说明.md) and current code before use.
+
+
 ## 目标和边界
 
 目标：公开前台页面要具备参与 Google 自然排名竞争的基础资格，尤其是行业、产品、城市、公司和报告页面。

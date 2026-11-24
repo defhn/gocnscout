@@ -1,5 +1,8 @@
 # 02. 技术架构与项目约定
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](../文档和脚本使用说明.md) and current code before use.
+
+
 ## 技术栈
 
 | 模块 | 技术 |

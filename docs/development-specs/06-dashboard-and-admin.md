@@ -1,5 +1,8 @@
 # 06. Dashboard 与中文 Admin
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](../文档和脚本使用说明.md) and current code before use.
+
+
 ## 全局原则
 
 Dashboard 全部使用英文。Admin 全部使用中文。

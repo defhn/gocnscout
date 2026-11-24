@@ -1,5 +1,8 @@
 # 09. 开发顺序与验收标准
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](../文档和脚本使用说明.md) and current code before use.
+
+
 ## 开发原则
 
 本项目不是 MVP。可以分阶段开发，但每一阶段都必须服务于完整产品交付。

@@ -1,5 +1,8 @@
 # 2万+展商数据英文站产品文档
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](docs/文档和脚本使用说明.md) and current code before use.
+
+
 ## 1. 产品结论
 
 这个项目建议做成一个面向海外采购用户的英文数据产品：

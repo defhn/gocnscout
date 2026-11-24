@@ -1,5 +1,8 @@
 # Alibaba AI Analysis Implementation Plan
 
+> **Historical document (2026-11-24):** This material may contain outdated plans or unimplemented features. Consult the [documentation guide](../../文档和脚本使用说明.md) and current code before use.
+
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Provide a public Alibaba-store or company-website URL analysis page that uses Firecrawl to create an evidence-backed buyer research summary and preserves the result for later human-review checkout.
