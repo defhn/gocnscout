@@ -6,6 +6,7 @@ import {
   ClipboardList,
   FileSearch,
   Lock,
+  MessageCircle,
   Scale,
   ShieldAlert,
   ShieldCheck,
@@ -13,6 +14,7 @@ import {
 import { Breadcrumbs } from "@/components/layout/breadcrumb";
 import { ButtonLink } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { WHATSAPP_URL } from "@/config/community";
 import { createMetadata } from "@/config/seo";
 
 export const metadata = createMetadata({
@@ -260,6 +262,14 @@ export default function SampleReportPage() {
             <ButtonLink href="/pricing?service=DECISION_SINGLE#human-review" className="bg-teal-600 hover:bg-teal-700 text-white font-semibold">
               Request $249 Buyer Decision Review <ArrowRight className="ml-2 h-4 w-4" />
             </ButtonLink>
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-emerald-600 px-4 text-sm font-semibold !text-white hover:bg-emerald-700 transition-colors"
+            >
+              <MessageCircle className="h-4 w-4" /> Chat on WhatsApp
+            </a>
             <ButtonLink href="/pricing" variant="outline">
               Compare $149 vs $249 Plans
             </ButtonLink>

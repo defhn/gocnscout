@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle2, Lock, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Lock, MessageCircle, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/input";
+import { WHATSAPP_URL } from "@/config/community";
 
 export type ServiceOptionItem = {
   value: string;
@@ -171,6 +172,21 @@ export function InquiryRequestForm({
           <span className="inline-flex items-center gap-1">
             <Lock className="h-3.5 w-3.5 text-slate-400" /> Confidential — we never contact the supplier
           </span>
+        </div>
+
+        <div className="mt-2 rounded-xl border border-emerald-200 bg-emerald-50/60 p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="text-xs text-emerald-950">
+            <strong>Prefer faster 1-on-1 chat?</strong> Send the supplier name, Alibaba link, or PI directly on WhatsApp.
+          </div>
+          <a
+            href={WHATSAPP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-emerald-600 px-3.5 text-xs font-bold !text-white hover:bg-emerald-700 transition-colors"
+          >
+            <MessageCircle className="h-3.5 w-3.5" />
+            Chat on WhatsApp
+          </a>
         </div>
       </form>
     </div>

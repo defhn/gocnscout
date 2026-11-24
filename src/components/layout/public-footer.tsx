@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { DISCORD_INVITE_URL } from "@/config/community";
+import { DISCORD_INVITE_URL, WHATSAPP_URL } from "@/config/community";
 import { SITE } from "@/config/seo";
 
 export function PublicFooter() {
@@ -53,6 +53,7 @@ export function PublicFooter() {
           <p className="text-sm font-semibold text-slate-950">Support</p>
           <div className="mt-3 grid gap-2 text-sm text-slate-600">
             <Link href="/contact">Contact</Link>
+            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">WhatsApp Support</a>
             <span>{SITE.supportEmail}</span>
           </div>
         </div>

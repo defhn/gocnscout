@@ -1,11 +1,23 @@
 /**
- * 社群入口统一配置。
- * 如需更换 Discord 邀请链接,设置环境变量 NEXT_PUBLIC_DISCORD_INVITE_URL 或直接修改默认值即可。
+ * 社群与 WhatsApp 1 对 1 咨询入口统一配置。
+ * 可通过环境变量 NEXT_PUBLIC_DISCORD_INVITE_URL / NEXT_PUBLIC_WHATSAPP_NUMBER 覆盖默认值。
  */
 export const DISCORD_INVITE_URL =
   process.env.NEXT_PUBLIC_DISCORD_INVITE_URL || "https://discord.gg/PueMpu2RXT";
 
 export const DISCORD_IS_PLACEHOLDER = false;
+
+export const WHATSAPP_NUMBER =
+  (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "8615658901753").replace(/[^\d]/g, "");
+
+export const DEFAULT_WHATSAPP_MESSAGE =
+  "Hi GoCNScout, I'd like to verify a Chinese supplier before paying a deposit. Here are the supplier details:";
+
+export function getWhatsAppUrl(message: string = DEFAULT_WHATSAPP_MESSAGE) {
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+}
+
+export const WHATSAPP_URL = getWhatsAppUrl();
 
 /** 免费社群答疑与付费人工服务的边界(用于首页、服务页等文案复用) */
 export const COMMUNITY_SCOPE = {
