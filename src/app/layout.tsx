@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { getClerkPublishableKey } from "@/lib/env";
 import { absoluteUrl } from "@/lib/utils";
 import "./globals.css";
 
@@ -43,7 +44,7 @@ export default function RootLayout({
     </html>
   );
 
-  const clerkPublishableKey = process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
+  const clerkPublishableKey = getClerkPublishableKey();
   if (!clerkPublishableKey) {
     return content;
   }

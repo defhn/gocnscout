@@ -1,9 +1,10 @@
 import { SignUp } from "@clerk/nextjs";
+import { getClerkPublishableKey } from "@/lib/env";
 
 export const dynamic = "force-dynamic";
 
 export default function SignUpPage() {
-  if (!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]) {
+  if (!getClerkPublishableKey()) {
     return (
       <section className="container-page py-16">
         <h1 className="text-3xl font-semibold text-slate-950">Sign up</h1>

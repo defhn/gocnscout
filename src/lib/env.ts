@@ -42,6 +42,14 @@ const envSchema = z.object({
 
 export const env = envSchema.parse(process.env);
 
+export function getRuntimeEnv(name: string): string | undefined {
+  return process.env[name] || undefined;
+}
+
+export function getClerkPublishableKey(): string | undefined {
+  return getRuntimeEnv("NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY");
+}
+
 export function getR2PublicBaseUrl() {
   return env.R2_PUBLIC_BASE_URL ?? env.R2_PUBLIC_URL;
 }

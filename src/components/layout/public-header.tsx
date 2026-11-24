@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import { ChevronDown, ShieldCheck, Layers, FileText, Mail, ShieldAlert, Database, Package } from "lucide-react";
 import { PublicAuthActions } from "@/components/layout/public-auth-actions";
+import { getClerkPublishableKey } from "@/lib/env";
 
 const NAV_LINK =
   "inline-flex items-center rounded-md px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-teal-600 transition-colors";
@@ -59,7 +60,7 @@ export function PublicHeader() {
         </nav>
 
         {/* Right side CTA Button Panel */}
-        <PublicAuthActions clerkEnabled={Boolean(process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"])} />
+        <PublicAuthActions clerkEnabled={Boolean(getClerkPublishableKey())} />
       </div>
     </header>
   );
