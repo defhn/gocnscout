@@ -21,8 +21,17 @@ function safeRedirectPath(value?: string) {
   return "/contact";
 }
 
-function buildSubmittedRedirectUrl(redirectTo: string, requestUrl: string) {
-  const target = new URL(redirectTo, requestUrl);
+function getPublicOrigin(request: Request) {
+  const forwardedHost = request.headers.get("x-forwarded-host") || request.headers.get("host");
+  if (forwardedHost && !forwardedHost.startsWith("0.0.0.0")) {
+    const proto = request.headers.get("x-forwarded-proto") || (forwardedHost.includes("localhost") ? "http" : "https");
+    return `${proto}://${forwardedHost}`;
+  }
+  return env.APP_URL;
+}
+
+function buildSubmittedRedirectUrl(redirectTo: string, request: Request) {
+  const target = new URL(redirectTo, getPublicOrigin(request));
   target.searchParams.set("submitted", "1");
   return target;
 }
@@ -50,7 +59,7 @@ export async function POST(request: Request) {
 
   // 蜜罐字段:真人看不到该输入框,机器人通常会自动填写
   if (typeof entries.website === "string" && entries.website.trim() !== "") {
-    return NextResponse.redirect(buildSubmittedRedirectUrl(redirectTo, request.url), 303);
+    return NextResponse.redirect(buildSubmittedRedirectUrl(redirectTo, request), 303);
   }
 
   const parsed = inquirySchema.parse(entries);
@@ -86,5 +95,5 @@ export async function POST(request: Request) {
   }
 
   // 必须使用 303 See Other,否则浏览器会对重定向目标继续发 POST 导致 405
-  return NextResponse.redirect(buildSubmittedRedirectUrl(redirectTo, request.url), 303);
+  return NextResponse.redirect(buildSubmittedRedirectUrl(redirectTo, request), 303);
 }
