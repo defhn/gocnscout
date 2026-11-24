@@ -35,7 +35,7 @@ export function PublicHeader() {
             Cities
           </Link>
           <Link href="/pricing" className={NAV_LINK}>
-            Human Services
+            Pricing
           </Link>
 
           {/* 非一级页面使用 Dropdown 下拉收纳 */}
