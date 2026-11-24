@@ -30,11 +30,11 @@ export function PublicAuthActions({ clerkEnabled = false }: { clerkEnabled?: boo
           </Show>
           <Show when="signed-in">
             <Link
-              href="/app/lists"
+              href="/app"
               className="hidden h-9 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors md:inline-flex"
             >
               <Bookmark className="h-3.5 w-3.5 text-teal-600" />
-              Saved
+              Account
             </Link>
             <UserButton />
           </Show>

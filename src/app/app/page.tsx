@@ -1,40 +1,61 @@
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getPlan } from "@/config/plans";
+import { DISCORD_INVITE_URL } from "@/config/community";
 import { requireAppUser } from "@/server/auth";
 import { prisma } from "@/lib/db";
-import { monthKey } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const user = await requireAppUser();
-  const plan = getPlan(user.planCode);
-  const [savedLists, exports, usage, screenings] = await Promise.all([
+  const [savedLists, savedSuppliers, screenings] = await Promise.all([
     prisma.savedList.count({ where: { userId: user.id } }),
-    prisma.exportJob.count({ where: { userId: user.id } }),
-    prisma.usageCounter.findMany({ where: { userId: user.id, periodKey: monthKey() } }),
+    prisma.savedSupplier.count({ where: { list: { userId: user.id } } }),
     prisma.supplierAnalysis.count({ where: { userId: user.id } }),
   ]);
 
   return (
     <section>
-      <h1 className="text-2xl font-semibold text-slate-950">Overview</h1>
-      <p className="mt-2 text-sm text-slate-600">Your current plan is {plan.name}. Usage resets monthly.</p>
-      <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Metric title="Export quota" value={`${usage.find((u) => u.kind === "export_rows")?.used || 0}/${plan.exportRowsPerMonth}`} />
-        <Metric title="Profile views" value={`${usage.find((u) => u.kind === "profile_view")?.used || 0}/${plan.profileViewsPerMonth}`} />
+      <h1 className="text-2xl font-semibold text-slate-950">Welcome{user.name ? `, ${user.name}` : ""}</h1>
+      <p className="mt-2 text-sm text-slate-600">
+        Your account lets you save suppliers to your shortlist across devices. Searching the company database is always free.
+      </p>
+      <div className="mt-6 grid gap-4 md:grid-cols-3">
+        <Metric title="Saved suppliers" value={String(savedSuppliers)} />
         <Metric title="Saved lists" value={String(savedLists)} />
-        <Metric title="Screened suppliers" value={String(screenings)} />
+        <Metric title="Past screenings" value={String(screenings)} />
       </div>
       <Card className="mt-6">
         <CardHeader>
-          <CardTitle>Recent export jobs</CardTitle>
+          <CardTitle>Quick links</CardTitle>
         </CardHeader>
-        <CardContent>
-          <h2 className="text-sm font-semibold text-slate-950">Export history</h2>
-          <p className="mt-2 text-sm text-slate-600">{exports ? `${exports} export jobs created.` : "No export jobs yet."}</p>
-          <h3 className="mt-4 text-sm font-semibold text-slate-950">Data policy</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-600">Exports include public supplier fields only and exclude personal contact fields.</p>
+        <CardContent className="flex flex-wrap gap-3">
+          <Link
+            href="/database"
+            className="inline-flex h-9 items-center rounded-md bg-teal-600 px-4 text-sm font-semibold !text-white hover:bg-teal-700"
+          >
+            Search Free Company Database
+          </Link>
+          <Link
+            href="/app/lists"
+            className="inline-flex h-9 items-center rounded-md border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+          >
+            View Saved Lists
+          </Link>
+          <a
+            href={DISCORD_INVITE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex h-9 items-center rounded-md border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+          >
+            Ask on Discord (Free)
+          </a>
+          <Link
+            href="/pricing"
+            className="inline-flex h-9 items-center rounded-md border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+          >
+            Human Verification Services
+          </Link>
         </CardContent>
       </Card>
     </section>

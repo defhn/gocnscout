@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { BookOpen, Database, FileUp, Home, Inbox, Shield, Users } from "lucide-react";
+import { getClerkPublishableKey } from "@/lib/env";
 
 const nav = [
   { href: "/admin", label: "概览", icon: Home },
@@ -13,7 +14,7 @@ const nav = [
 ];
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
-  const clerkEnabled = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+  const clerkEnabled = Boolean(getClerkPublishableKey());
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -32,6 +33,12 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </nav>
       </aside>
       <div className="lg:pl-64">
+        <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4 lg:px-8">
+          <Link href="/" className="text-xs font-medium text-slate-500 hover:text-teal-700">
+            ← 返回前台首页
+          </Link>
+          {clerkEnabled ? <UserButton /> : null}
+        </header>
         <main className="px-4 py-8 lg:px-8">{children}</main>
       </div>
     </div>

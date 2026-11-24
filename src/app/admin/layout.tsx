@@ -9,6 +9,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const user = await getCurrentAppUser();
   if (!user) redirect("/sign-in");
   const admin = await prisma.adminProfile.findUnique({ where: { userId: user.id } });
-  if (!admin?.isActive) redirect("/app");
+  if (!admin?.isActive) redirect("/");
   return <AdminShell>{children}</AdminShell>;
 }
