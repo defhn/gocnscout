@@ -15,17 +15,20 @@ const PACKAGES = [
   {
     pkg: identity,
     stageTag: "Stage 1 · First Quote & Screening",
-    idealFor: "Best when you just received a quote or B2B link and want to rule out trading shells or fake office addresses before investing time.",
+    idealFor:
+      "Best when you just received a quote or B2B link and want to verify legal existence, active status, business scope, and obvious risk flags before investing time.",
   },
   {
     pkg: decision,
     stageTag: "Stage 2 · Pre-Sample & Pre-Deposit",
-    idealFor: "Best before paying tooling fees or a 30% T/T deposit — covers ownership trace, lawsuits, CNCA/CNIPA checks, and wire-beneficiary safety.",
+    idealFor:
+      "Best before paying tooling fees or a 30% deposit — covers shareholder penetration, related-company shell risks, lawsuits, mortgages, insured headcount, domestic certificates, IP, and domestic social signals.",
   },
   {
     pkg: decisionBundle,
     stageTag: "Stage 3 · Comparing 2-3 Finalists",
-    idealFor: "Best when choosing between up to three shortlisted suppliers so you eliminate risky candidates before paying for samples or SGS audits.",
+    idealFor:
+      "Best when choosing between up to three shortlisted suppliers so you eliminate risky candidates before paying for samples or on-site QC audits.",
   },
 ] as const;
 
@@ -143,6 +146,38 @@ export function HumanVerificationPackages({
                     Request {pkg.shortName}
                   </Link>
                 )}
+
+                {pkg.code === "IDENTITY_SINGLE" && (
+                  <a
+                    href="/samples/gocnscout-sample-identity-check-149.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2.5 inline-flex items-center justify-center gap-1.5 text-[11px] font-semibold text-slate-600 hover:text-teal-700 transition-colors"
+                  >
+                    <FileCheck2 className="h-3.5 w-3.5 text-slate-400" />
+                    Preview 9-Page Sample PDF ↗
+                  </a>
+                )}
+                {pkg.code === "DECISION_SINGLE" && (
+                  <a
+                    href="/samples/gocnscout-sample-decision-review-249.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2.5 inline-flex items-center justify-center gap-1.5 text-[11px] font-semibold text-teal-700 hover:text-teal-800 transition-colors"
+                  >
+                    <FileCheck2 className="h-3.5 w-3.5 text-teal-600" />
+                    Preview 14-Page Sample PDF ↗
+                  </a>
+                )}
+                {pkg.code === "DECISION_BUNDLE" && (
+                  <Link
+                    href="/sample-report"
+                    className="mt-2.5 inline-flex items-center justify-center gap-1.5 text-[11px] font-semibold text-slate-600 hover:text-teal-700 transition-colors"
+                  >
+                    <FileCheck2 className="h-3.5 w-3.5 text-slate-400" />
+                    Inspect Full Sample Gallery →
+                  </Link>
+                )}
               </CardContent>
             </Card>
           );
@@ -154,19 +189,35 @@ export function HumanVerificationPackages({
         <div className="flex items-start gap-3">
           <Info className="h-5 w-5 text-teal-600 shrink-0 mt-0.5" />
           <div className="text-xs leading-relaxed text-slate-600">
-            <strong className="text-slate-900">How desk verification fits with on-site audits (SGS / TÜV):</strong>{" "}
-            Our {formatUsd(identity.amountUsdCents)}–{formatUsd(decision.amountUsdCents)} desk review screens out paper
-            shells, fake certificates, lawsuit defaults, and entity mismatches <em>before</em> you wire a deposit or
-            spend $800–$1,500+ booking an on-site factory inspection during production.
+            <strong className="text-slate-900">Clear scope boundary (what we check vs. what we do not):</strong>{" "}
+            Our {formatUsd(identity.amountUsdCents)}–{formatUsd(decision.amountUsdCents)} desk review analyzes Chinese
+            public corporate, court, mortgage, domestic certificate, IP, and domestic social records <em>before</em> you
+            commit. We do <strong>not</strong> perform on-site visits/satellite facility inspections, verify private
+            bank accounts, supply original business license scans, or audit overseas lab certificates (CE/FCC/FDA/UL) —
+            instead, we give you the exact checklist of documents to request from the supplier and recommend pairing
+            mass-production orders with on-site QC (SGS / TÜV).
           </div>
         </div>
-        <Link
-          href="/sample-report"
-          className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl border border-teal-200 bg-teal-50 px-4 py-2.5 text-xs font-bold text-teal-800 hover:bg-teal-100 transition-colors"
-        >
-          <FileCheck2 className="h-4 w-4 text-teal-600" />
-          View Redacted Sample Report
-        </Link>
+        <div className="flex flex-wrap shrink-0 gap-2">
+          <a
+            href="/samples/gocnscout-sample-identity-check-149.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-bold text-slate-800 hover:bg-slate-50 transition-colors"
+          >
+            <FileCheck2 className="h-4 w-4 text-slate-600" />
+            $149 Sample PDF
+          </a>
+          <a
+            href="/samples/gocnscout-sample-decision-review-249.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-teal-200 bg-teal-50 px-3.5 py-2.5 text-xs font-bold text-teal-800 hover:bg-teal-100 transition-colors"
+          >
+            <FileCheck2 className="h-4 w-4 text-teal-600" />
+            $249 Sample PDF
+          </a>
+        </div>
       </div>
 
       <p className="mt-5 text-center text-xs text-slate-500">

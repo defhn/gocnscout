@@ -1,0 +1,194 @@
+{
+  "meta": {
+    "reportId": "GCS-SAMPLE-2026-1126",
+    "reportDate": "November 26, 2026",
+    "isSample": true,
+    "confidentialLabel": "REDACTED PUBLIC SAMPLE · BUYER-SIDE CONFIDENTIAL",
+    "analystUnit": "GoCNScout Independent Buyer Intelligence",
+    "buyerContext": "Overseas apparel importer evaluating a 25-year-old seamless knitwear & hosiery manufacturer prior to sampling and a $28,000 trial order deposit.",
+    "turnaroundHours": 28
+  },
+  "verdict": {
+    "tier": "CRITICAL",
+    "tierLabel": "CRITICAL RISK",
+    "actionHeadline": "PAUSE — DO NOT PAY THIS LEGAL ENTITY",
+    "criticalOverrideTriggered": true,
+    "criticalOverrideReason": "Active simplified deregistration notice (Nov 6–26, 2026), 40.5M RMB resumed court enforcement, 0 insured employees, and full B2B storefront closure.",
+    "overallScore": 3,
+    "maxScore": 30,
+    "executiveSummary149": "Although Zhejiang [REDACTED] Knitting Co., Ltd. appears on paper to be a 25-year-old manufacturer (founded 2001, 10M RMB paid-in capital, customs exporter since 2003), Chinese public registry and judicial records reveal severe distress. The entity filed an active simplified deregistration notice (November 6–26, 2026), reported 0 insured employees in 2025 with all 3 branches cancelled, carries a 40.5M RMB resumed court enforcement case and 5 historical administrative penalties, and has closed both its Alibaba.com and 1688 storefronts while leaving its website unmaintained. Buyers should NOT sign contracts or wire funds to this entity.",
+    "executiveSummary249": "On the surface, Zhejiang [REDACTED] Knitting Co., Ltd. displays the credentials of an established tier-2 knitwear manufacturer: founded in 2001, 10M RMB paid-in capital, 58 historical patents, 30 trademarks, and co-drafter of Chinese national knitwear standards. However, multi-source desk due diligence uncovers an acute 'winding-down legacy shell' profile: (1) an active simplified deregistration notice (Nov 6–26, 2026); (2) 0 insured employees across 2024 and 2025 annual reports with all 3 branches cancelled; (3) 40.5M RMB in resumed court enforcement (Jul 2025), 83.1M RMB in active chattel mortgages, 65.27M RMB in historical dishonest debtor orders, and 7 labor arbitrations; (4) all 3 recent ISO certificates revoked and all 58 patents terminated for unpaid fees; and (5) 6 active related entities sharing identical phone/email records—including 3 newly registered 2022–2024 trading/printing shells. Recommendation: Pause all payments immediately and verify whichever active successor entity the supplier proposes as counterparty."
+  },
+  "company": {
+    "englishName": "Zhejiang [REDACTED] Knitting Co., Ltd.",
+    "formerName": "Yiwu [REDACTED] Knitting Co., Ltd. (2001–2003)",
+    "uscc": "913307827303******",
+    "taxId": "913307827303******",
+    "orgCode": "730337**-5",
+    "regNumber": "330782000080***",
+    "customsCode": "331896****",
+    "legalRepresentative": "Mr. L** (51% shareholder)",
+    "registrationStatus": "Active — Simplified Deregistration Notice Ongoing (Nov 6–26, 2026)",
+    "establishmentDate": "2001-07-18 (25 years)",
+    "approvalDate": "2021-07-15",
+    "operatingTerm": "2001-07-18 to Indefinite",
+    "registrationAuthority": "Yiwu Municipal Administration for Market Regulation",
+    "registeredCapital": "10,000,000 RMB (Reduced −81% from 52,000,000 RMB peak)",
+    "paidInCapital": "10,000,000 RMB (2025 Annual Report)",
+    "companyType": "Limited Liability Company (Natural Person Invested/Controlled)",
+    "companyScale": "Small (S)",
+    "industry": "Manufacturing — Textile & Apparel (Knitted Underwear & Hosiery)",
+    "registeredAddress": "No. 100 [REDACTED] East Road, Fotang Town, Yiwu City, Zhejiang Province, China",
+    "insuredEmployees2025": "0 employees (2025 Annual Report)",
+    "insuredEmployees2024": "0 employees (2024 Annual Report)",
+    "branchesStatus": "3 registered branches — ALL 3 CANCELLED",
+    "businessScope": "Manufacturing and sales of knitted underwear, woven pure chemical-fiber fabrics, socks, and covered yarn (excluding dyeing); import and export of goods and technology.",
+    "importExportStatus": "Active Customs Consignee/Consignor (Registered 2003-06-06; Yiwu Customs; Regular Credit Tier)"
+  },
+  "branches": [
+    { "name": "Zhejiang [REDACTED] Knitting Co., Ltd. — Beiyuan Branch", "head": "Mr. L** (Relative)", "city": "Yiwu, Zhejiang", "founded": "2014-04-01", "status": "CANCELLED" },
+    { "name": "Zhejiang [REDACTED] Knitting Co., Ltd. — Futian Market Branch", "head": "Mr. L**", "city": "Yiwu, Zhejiang", "founded": "2008-12-19", "status": "CANCELLED" },
+    { "name": "Zhejiang [REDACTED] Knitting Co., Ltd. — Branch Office", "head": "Mr. L**", "city": "Yiwu, Zhejiang", "founded": "2006-06-13", "status": "CANCELLED" }
+  ],
+  "keyRegistryChanges": [
+    { "date": "2021-07-15", "item": "Registered Capital Reduction", "detail": "Capital reduced from 22.0M RMB down to 10.0M RMB (−54.5% second cut)." },
+    { "date": "2020-08-20", "item": "Operating Term Extension", "detail": "Extended operating term from 2021-07-16 expiry to Indefinite." },
+    { "date": "2019-12-20", "item": "Registered Capital Reduction", "detail": "Capital cut sharply from peak 52.0M RMB down to 22.0M RMB (−57.7%)." },
+    { "date": "2016-04-26", "item": "Unified Social Credit Code", "detail": "Converted legacy registration & org code to 18-digit USCC." },
+    { "date": "2014-12-04", "item": "Registered Address Relocation", "detail": "Relocated from Beiyuan Road to Fotang Town, Yiwu (current address)." },
+    { "date": "2008-12-11", "item": "Capital Increase & Legal Rep", "detail": "Increased capital 42.0M → 52.0M RMB (peak); Mr. L** replaced Ms. J** as Legal Rep." },
+    { "date": "2006-01-20", "item": "Major Capital Expansion", "detail": "Increased registered capital from 12.0M RMB to 42.0M RMB (+30M RMB)." },
+    { "date": "2003-06-03", "item": "Export Scope Addition", "detail": "Added self-operated import & export business to licensed scope." },
+    { "date": "2003-04-14", "item": "Name & Capital Upgrade", "detail": "Upgraded name from Yiwu to Zhejiang provincial title; capital 1M → 10M RMB." }
+  ],
+  "adminPenalties": [
+    { "date": "2025-01-22", "docNo": "Yi-Fo-Zong-Zhi [2024] 000651-2", "authority": "Fotang Town Gov.", "fine": "2,000 RMB", "fact": "Workplace safety violation: blocked production-floor evacuation passage." },
+    { "date": "2023-09-17", "docNo": "Yi-Shi-Jian [2023] 2353", "authority": "Yiwu AMR", "fine": "20,000 RMB", "fact": "Advertising law violation on historical website [REDACTED].com (improper map graphic)." },
+    { "date": "2017-11-20", "docNo": "Yi-Gong-Fo [2017] 26901", "authority": "Yiwu Public Security", "fine": "100 RMB", "fact": "Failed to register migrant worker temporary residence records." },
+    { "date": "2017-03-23", "docNo": "Hu-Yang-Guan [2017] 0047", "authority": "Yangshan Customs", "fine": "Undisclosed", "fact": "Simplified customs declaration compliance violation." },
+    { "date": "2017-01-17", "docNo": "Yi-Gong-Xiao [2017] 0020", "authority": "Yiwu Fire Brigade", "fine": "Undisclosed", "fact": "Fire control room failed to maintain mandatory 24-hour duty staffing." }
+  ],
+  "basicChecks149": [
+    {
+      "area": "1. Legal Existence & Deregistration Check",
+      "status": "CRITICAL",
+      "finding": "Active on paper, but an active Simplified Deregistration Notice (Nov 6–26, 2026) is filed with Yiwu AMR. All 3 branches are cancelled."
+    },
+    {
+      "area": "2. Basic Judicial, Enforcement & Penalty Screen",
+      "status": "CRITICAL",
+      "finding": "40.5M RMB resumed court enforcement (Jul 2025), 480K RMB enforcement (2026), 65.27M RMB historical dishonest debtor records, 5 historical administrative penalties."
+    },
+    {
+      "area": "3. Website & B2B Storefront Consistency",
+      "status": "HIGH",
+      "finding": "Historical domain ([REDACTED].com) resolves via HTTP but is unmaintained with no active ICP filing; both Alibaba.com (English) and 1688 (Chinese) storefronts are closed."
+    }
+  ],
+  "scorecard249": [
+    { "dimension": "1. Legal Existence & Status", "score": 0, "max": 5, "status": "CRITICAL", "rationale": "Simplified deregistration notice active (Nov 6–26, 2026); all 3 branches cancelled." },
+    { "dimension": "2. Ownership & Related-Entity Risk", "score": 1, "max": 5, "status": "HIGH", "rationale": "Capital cut 52M → 10M RMB; 6 related entities share phone/email, incl. 3 new 2022–2024 shells." },
+    { "dimension": "3. Judicial, Debt & Compliance", "score": 0, "max": 5, "status": "CRITICAL", "rationale": "40.5M RMB resumed enforcement (2025), 83.1M RMB chattel mortgages, 65.27M RMB historical debtor records." },
+    { "dimension": "4. Operating Scale & Credentials", "score": 0, "max": 5, "status": "CRITICAL", "rationale": "0 insured staff in 2024 & 2025; all 3 recent ISO 9001/14001/45001 certificates revoked." },
+    { "dimension": "5. IP & Standards Credibility", "score": 1, "max": 5, "status": "HIGH", "rationale": "26 trademarks remain registered, but 58 of 58 patents are terminated for unpaid annual fees." },
+    { "dimension": "6. External Footprint & Activity", "score": 1, "max": 5, "status": "HIGH", "rationale": "Website unmaintained; Alibaba.com & 1688 closed; 0 active jobs on BOSS Zhipin; 0 social presence." }
+  ],
+  "capitalHistory": [
+    { "year": "2001", "rmbMillions": 1 },
+    { "year": "2003", "rmbMillions": 10 },
+    { "year": "2004", "rmbMillions": 12 },
+    { "year": "2006", "rmbMillions": 42 },
+    { "year": "2008", "rmbMillions": 52 },
+    { "year": "2019", "rmbMillions": 22 },
+    { "year": "2021", "rmbMillions": 10 },
+    { "year": "2026", "rmbMillions": 10 }
+  ],
+  "shareholders": [
+    { "name": "Mr. L** (Legal Rep / Executive Director)", "ratio": "51.00%", "subscribed": "5.10M RMB", "paidIn": "5.10M RMB", "since": "2004-01-16" },
+    { "name": "Ms. J** (Supervisor)", "ratio": "49.00%", "subscribed": "4.90M RMB", "paidIn": "4.90M RMB", "since": "2001-07-18" }
+  ],
+  "legalRepOtherEntities": [
+    { "name": "Yiwu Choucheng [REDACTED] Hosiery Factory", "role": "Legal Rep", "region": "Zhejiang", "status": "ACTIVE" },
+    { "name": "Shanghai [REDACTED] Knitwear Co., Ltd.", "role": "Exec Director (60%)", "region": "Shanghai", "status": "CANCELLED (2014)" },
+    { "name": "Hangzhou [REDACTED] Investment Co., Ltd.", "role": "Supervisor (20%)", "region": "Zhejiang", "status": "CANCELLED (2023)" },
+    { "name": "Yiwu [REDACTED] Trading Co., Ltd.", "role": "Supervisor", "region": "Zhejiang", "status": "CANCELLED (2019)" },
+    { "name": "3 Legacy Hosiery Stalls & Branches", "role": "Legal Rep / Head", "region": "Zhejiang", "status": "ALL CANCELLED" }
+  ],
+  "relatedEntities": [
+    { "name": "Yiwu [REDACTED] Printing Co., Ltd.", "founded": "2023-04-28", "capital": "1.0M RMB", "link": "Same phone & email; Legal Rep is 49% shareholder Ms. J**", "status": "ACTIVE" },
+    { "name": "Yiwu [REDACTED] Trading Co., Ltd. (A)", "founded": "2024-10-17", "capital": "1.0M RMB", "link": "Shared registered email address", "status": "ACTIVE" },
+    { "name": "Yiwu [REDACTED] Trading Co., Ltd. (B)", "founded": "2022-03-11", "capital": "1.0M RMB", "link": "Shared registered phone & email", "status": "ACTIVE" },
+    { "name": "Yiwu [REDACTED] Import & Export Co., Ltd.", "founded": "2009-10-29", "capital": "60.0M RMB", "link": "Shared registered phone & email", "status": "ACTIVE" },
+    { "name": "Yiwu [REDACTED] Tech Dev Co., Ltd.", "founded": "2006-06-09", "capital": "30.0M RMB", "link": "Shared landline & email", "status": "ACTIVE" },
+    { "name": "Yiwu [REDACTED] Micro-Finance Co., Ltd.", "founded": "2011-12-28", "capital": "6% Equity Held", "link": "Outbound investment; equity frozen & pledged", "status": "RISK FLAGGED" }
+  ],
+  "chattelMortgages": [
+    { "regNo": "33072019012636", "date": "2019-08-27", "mortgagee": "Individual Lender (Mr. Y**)", "term": "2019-08 to 2024-08", "amount": "30.00M RMB", "status": "ACTIVE" },
+    { "regNo": "33072018002769", "date": "2018-11-21", "mortgagee": "Bank of China (Yiwu Branch)", "term": "2018-11 to 2023-11", "amount": "3.10M RMB", "status": "ACTIVE" },
+    { "regNo": "Yi-Shi-Jian [2018] 90", "date": "2018-07-18", "mortgagee": "Yiwu Bangjie Micro-Loan Co.", "term": "2018-07 to 2023-07", "amount": "50.00M RMB", "status": "ACTIVE" }
+  ],
+  "historicalDebtors": [
+    { "caseNo": "(2021) Zhe 0782 Zhi 13695", "date": "2022-02-25", "creditor": "China Huarong AMC (Zhejiang)", "amount": "40.50M RMB", "detail": "Dishonest debtor & High-Consumption Restriction on Mr. L**; resumed enforcement Jul 2025." },
+    { "caseNo": "(2020) Zhe 0782 Zhi 11444", "date": "2021-04-15", "creditor": "China Cinda AMC (Zhejiang)", "amount": "24.77M RMB", "detail": "Dishonest debtor & High-Consumption Restriction on Mr. L** (financial loan guarantee default)." }
+  ],
+  "laborArbitrations": [
+    { "date": "2020-05-11", "caseNo": "(2020) 387", "cause": "Social insurance arrears" },
+    { "date": "2019-05-23", "caseNo": "(2019) 562", "cause": "Unpaid wages" },
+    { "date": "2018-09-03", "caseNo": "(2018) 2010", "cause": "Severance / contract termination compensation" },
+    { "date": "2017-12-13", "caseNo": "(2017) 1454", "cause": "Work-related injury benefits" },
+    { "date": "2016-10-20", "caseNo": "(2016) 1333", "cause": "Unpaid wages" },
+    { "date": "2015-07-06", "caseNo": "(2015) 0952", "cause": "Work-related injury benefits" },
+    { "date": "2015-01-29", "caseNo": "(2015) 0046", "cause": "Work-related injury benefits" }
+  ],
+  "keyJudicialAndDebt": [
+    { "date": "2026-11-06", "category": "Simplified Deregistration", "amount": "CRITICAL", "summary": "Public deregistration notice filed with Yiwu AMR (window Nov 6–26, 2026)." },
+    { "date": "2026", "category": "Court Enforcement", "amount": "0.48M RMB", "summary": "Case (2026) Zhe 0782 Zhi 9730 — labor-provider injury liability enforcement (Yiwu Court)." },
+    { "date": "2025-07-30", "category": "Resumed Enforcement", "amount": "40.50M RMB", "summary": "Case (2025) Zhe 0782 Zhi Hui 1918 — resumed enforcement on financial loan guarantee." },
+    { "date": "2023", "category": "Labor Lawsuit", "amount": "Defendant", "summary": "Case (2023) Zhe 0782 Min Chu 6892 — employee labor dispute (first instance)." },
+    { "date": "2021–2022", "category": "Bank Loan Lawsuits", "amount": "38.00M RMB", "summary": "Defendant in financial loan suits by SPD Bank Yiwu (38.0M RMB) & Bank of China Yiwu." },
+    { "date": "2019", "category": "Bank Loan & Supply Suits", "amount": "19.93M RMB", "summary": "Defendant in Bank of Communications loan guarantee suit (19.93M RMB) & textile supply dispute." },
+    { "date": "2012–2018", "category": "Receivables Recovery", "amount": "30+ Cases", "summary": "Predominantly plaintiff suing domestic distributors for unpaid knitwear receivables." }
+  ],
+  "credentialsAndIp": {
+    "domesticCertificates": [
+      { "name": "ISO 9001 Quality Management", "certNo": "50820Q10190R0M", "issuer": "CCIC Excellence (Beijing)", "period": "2020-05 to 2023-05", "status": "REVOKED" },
+      { "name": "ISO 14001 Environmental Mgmt", "certNo": "50820E10107R0M", "issuer": "CCIC Excellence (Beijing)", "period": "2020-05 to 2023-05", "status": "REVOKED" },
+      { "name": "ISO 45001 Occupational H&S", "certNo": "50820S10082R0M", "issuer": "CCIC Excellence (Beijing)", "period": "2020-05 to 2023-05", "status": "REVOKED" },
+      { "name": "ISO 9001 Quality Management", "certNo": "06913Q11341R1M", "issuer": "KCB Certification (Beijing)", "period": "2013-05 to 2016-05", "status": "EXPIRED" },
+      { "name": "ISO 14001 Environmental Mgmt", "certNo": "06913E10188R1M", "issuer": "KCB Certification (Beijing)", "period": "2013-05 to 2016-05", "status": "REVOKED" },
+      { "name": "ISO 9001 & 14001 (2 Legacy)", "certNo": "06910Q/E12020", "issuer": "KCB Certification (Beijing)", "period": "2010-05 to 2013-05", "status": "EXPIRED" },
+      { "name": "Customs Consignee/Consignor", "certNo": "331896****", "issuer": "General Admin. of Customs", "period": "2003-06 to 2099-12", "status": "ACTIVE" }
+    ],
+    "creditRatings": [
+      "Tax Credit Rating: Grade A in 2015, 2018, 2020, 2021 (no Grade-A listing published since 2021).",
+      "Environmental Credit Rating: Downgraded from Grade A (2021–2023) to Grade B (2023–2026, Zhejiang Ecology Dept.).",
+      "Customs Credit Rating: Regular Enterprise (Yiwu Customs); General VAT Taxpayer active since 2003."
+    ],
+    "ipSummary": [
+      "Patents: 58 total filings (48 utility models, 10 designs; peak 20 filings in 2011; last filing May 2020) — 100% (58/58) TERMINATED for unpaid annual fees.",
+      "Trademarks: 30 filings (26 registered, 4 invalid across Classes 25, 26, 24, 23, etc.) — all filed 2001–2013; zero new brand filings in 13 years.",
+      "Software Copyrights: 1 filing (2017SR284967 — Trouser Pattern Design Intelligent System V1.0).",
+      "Industry Standards: Co-drafter of 4 standards — 2 active (GB/T 39508-2020 Children's Knitted Apparel; T/CKIA 2-2019 Bra Sizing) and 2 abolished."
+    ]
+  },
+  "externalFootprint": [
+    { "channel": "Corporate Website ([REDACTED].com)", "status": "UNMAINTAINED", "detail": "Resolves via HTTP, but visibly unmaintained; no active ICP website filing appears in public records." },
+    { "channel": "Alibaba.com (International B2B)", "status": "CLOSED", "detail": "No active international Alibaba storefront exists; legacy exporter listing is closed." },
+    { "channel": "1688.com (Domestic B2B)", "status": "CLOSED", "detail": "Domestic Chinese wholesale storefront is closed." },
+    { "channel": "BOSS Zhipin (Hiring Activity)", "status": "0 ACTIVE JOBS", "detail": "No current job openings posted (corroborating 0 insured staff in 2024–2025 annual reports)." },
+    { "channel": "Xiaohongshu / Douyin / Zhihu", "status": "NO PRESENCE", "detail": "Manual search returned zero active official factory accounts, brand promotions, or recent worker/buyer threads." }
+  ],
+  "practicalSafeguards": [
+    "Do NOT sign a purchase contract or wire any deposit to this legacy legal entity while its simplified deregistration notice and 40.5M RMB enforcement remain unresolved.",
+    "Request a watermarked copy of the stamped Chinese Business License ('For supplier onboarding only') from whichever active entity the sales rep proposes as your counterparty—and verify that new entity before proceeding.",
+    "Require a formally stamped Proforma Invoice (PI). If the supplier requests USD payment to a Hong Kong or third-party export account, require a 1-page stamped Payment Authorization Letter signed by the contracting mainland entity.",
+    "Only if the active successor entity claims ISO 9001 or target-market test reports (e.g., OEKO-TEX / CPSIA), request scanned copies to verify that the certificate holder name matches the contracting entity and is still valid.",
+    "Before any bulk deposit to a newly verified successor factory, conduct a 5-minute live video walkthrough of the sample room/workshop and schedule third-party pre-shipment QC (e.g., SGS / TÜV) for production orders."
+  ],
+  "rfqQuestions": [
+    "Public Chinese registry records show Zhejiang [REDACTED] Knitting Co., Ltd. filed a simplified deregistration notice in November 2026—which active legal entity will actually sign our contract and manufacture our order?",
+    "We noticed all three of the legacy factory's ISO certificates show status 'Revoked' and annual-report insured headcount is zero. Are you currently producing in-house under a successor company (such as Yiwu [REDACTED] Printing Co., Ltd.) or subcontracting to a partner workshop?",
+    "Will the beneficiary on our Proforma Invoice match the active contracting Chinese entity, or if using a Hong Kong account, can the mainland entity issue a stamped Payment Authorization Letter?",
+    "Can we arrange a 5-minute live video call from the production floor and confirm the exact factory address for third-party pre-shipment QC?"
+  ]
+}

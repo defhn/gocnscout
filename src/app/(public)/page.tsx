@@ -94,7 +94,7 @@ const BUYER_PERSONAS = [
     icon: Briefcase,
     audience: "Brands & Enterprise Importers",
     subtitle: "Strict Compliance · Custom Tooling & IP",
-    pain: "High exposure to fake CE/FDA/ISO certificates, patent infringement lawsuits, or entity-mixing between trading desks and plants.",
+    pain: "High exposure to revoked domestic ISO certificates, lapsed patents, heavy debt enforcement, or entity-mixing between trading desks and legacy plants.",
     path: "Order a $249 Buyer Decision Review before tooling or deposit — or license the full structured dataset ($6,000/yr) for internal procurement teams.",
     ctaLabel: "Inspect Sample Report",
     href: "/sample-report",
@@ -105,59 +105,59 @@ const PROCUREMENT_STAGES = [
   {
     stage: "01 · First Quote",
     trigger: "Supplier sends catalog or B2B quote",
-    risk: "Trading shell or office room posing as an industrial factory",
-    solution: "Free DB lookup + $149 Identity Check (GSXT business scope & satellite address check)",
+    risk: "Trading-only entity, deregistration notice, or mismatched business scope",
+    solution: "Free DB lookup + $149 Identity Check (GSXT legal status, business scope & obvious-risk screen)",
   },
   {
     stage: "02 · Shortlist Filter",
     trigger: "Comparing 2–3 supplier quotes",
-    risk: "Hidden contract lawsuits, zero insured workers, or shell affiliates",
-    solution: "$499 3-Supplier Bundle to eliminate risky finalists before paying sample/audit fees",
+    risk: "Hidden court enforcements, 0 insured workers, or shell affiliates sharing phone/email",
+    solution: "$499 3-Supplier Bundle to eliminate distressed finalists before paying sample/audit fees",
   },
   {
     stage: "03 · Sample & Compliance",
-    trigger: "Reviewing ISO / CE / FCC / patent claims",
-    risk: "Forged, expired, or wrong-voltage certificates belonging to another factory",
-    solution: "$249 Decision Review (CNCA certificate number & CNIPA patent ownership cross-check)",
+    trigger: "Reviewing ISO / patent / factory-scale claims",
+    risk: "Revoked domestic ISO certificates, lapsed patents, or shrinking headcount",
+    solution: "$249 Decision Review (domestic certificate status, CNIPA patent status & annual-report insured staff)",
   },
   {
-    stage: "04 · Pre-Deposit Wire",
-    trigger: "Proforma Invoice requests 30% T/T deposit",
-    risk: "PI beneficiary account (e.g. unlinked HK shell) does not match actual manufacturer",
-    solution: "$249 Decision Review (shareholder penetration + contract chop & bank-entity checklist)",
+    stage: "04 · Pre-Deposit Check",
+    trigger: "Before signing contract or paying 30% deposit",
+    risk: "Contracting with a winding-down shell or indebted entity with heavy chattel mortgages",
+    solution: "$249 Decision Review (shareholder & related-entity trace + exact supplier document checklist)",
   },
   {
     stage: "05 · Production & QC",
     trigger: "Mass production & pre-shipment",
-    risk: "Subcontracting or spec drift on the assembly line",
-    solution: "Pair our prior legal/address verification with an on-site QC agency (SGS / TÜV) at the verified plant",
+    risk: "Quality drift, overseas lab compliance, or unauthorized subcontracting",
+    solution: "Request stamped license/bank proof & overseas CE/FCC/FDA reports from supplier + book on-site QC (SGS / TÜV)",
   },
 ] as const;
 
 const RED_FLAGS = [
   {
     icon: ShieldAlert,
-    tag: "Case #1 · Fake Factory",
-    title: "Office-Tower Shell Using Borrowed Workshop Photos",
-    text: "B2B storefront claims a 200-worker factory, but GSXT filings & satellite maps reveal Room 1408 in a commercial plaza, 0 paid-in capital, and a trading-only license.",
+    tag: "Case #1 · Winding Down",
+    title: "25-Year Legacy Factory Quietly Filing Deregistration",
+    text: "Catalog still boasts decades of history, yet Chinese public records reveal an active simplified deregistration notice, 0 insured staff, and cancelled branches.",
   },
   {
     icon: AlertTriangle,
-    tag: "Case #2 · Compliance Trap",
-    title: "Forged, Expired, or Wrong-Scope CE / ISO Certificates",
-    text: "Scanned certificates look legitimate until checked on CNCA — often belonging to an unrelated third-party plant or covering 220V models instead of your 110V SKU.",
+    tag: "Case #2 · Revoked Status",
+    title: "Revoked Domestic ISO Certificates & Lapsed Patents",
+    text: "Suppliers keep advertising 'ISO 9001 & 50+ Patents' while public registries show every ISO certificate revoked and all patents terminated for unpaid fees.",
   },
   {
     icon: Scale,
-    tag: "Case #3 · Default Risk",
-    title: "Active Supply-Contract Lawsuits & Dishonest Debtors",
-    text: "Suppliers facing cash-flow collapse, frozen bank accounts, or multiple raw-material lawsuits aggressively push for fast T/T deposits to plug old debts.",
+    tag: "Case #3 · Debt Collapse",
+    title: "Heavy Court Enforcements, Mortgages & Labor Disputes",
+    text: "Companies hit with multi-million RMB court enforcements, chattel mortgages, and labor arbitrations often chase fast upfront deposits to survive.",
   },
   {
     icon: FileSearch,
-    tag: "Case #4 · Wire & IP Trap",
-    title: "Beneficiary Account Mismatch & Patent Infringement",
-    text: "Signing with an asset-light export desk or wiring to an unlinked offshore account leaves zero legal recourse — while copied molds risk customs seizure.",
+    tag: "Case #4 · Shell Migration",
+    title: "Entity-Mixing Across Related Trading Companies",
+    text: "Shareholders open new 1M RMB trading shells sharing the same phone/email while leaving debts on the old factory — leaving buyers with weak legal recourse.",
   },
 ] as const;
 
@@ -469,30 +469,31 @@ export default async function HomePage() {
                 <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
                   <div className="font-bold text-teal-300">1. GSXT (National Enterprise Credit Publicity System)</div>
                   <p className="mt-1 text-slate-300 leading-relaxed">
-                    Exact Chinese legal name, Unified Social Credit Code (USCC), paid-in vs. subscribed capital, legal
-                    representative, shareholder chain, manufacturing vs. trading-only scope, and satellite check on
-                    industrial zone vs. office-room address.
+                    Exact Chinese legal name, Unified Social Credit Code (USCC), active vs. deregistration notices,
+                    paid-in vs. subscribed capital, legal representative, shareholder chain, related entities sharing
+                    phone/email, and manufacturing vs. trading-only business scope.
                   </p>
                 </div>
                 <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
-                  <div className="font-bold text-teal-300">2. China Judgments Online &amp; Court Enforcement Portal</div>
+                  <div className="font-bold text-teal-300">2. China Judgments, Enforcement &amp; Debt Records</div>
                   <p className="mt-1 text-slate-300 leading-relaxed">
-                    Supply-contract defaults, defendant hearing trends, dishonest judgment debtor (&ldquo;Laolai&rdquo;)
-                    blacklists, frozen equity, and administrative penalties.
+                    Supply-contract &amp; bank-loan lawsuits, current and historical dishonest judgment debtors
+                    (&ldquo;Laolai&rdquo;), chattel mortgages, guarantees, equity pledges, labor arbitrations, and
+                    administrative penalties.
                   </p>
                 </div>
                 <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
-                  <div className="font-bold text-teal-300">3. CNCA Certificate Registry &amp; Insured Headcount</div>
+                  <div className="font-bold text-teal-300">3. Domestic Certificates, Customs &amp; Insured Headcount</div>
                   <p className="mt-1 text-slate-300 leading-relaxed">
-                    Authenticity &amp; product-scope check on ISO / CCC / CE lab credentials, plus social-security
-                    insured employee count to expose &ldquo;200-worker&rdquo; shells with 0–2 staff.
+                    Domestic Chinese certificate status (ISO valid vs. revoked/expired), customs exporter registration,
+                    tax/environmental credit ratings, and annual-report insured employee count.
                   </p>
                 </div>
                 <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
-                  <div className="font-bold text-teal-300">4. CNIPA Patents/Trademarks, MIIT ICP &amp; Domestic Signals</div>
+                  <div className="font-bold text-teal-300">4. CNIPA Patents/Trademarks, Standards &amp; Domestic Platforms</div>
                   <p className="mt-1 text-slate-300 leading-relaxed">
-                    Patent/trademark ownership verification, corporate domain ICP owner match, and manual reputation
-                    checks on 1688, Xiaohongshu, Douyin, and Zhihu.
+                    Trademark validity, active vs. fee-terminated patents, website ICP filings (when listed), national
+                    standards, and manual reputation checks on Xiaohongshu, Douyin, and Zhihu.
                   </p>
                 </div>
               </div>
@@ -638,15 +639,15 @@ export default async function HomePage() {
               <div className="space-y-3 pt-1 text-xs text-slate-700">
                 <div className="flex items-start gap-2.5">
                   <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" />
-                  <span><strong>GSXT Legal &amp; Satellite Address Check:</strong> Confirms whether your seller is a licensed plant in an industrial zone or a 2-person office desk.</span>
+                  <span><strong>Legal Status &amp; Scale Reality Check:</strong> Spots deregistration notices, 0-staff annual reports, capital reductions, and revoked domestic ISO certificates before you commit.</span>
                 </div>
                 <div className="flex items-start gap-2.5">
                   <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" />
-                  <span><strong>Shareholder &amp; Beneficiary Penetration:</strong> Detects entity-mixing when a trading shell uses an affiliate factory&apos;s photos or an offshore HK bank account.</span>
+                  <span><strong>Debt, Litigation &amp; Shell-Migration Trace:</strong> Uncovers court enforcements, chattel mortgages, labor arbitrations, and related trading companies sharing phone/email.</span>
                 </div>
                 <div className="flex items-start gap-2.5">
                   <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" />
-                  <span><strong>Actionable Pre-Deposit Playbook:</strong> Clear <em>Proceed / Restructure / Pause</em> verdict plus required license chops and trap-testing RFQ questions.</span>
+                  <span><strong>Actionable Pre-Deposit Playbook:</strong> Clear <em>Proceed / Caution / Pause</em> verdict, tailored RFQ questions, and exact documents to request from the supplier (license scan, bank proof, overseas test reports).</span>
                 </div>
               </div>
 
@@ -663,57 +664,89 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Real Case Redacted Snapshot */}
+            {/* Real Case Redacted Snapshot + Actual Rendered PDF Preview */}
             <div className="rounded-2xl border border-slate-200 bg-slate-950 text-white p-6 md:p-7 shadow-xl">
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-4">
                 <div>
                   <p className="text-[11px] font-bold uppercase tracking-wider text-teal-400">Real Redacted Case Snapshot</p>
                   <h3 className="mt-1 text-base md:text-lg font-bold text-white">
-                    &ldquo;Shenzhen [Redacted] Smart Appliances&rdquo; · $249 Review
+                    &ldquo;Zhejiang [Redacted] Knitting Co.&rdquo; · $249 Review (14 Pages)
                   </h3>
                 </div>
-                <span className="rounded-full bg-amber-500/15 border border-amber-500/30 px-3 py-1 text-[11px] font-extrabold text-amber-300">
-                  HOLD DEPOSIT
+                <span className="rounded-full bg-rose-500/15 border border-rose-500/30 px-3 py-1 text-[11px] font-extrabold text-rose-300">
+                  PAUSE DEPOSIT
                 </span>
+              </div>
+
+              {/* Actual Rendered PDF Page Thumbnails */}
+              <div className="mt-5 grid grid-cols-2 gap-3">
+                <Link
+                  href="/sample-report"
+                  className="group relative overflow-hidden rounded-xl border border-slate-700 bg-slate-900 shadow-md hover:border-teal-400 transition-colors"
+                >
+                  <img
+                    src="/samples/previews/decision-249-p01-cover.webp"
+                    alt="GoCNScout $249 Buyer Decision Review Cover Page"
+                    loading="lazy"
+                    className="aspect-[210/270] w-full object-cover object-top group-hover:scale-[1.02] transition-transform duration-300"
+                  />
+                  <span className="absolute bottom-2 left-2 rounded bg-slate-950/85 px-2 py-0.5 text-[10px] font-bold text-slate-100">
+                    Cover · Verdict
+                  </span>
+                </Link>
+                <Link
+                  href="/sample-report"
+                  className="group relative overflow-hidden rounded-xl border border-slate-700 bg-slate-900 shadow-md hover:border-teal-400 transition-colors"
+                >
+                  <img
+                    src="/samples/previews/decision-249-p03-scorecard.webp"
+                    alt="GoCNScout $249 6-Dimension Radar Scorecard Page"
+                    loading="lazy"
+                    className="aspect-[210/270] w-full object-cover object-top group-hover:scale-[1.02] transition-transform duration-300"
+                  />
+                  <span className="absolute bottom-2 left-2 rounded bg-slate-950/85 px-2 py-0.5 text-[10px] font-bold text-slate-100">
+                    Page 03 · 6-Dim Radar
+                  </span>
+                </Link>
               </div>
 
               <div className="mt-5 space-y-3 text-xs">
                 <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-4">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-200">1. Claimed vs. GSXT Reality</span>
-                    <span className="rounded bg-rose-500/15 px-2 py-0.5 text-[10px] font-bold text-rose-300">Shell Detected</span>
+                    <span className="font-bold text-slate-200">1. Surface Prestige vs. Registry Reality</span>
+                    <span className="rounded bg-rose-500/15 px-2 py-0.5 text-[10px] font-bold text-rose-300">Deregistering</span>
                   </div>
                   <p className="mt-1.5 text-slate-400 leading-relaxed">
-                    Claimed &ldquo;200-worker factory&rdquo;, but GSXT showed a 14-month-old office-plaza trading company
-                    with 0 RMB paid-in capital, 2 insured staff, and no manufacturing scope.
+                    Looked like a 25-year-old manufacturer (est. 2001, 58 patents, ISO), yet records revealed an active
+                    simplified deregistration notice, 0 insured employees, and all 58 patents terminated for unpaid fees.
                   </p>
                 </div>
 
                 <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-4">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-200">2. Ownership &amp; Certificate Cross-Check</span>
-                    <span className="rounded bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold text-amber-300">Entity Mismatch</span>
+                    <span className="font-bold text-slate-200">2. Debt, Revoked ISO &amp; Related Shells</span>
+                    <span className="rounded bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold text-amber-300">High Distress</span>
                   </div>
                   <p className="mt-1.5 text-slate-400 leading-relaxed">
-                    70% owner held a 25% stake in a real Foshan Shunde plant whose ISO 9001 certificate was borrowed —
-                    while the PI asked to wire $6,300 to an unlinked HK account.
+                    40.5M RMB resumed court enforcement, 83.1M RMB in active chattel mortgages, revoked ISO 9001
+                    certificates, and 3 newly formed related trading/printing entities sharing phone &amp; email.
                   </p>
                 </div>
 
                 <div className="rounded-xl border border-teal-500/30 bg-teal-950/35 p-4">
                   <div className="flex items-center gap-2 font-bold text-teal-300">
                     <ClipboardCheck className="h-4 w-4 shrink-0" />
-                    <span>3. How We Saved the Buyer&apos;s $21,000 Order</span>
+                    <span>3. Buyer Decision Guidance Delivered</span>
                   </div>
                   <p className="mt-1.5 text-slate-200 leading-relaxed">
-                    Guided buyer to re-sign the contract directly under the licensed Foshan factory&apos;s official chop
-                    and onshore USD account, plus verify 120V UL scope before paying.
+                    Advised buyer to pause all payments to the winding-down entity, identify the active contracting
+                    successor, and verify that entity before signing or sending a deposit.
                   </p>
                 </div>
               </div>
 
               <div className="mt-5 flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-800">
-                <span className="text-[11px] text-slate-400">Turnaround: 31 hours · Supplier never notified</span>
+                <span className="text-[11px] text-slate-400">Turnaround: 28 hours · Supplier never notified</span>
                 <Link
                   href="/sample-report"
                   className="inline-flex items-center text-xs font-bold text-teal-300 hover:text-teal-200"
@@ -850,7 +883,7 @@ export default async function HomePage() {
             {
               question: "How do desk reviews ($149–$249) work alongside physical QC agencies like SGS or TÜV?",
               answer:
-                "Use our $149–$249 desk review BEFORE paying deposits or booking costly $800–$1,500 on-site audits — it eliminates trading shells, fake certificates, lawsuit defaults, and bank-account mismatches upfront. Once mass production runs at a verified plant, pair it with physical sample testing and pre-shipment QC.",
+                "Use our $149–$249 desk review BEFORE paying deposits or booking costly $800–$1,500 on-site audits — it exposes deregistration notices, lawsuits, chattel mortgages, revoked domestic ISO certificates, lapsed patents, and related-entity shell risks upfront. We do not verify private bank accounts, audit overseas CE/FCC/FDA lab reports, or visit physical factories; instead, we give you the exact checklist of documents to request from the supplier and recommend pairing large orders with sample testing and pre-shipment QC.",
             },
             {
               question: "Do I pay upfront before you confirm what can be checked?",

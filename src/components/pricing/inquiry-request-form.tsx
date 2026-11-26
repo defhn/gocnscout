@@ -144,7 +144,7 @@ export function InquiryRequestForm({
             name="message"
             defaultValue={defaultMessage}
             rows={4}
-            placeholder="Paste supplier English/Chinese name, Alibaba or website URL, target product, approximate order value, and any specific red flags (e.g. deposit account mismatch, factory claim, CE/ISO certificate check)..."
+            placeholder="Paste supplier English/Chinese name, Alibaba or website URL (if any), target product, approximate order value, and any specific concerns (e.g. factory vs trading claim, ownership, lawsuits, or deregistration risk)..."
             required
           />
         </label>

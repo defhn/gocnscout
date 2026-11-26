@@ -138,9 +138,9 @@ export default async function PricingPage({
                   "No. You send a request first, we confirm exact scope and price by email, and only then do we send a Stripe payment link.",
               },
               {
-                question: "Can desk due diligence replace sample testing or an on-site QC inspection?",
+                question: "Can desk due diligence replace sample testing, bank checks, or an on-site QC inspection?",
                 answer:
-                  "No — they solve different stages. Desk due diligence ($149-$249) eliminates paper shells, fake certificates, lawsuit defaults, and beneficiary mismatches before you wire a deposit. Once mass production starts, you should still test physical samples and book pre-shipment QC (e.g. SGS/TÜV) for large orders.",
+                  "No — they cover different stages. Desk due diligence ($149–$249) uncovers Chinese legal registration status, deregistration notices, shareholder/related-company links, lawsuits, mortgages, insured headcount, domestic certificate status, and expired IP before you commit. We do not verify private bank accounts, audit overseas CE/FCC/FDA lab reports, or inspect physical factories — we provide a clear checklist of documents to request from the supplier and recommend pairing large orders with sample testing and on-site QC (e.g. SGS/TÜV).",
               },
               {
                 question: "Do you provide private contact details?",
