@@ -685,7 +685,7 @@ export default async function HomePage() {
                   className="group relative overflow-hidden rounded-xl border border-slate-700 bg-slate-900 shadow-md hover:border-teal-400 transition-colors"
                 >
                   <img
-                    src="/samples/previews/decision-249-p01-cover.webp"
+                    src="/samples/previews/decision-249-p01.webp"
                     alt="GoCNScout $249 Buyer Decision Review Cover Page"
                     loading="lazy"
                     className="aspect-[210/270] w-full object-cover object-top group-hover:scale-[1.02] transition-transform duration-300"
@@ -699,7 +699,7 @@ export default async function HomePage() {
                   className="group relative overflow-hidden rounded-xl border border-slate-700 bg-slate-900 shadow-md hover:border-teal-400 transition-colors"
                 >
                   <img
-                    src="/samples/previews/decision-249-p03-scorecard.webp"
+                    src="/samples/previews/decision-249-p03.webp"
                     alt="GoCNScout $249 6-Dimension Radar Scorecard Page"
                     loading="lazy"
                     className="aspect-[210/270] w-full object-cover object-top group-hover:scale-[1.02] transition-transform duration-300"

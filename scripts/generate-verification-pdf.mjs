@@ -1663,12 +1663,10 @@ async function main() {
         await exportPreviews(
           browser,
           html149,
-          [
-            { pageNum: 1, file: "identity-149-p01-cover.webp" },
-            { pageNum: 3, file: "identity-149-p03-scale.webp" },
-            { pageNum: 4, file: "identity-149-p04-registry.webp" },
-            { pageNum: 8, file: "identity-149-p08-safeguards.webp" },
-          ],
+          Array.from({ length: 9 }, (_, i) => ({
+            pageNum: i + 1,
+            file: `identity-149-p${String(i + 1).padStart(2, "0")}.webp`,
+          })),
           path.resolve("public/samples/previews"),
         );
       }
@@ -1686,14 +1684,10 @@ async function main() {
         await exportPreviews(
           browser,
           html249,
-          [
-            { pageNum: 1, file: "decision-249-p01-cover.webp" },
-            { pageNum: 3, file: "decision-249-p03-scorecard.webp" },
-            { pageNum: 5, file: "decision-249-p05-capital.webp" },
-            { pageNum: 6, file: "decision-249-p06-topology.webp" },
-            { pageNum: 8, file: "decision-249-p08-debt.webp" },
-            { pageNum: 13, file: "decision-249-p13-playbook.webp" },
-          ],
+          Array.from({ length: 14 }, (_, i) => ({
+            pageNum: i + 1,
+            file: `decision-249-p${String(i + 1).padStart(2, "0")}.webp`,
+          })),
           path.resolve("public/samples/previews"),
         );
       }

@@ -12,67 +12,145 @@ type PreviewPage = {
 
 const DECISION_249_PAGES: PreviewPage[] = [
   {
-    src: "/samples/previews/decision-249-p01-cover.webp",
+    src: "/samples/previews/decision-249-p01.webp",
     pageLabel: "Page 01 / 14",
     title: "Executive Cover & Critical Override",
-    caption: "Immediate PAUSE determination, 3 / 30 signal score, turnaround, and top distress triggers.",
+    caption: "Immediate PAUSE verdict, 3 / 30 composite score, turnaround, and top distress triggers.",
   },
   {
-    src: "/samples/previews/decision-249-p03-scorecard.webp",
+    src: "/samples/previews/decision-249-p02.webp",
+    pageLabel: "Page 02 / 14",
+    title: "Executive Summary & Report Roadmap",
+    caption: "4 core KPI tiles, full analyst summary, Mandatory Critical Override trigger, and 12-section index.",
+  },
+  {
+    src: "/samples/previews/decision-249-p03.webp",
     pageLabel: "Page 03 / 14",
     title: "6-Dimension Radar & 0–5 Scorecard",
     caption: "Evidence-backed 0–5 scoring across legal status, ownership, debt, scale/ISO, IP, and digital pulse.",
   },
   {
-    src: "/samples/previews/decision-249-p05-capital.webp",
+    src: "/samples/previews/decision-249-p04.webp",
+    pageLabel: "Page 04 / 14",
+    title: "Statutory Corporate Profile & Branches",
+    caption: "Verified USCC, customs code, simplified deregistration notice, 0 insured staff, and 3/3 cancelled branches.",
+  },
+  {
+    src: "/samples/previews/decision-249-p05.webp",
     pageLabel: "Page 05 / 14",
-    title: "Registered Capital Contraction Curve",
-    caption: "Visualizing the −81% registered capital drop from 52M RMB peak down to 10M RMB (2019–2021).",
+    title: "Capital Contraction Curve & Changes",
+    caption: "−81% registered capital drop from 52M RMB peak to 10M RMB (2019–2021) plus milestone registry filings.",
   },
   {
-    src: "/samples/previews/decision-249-p06-topology.webp",
+    src: "/samples/previews/decision-249-p06.webp",
     pageLabel: "Page 06 / 14",
-    title: "Ownership & Shell-Migration Map",
-    caption: "Exposing 3 newly registered 1M RMB trading & printing shells sharing identical phone/email records.",
+    title: "Ownership & Shell-Migration Topology",
+    caption: "Visual diagram mapping shareholders to 3 newly formed 1M RMB trading & printing shells sharing phone/email.",
   },
   {
-    src: "/samples/previews/decision-249-p08-debt.webp",
+    src: "/samples/previews/decision-249-p07.webp",
+    pageLabel: "Page 07 / 14",
+    title: "Related Entities & Officer Appointments",
+    caption: "6 suspected related entities sharing contact footprints + Legal Rep's other cancelled & active companies.",
+  },
+  {
+    src: "/samples/previews/decision-249-p08.webp",
     pageLabel: "Page 08 / 14",
-    title: "Debt vs. Capital (12.4×) & Litigation",
-    caption: "123.6M RMB in active enforcement and chattel mortgages vs. 10M RMB remaining capital.",
+    title: "Judicial Litigation & Debt Profile (12.4×)",
+    caption: "123.6M RMB debt/mortgages vs. 10M RMB capital + chronological shift from plaintiff to loan-default defendant.",
   },
   {
-    src: "/samples/previews/decision-249-p13-playbook.webp",
+    src: "/samples/previews/decision-249-p09.webp",
+    pageLabel: "Page 09 / 14",
+    title: "Chattel Mortgages & Dishonest Debtors",
+    caption: "83.1M RMB active chattel mortgages, 65.27M RMB historical debtor orders, and deposit-seizure risk assessment.",
+  },
+  {
+    src: "/samples/previews/decision-249-p10.webp",
+    pageLabel: "Page 10 / 14",
+    title: "Labor Arbitrations & Admin Penalties",
+    caption: "7 labor arbitrations (unpaid wages, social insurance, injury) and 5 regulatory penalties (2017–2025).",
+  },
+  {
+    src: "/samples/previews/decision-249-p11.webp",
+    pageLabel: "Page 11 / 14",
+    title: "Domestic ISO Certificates, IP & Standards",
+    caption: "Decay chart, all 3 recent ISO certificates REVOKED, 58/58 patents terminated, and 4 national standards.",
+  },
+  {
+    src: "/samples/previews/decision-249-p12.webp",
+    pageLabel: "Page 12 / 14",
+    title: "External Digital Footprint & Credit",
+    caption: "5-channel audit (Website, Alibaba, 1688, BOSS Zhipin, Xiaohongshu/Douyin/Zhihu) + domestic credit ratings.",
+  },
+  {
+    src: "/samples/previews/decision-249-p13.webp",
     pageLabel: "Page 13 / 14",
-    title: "Buyer Playbook & RFQ Script",
-    caption: "5 realistic China export safeguards plus 4 direct trap-testing questions for the sales rep.",
+    title: "Buyer Action Playbook & RFQ Script",
+    caption: "5 realistic China export safeguards plus 4 direct trap-testing questions to send the sales rep.",
+  },
+  {
+    src: "/samples/previews/decision-249-p14.webp",
+    pageLabel: "Page 14 / 14",
+    title: "Independence, Scope & Analyst Desk",
+    caption: "100% buyer-funded independence guarantee, clear desk-review boundaries, and direct analyst contact.",
   },
 ];
 
 const IDENTITY_149_PAGES: PreviewPage[] = [
   {
-    src: "/samples/previews/identity-149-p01-cover.webp",
+    src: "/samples/previews/identity-149-p01.webp",
     pageLabel: "Page 01 / 09",
     title: "Executive Cover & Verdict",
     caption: "Clear Critical Risk — Pause determination for fast pre-sample supplier gatekeeping.",
   },
   {
-    src: "/samples/previews/identity-149-p03-scale.webp",
+    src: "/samples/previews/identity-149-p02.webp",
+    pageLabel: "Page 02 / 09",
+    title: "Executive Summary & Contents",
+    caption: "4 key risk metrics, plain-English screening summary, Mandatory Critical Override, and report index.",
+  },
+  {
+    src: "/samples/previews/identity-149-p03.webp",
     pageLabel: "Page 03 / 09",
     title: "4-Tier Scale & 3-Point Identity Audit",
-    caption: "Structured screening across legal existence, basic enforcement/penalties, and B2B consistency.",
+    caption: "Structured screening across legal existence, basic enforcement/penalties, and B2B storefront consistency.",
   },
   {
-    src: "/samples/previews/identity-149-p04-registry.webp",
+    src: "/samples/previews/identity-149-p04.webp",
     pageLabel: "Page 04 / 09",
     title: "Full Chinese Statutory Profile",
-    caption: "Verified USCC, customs code, deregistration notice, 0 insured staff, and licensed business scope.",
+    caption: "Verified USCC, customs code, active deregistration notice, 0 insured staff, and licensed business scope.",
   },
   {
-    src: "/samples/previews/identity-149-p08-safeguards.webp",
+    src: "/samples/previews/identity-149-p05.webp",
+    pageLabel: "Page 05 / 09",
+    title: "Capital Trajectory & Cancelled Branches",
+    caption: "Registered capital drop (52M → 10M RMB) chart plus all 3 registered branch offices (all cancelled).",
+  },
+  {
+    src: "/samples/previews/identity-149-p06.webp",
+    pageLabel: "Page 06 / 09",
+    title: "Historical Corporate Registry Filings",
+    caption: "9 milestone corporate changes (2003–2021) tracing the factory's expansion and abrupt retrenchment.",
+  },
+  {
+    src: "/samples/previews/identity-149-p07.webp",
+    pageLabel: "Page 07 / 09",
+    title: "Enforcement & Administrative Penalties",
+    caption: "Active simplified deregistration, 40.5M RMB resumed enforcement, historical debtor flags, and 5 penalties.",
+  },
+  {
+    src: "/samples/previews/identity-149-p08.webp",
     pageLabel: "Page 08 / 09",
     title: "B2B Check, Safeguards & Scope",
-    caption: "Alibaba/1688/website findings, 5 standard onboarding safeguards, and transparent scope boundaries.",
+    caption: "Website/Alibaba/1688 findings, 5 practical China export safeguards, and explicit scope boundaries.",
+  },
+  {
+    src: "/samples/previews/identity-149-p09.webp",
+    pageLabel: "Page 09 / 09",
+    title: "Independence, Upgrade Path & Desk",
+    caption: "Buyer-funded independence statement, $249 deep-review upgrade details, legal notice, and contact desk.",
   },
 ];
 
@@ -117,7 +195,7 @@ export function SampleReportGallery() {
             }`}
           >
             <Sparkles className="h-3.5 w-3.5 shrink-0" />
-            <span>$249 Decision Review (14 Pages)</span>
+            <span>$249 Decision Review (All 14 Pages)</span>
           </button>
           <button
             type="button"
@@ -131,7 +209,7 @@ export function SampleReportGallery() {
                 : "bg-slate-50 text-slate-700 hover:bg-slate-100"
             }`}
           >
-            <span>$149 Identity Check (9 Pages)</span>
+            <span>$149 Identity Check (All 9 Pages)</span>
           </button>
         </div>
 
@@ -154,8 +232,8 @@ export function SampleReportGallery() {
         </div>
       </div>
 
-      {/* Page Thumbnail Grid */}
-      <div className={`grid gap-5 sm:grid-cols-2 ${activeTier === "249" ? "lg:grid-cols-3" : "lg:grid-cols-4"}`}>
+      {/* Complete Page-by-Page Grid */}
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {pages.map((item, idx) => (
           <button
             key={item.src}
@@ -175,7 +253,7 @@ export function SampleReportGallery() {
               </span>
               <span className="absolute inset-0 flex items-center justify-center bg-slate-950/0 group-hover:bg-slate-950/25 transition-colors">
                 <span className="opacity-0 group-hover:opacity-100 inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-bold text-slate-900 shadow-md transition-opacity">
-                  <Eye className="h-3.5 w-3.5 text-teal-600" /> Zoom Page
+                  <Eye className="h-3.5 w-3.5 text-teal-600" /> Zoom Full Page
                 </span>
               </span>
             </div>
@@ -241,7 +319,7 @@ export function SampleReportGallery() {
                 onClick={() => setLightboxIdx((lightboxIdx - 1 + pages.length) % pages.length)}
                 className="inline-flex items-center gap-1 rounded-lg border border-slate-300 px-3 py-1.5 font-semibold text-slate-800 hover:bg-slate-50 cursor-pointer"
               >
-                <ChevronLeft className="h-4 w-4" /> Previous
+                <ChevronLeft className="h-4 w-4" /> Previous Page
               </button>
               <span className="hidden sm:inline text-center max-w-md truncate">{activeLightboxPage.caption}</span>
               <button
@@ -249,7 +327,7 @@ export function SampleReportGallery() {
                 onClick={() => setLightboxIdx((lightboxIdx + 1) % pages.length)}
                 className="inline-flex items-center gap-1 rounded-lg border border-slate-300 px-3 py-1.5 font-semibold text-slate-800 hover:bg-slate-50 cursor-pointer"
               >
-                Next <ChevronRight className="h-4 w-4" />
+                Next Page <ChevronRight className="h-4 w-4" />
               </button>
             </div>
           </div>
